@@ -357,6 +357,13 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .vid-warn { position: absolute; z-index: 2; left: 50%; top: 104px; transform: translateX(-50%); margin: 0; padding: 5px 10px 5px 26px; border-radius: 999px; background: rgba(0,0,0,.55); font: 600 10px/1.35 var(--mono); color: var(--gold); width: max-content; max-width: 84%; text-align: center; }
 .vid-warn::before { content: ""; position: absolute; left: 10px; top: 50%; width: 10px; height: 8px; transform: translateY(-50%); background: linear-gradient(90deg, var(--gold) 0 2px, transparent 2px 4px, var(--gold) 4px 6px, transparent 6px 8px, rgba(255,210,77,.3) 8px 10px); }
 .geraet.mit-video .phone-tasten-talk .rund-deko { background: rgba(0,0,0,.4); }
+/* Videoanruf im Teams-Fenster: das Bild füllt die Kachel, Namensschild und eigene Kachel liegen darüber */
+.win-video { display: none; position: absolute; inset: 0; z-index: 1; background: #000 var(--poster, none) center / cover no-repeat; }
+.geraet.mit-video[data-zustand="talk"] .win-video, .geraet.mit-video[data-zustand="ende"] .win-video { display: block; }
+.geraet.mit-video[data-art="teams"] .win-kachel { visibility: hidden; }
+.win-vid-warn { top: 14px; }
+/* Ausgehender Anruf: keine Annehmen-/Ablehnen-Tasten, Teams verbindet von selbst */
+.geraet.ausgehend .win-toast-tasten { display: none; }
 
 /* Teams-artiges Fenster (angelehnt an das aktuelle Teams im dunklen Design)
    Vor dem Anruf: Posteingang mit Suchleiste. Im Anruf: Leiste mit Zeit und Name links,
@@ -1284,6 +1291,13 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
                 </div>
                 <div class="mail-lesen" id="win-lesen"></div>
               </div>
+              <!-- Videoanruf im Teams-Fenster: große Kachel mit Idle-Schleife und Clip -->
+              <div class="win-video" id="win-video">
+                <video id="win-vid-idle" class="vid" playsinline muted loop preload="auto"></video>
+                <video id="win-vid-talk" class="vid vid-talk" playsinline muted preload="auto"></video>
+                <canvas id="win-vid-standbild" class="vid-standbild" aria-hidden="true"></canvas>
+                <p class="vid-warn win-vid-warn" id="win-vid-warn" hidden></p>
+              </div>
               <div class="win-kachel">
                 <div class="ph-avatar-wrap">
                   <canvas class="ph-ring" id="win-ring" width="320" height="320" aria-hidden="true"></canvas>
@@ -1508,6 +1522,7 @@ window.CONTENT = {
     eingehend: 'Eingehender Anruf',
     eingehendVideo: 'Eingehender Videoanruf',
     instabil: 'Verbindung instabil',
+    ausgehend: 'Ausgehender Anruf · Verbindung wird hergestellt …',
     annehmen: 'Annehmen',
     ablehnen: 'Ablehnen',
     ablehnenTipp: 'Heute gehst du ran – auflegen kannst du jederzeit.',
@@ -1777,6 +1792,60 @@ window.CONTENT = {
       beute: 0
     },
 
+    {
+      // Echter Videoanruf: Du rufst selbst die IT-Hotline an (Pilot-Call 06, Ordner „Videos Case 6 – Das Headset Ticket“).
+      // Das Bild friert einmal kurz ein (WLAN) – steckt im Clip c6_0 selbst, samt Tonaussetzer.
+      // c6_2b: der Clip mit „Nein, auf keinen Fall, das brauchen wir nicht …“ fehlt noch. Bis dahin fragt Option B
+      // nach dem Termin; mit dem Clip wird sie wieder zur Frage nach Passwort oder Code (wert: 'gut').
+      id: 'c6',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: false,
+      ausgehend: true,
+      video: { poster: 'assets/video/chen-poster.jpg', idle: 'assets/video/c6_idle.mp4', clips: ['c6_0', 'c6_1a', 'c6_1b', 'c6_2a', 'c6_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Freitag, 13:20',
+      storyTitel: 'Das Headset-Ticket',
+      lage: 'Dein Headset gibt seit heute Morgen keinen Ton von sich. Du hast ein Ticket eröffnet und rufst jetzt selbst die IT-Hotline aus dem Intranet an. Daniel Chen nimmt ab.',
+      anrufer: { name: 'Daniel Chen', zeile: 'IT-Service Desk · Verfügbar', initialen: 'DC', farbe: '#2E7D6B', foto: 'assets/chen-profil.jpg' },
+      posteingang: [
+        ['IT-Service', 'Ticket 51877 angelegt: Headset ohne Ton'],
+        ['Lena Hofmann', 'Kurzer Call um drei?'],
+        ['Kalender', 'Teammeeting · Mo 9:30']
+      ],
+      start: { id: 'c6_0', tts: 'Hallo, Daniel Chen, IT-Service. Ich hab Ihr Ticket hier – Headset, seit heute Morgen kein Ton, richtig? … Sorry, bei mir ruckelt’s heute, wir haben WLAN-Probleme im Gebäude. Okay: Klicken Sie mal unten rechts auf das Lautsprechersymbol. Welches Gerät ist da ausgewählt?' },
+      runden: [
+        [
+          { text: 'Moment … da steht „Laptop-Lautsprecher“.', wert: 'neutral',
+            antwort: { id: 'c6_1a', tts: 'Da haben wir’s schon. Stellen Sie das bitte auf Ihr Headset um. … Hören Sie mich jetzt über das Headset? Wenn nicht, schauen wir uns das gleich gemeinsam an.' } },
+          { text: 'Ihr Bild hat gerade gehangen. Sind Sie wirklich vom IT-Service?', wert: 'gut',
+            antwort: { id: 'c6_1b', tts: 'Berechtigte Frage! Sie haben mich ja selbst über die Hotline angerufen. Und im IT-Portal steht bei Ihrem Ticket mein Name als Bearbeiter. Das Ruckeln ist unser WLAN – sorry dafür. Wollen wir weitermachen?' } }
+        ],
+        [
+          { text: 'Soll ich meinen Bildschirm teilen?', wert: 'neutral',
+            antwort: { id: 'c6_2a', tts: 'Gern, über den Button oben im Call. Sie sehen ja, was Sie zeigen, und können jederzeit stoppen. … Ah, da ist es: Der Treiber ist veraltet. Ich trage das ins Ticket ein und schicke Ihnen eine kurze Anleitung.' } },
+          { text: 'Und wenn es danach immer noch nicht geht?', wert: 'neutral',
+            antwort: { id: 'c6_2b', tts: 'Wenn’s danach immer noch nicht geht, trage ich das ins Ticket ein, und wir machen einen Termin vor Ort.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Du hast angerufen', text: 'Du hast selbst die Hotline aus dem Intranet gewählt – zu deinem eigenen Ticket. Wer den Kontakt startet, entscheidet über das Risiko.' },
+        { art: 'gruen', titel: 'Kein „Extern“', geraet: 'namensschild', text: 'Daniel erscheint im Firmen-Teams mit Namen und Abteilung – ohne „Extern“. Vergleiche mit dem falschen Helpdesk aus Level 1.' },
+        { art: 'gruen', titel: 'Gelassen auf deine Frage', zitat: 'Sie haben mich ja selbst über die Hotline angerufen', text: 'Kein Druck, keine Ausrede: Er verweist auf deinen eigenen Anruf und auf das Portal, wo du alles selbst prüfen kannst.', wenn: 'c6_1b' },
+        { art: 'gruen', titel: 'Bildschirm teilen – hier in Ordnung', zitat: 'Sie sehen ja, was Sie zeigen', text: 'Du hast den Kontakt gestartet, siehst, was du zeigst, und kannst jederzeit stoppen. Fernsteuerung, Passwort oder Code verlangt er nicht.', wenn: 'c6_2a' },
+        { art: 'gruen', titel: 'Prozess statt Druck', zitat: 'wir machen einen Termin vor Ort', text: 'Ticket, Anleitung, Termin vor Ort – so läuft echter Support. Niemand drängt dich zu etwas.', wenn: 'c6_2b' },
+        { art: 'info', titel: 'Das Ruckeln ist kein Beweis', zitat: 'bei mir ruckelt’s heute', text: 'Bildstörungen gibt es bei jedem schlechten WLAN. Ein Ruckler macht noch keinen Deepfake – und ein flüssiges Bild noch keinen echten Anruf.' }
+      ],
+      kern: 'Du hast selbst angerufen, über die bekannte Hotline, zu deinem eigenen Ticket. Eine Bildstörung beweist keinen Deepfake – entscheidend ist, wer den Kontakt gestartet hat.',
+      tipp: 'Frag dich zuerst: Wer hat den Kontakt gestartet? Rufst du selbst über die Hotline aus dem Intranet an, ist der Weg geprüft. Ruft „die IT“ dich an: Ticketnummer nennen lassen und im Portal prüfen.',
+      hacker: { echt: 'Gähn. Da hat nur einer sein Headset repariert.', fehlalarm: 'Wegen eines Rucklers gleich Fake? Dann viel Spaß ohne Ton im nächsten Meeting!' },
+      beute: 0
+    },
+
+    // nicht im Spiel (Level 2 zählt nur zwei Anrufe): der frühere echte IT-Anruf aus der Vishing Challenge
     {
       // Gegenstück zum falschen Helpdesk (c3): gleicher Kanal, aber intern, mit eigenem Ticket und ohne Druck
       id: 'c7',
@@ -3056,7 +3125,9 @@ window.Feier = (function () {
     $('ph-kanal').textContent = a.video ? C.telefon.eingehendVideo : C.telefon.eingehend;
     $('ph-timer').textContent = '';
     $('win-name').textContent = an.name; $('win-zeile').textContent = an.zeile; $('win-extern').hidden = !a.extern;
-    $('win-toast-name').textContent = an.name + (a.extern ? ' (Extern)' : ''); $('win-toast-zeile').textContent = a.extern ? an.zeile : 'ruft Sie an …';
+    $('win-toast-name').textContent = an.name + (a.extern ? ' (Extern)' : '');
+    $('win-toast-zeile').textContent = a.ausgehend ? C.telefon.ausgehend : a.extern ? an.zeile : 'ruft Sie an …';
+    geraet.classList.toggle('ausgehend', !!a.ausgehend);
     $('win-call-name').textContent = an.name + (a.extern ? ' (Extern)' : '');
     $('win-timer').textContent = '';
     setZustand('ruhe');
@@ -3140,6 +3211,8 @@ window.Feier = (function () {
     K.ring(a.klingel, a.geraet !== 'teams');
     cancelAnimationFrame(ringId);
     ringId = requestAnimationFrame(ringZeichnen);
+    // Ausgehender Anruf (du rufst die Hotline an): kein Annehmen, nach ein paar Freizeichen ist er dran
+    if (a.ausgehend) { const ep = S.epoche; setTimeout(() => { if (ep === S.epoche) annehmen(); }, 3600); return; }
     (a.geraet === 'teams' ? $('win-annehmen') : $('ph-annehmen')).focus({ preventScroll: true });
   }
 
@@ -3295,13 +3368,20 @@ window.Feier = (function () {
   // Jede Zeile hat einen eigenen Clip; dazwischen läuft die Idle-Schleife (sie hört zu).
   // Der Clip läuft stumm; der Ton derselben Aufnahme kommt als .m4a durch die Leitung (Untertitel, Filter, Pegel
   // wie bei den Audioanrufen). Weicht das Bild mehr als 0,12 s vom Ton ab, springt es nach.
-  const VID = { box: $('ph-video'), idle: $('vid-idle'), talk: $('vid-talk'), standbild: $('vid-standbild'), warn: $('vid-warn') };
-  let vLauf = null;
+  // Zwei Bühnen: das Handy (WhatsApp-Video) und die große Kachel im Teams-Fenster; VID zeigt auf die des laufenden Anrufs
+  const BUEHNEN = {
+    phone: { box: $('ph-video'), idle: $('vid-idle'), talk: $('vid-talk'), standbild: $('vid-standbild'), warn: $('vid-warn') },
+    teams: { box: $('win-video'), idle: $('win-vid-idle'), talk: $('win-vid-talk'), standbild: $('win-vid-standbild'), warn: $('win-vid-warn') }
+  };
+  let VID = BUEHNEN.phone, vLauf = null;
   C.anrufe.forEach(a => { if (a.video) a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; }); });
   function videoVorbereiten(a) {
     videoStop();
-    VID.idle.removeAttribute('src'); VID.talk.removeAttribute('src'); VID.talk.style.opacity = 0;
-    VID.standbild.classList.remove('an'); VID.warn.hidden = true;
+    Object.values(BUEHNEN).forEach(b => {
+      b.idle.removeAttribute('src'); b.talk.removeAttribute('src'); b.talk.style.opacity = 0;
+      b.standbild.classList.remove('an'); b.warn.hidden = true;
+    });
+    VID = a.geraet === 'teams' ? BUEHNEN.teams : BUEHNEN.phone;
     geraet.classList.toggle('mit-video', !!a.video);
     if (!a.video) { geraet.style.removeProperty('--poster'); return; }
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf

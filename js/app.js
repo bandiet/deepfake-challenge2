@@ -464,7 +464,9 @@
     $('ph-kanal').textContent = a.video ? C.telefon.eingehendVideo : C.telefon.eingehend;
     $('ph-timer').textContent = '';
     $('win-name').textContent = an.name; $('win-zeile').textContent = an.zeile; $('win-extern').hidden = !a.extern;
-    $('win-toast-name').textContent = an.name + (a.extern ? ' (Extern)' : ''); $('win-toast-zeile').textContent = a.extern ? an.zeile : 'ruft Sie an …';
+    $('win-toast-name').textContent = an.name + (a.extern ? ' (Extern)' : '');
+    $('win-toast-zeile').textContent = a.ausgehend ? C.telefon.ausgehend : a.extern ? an.zeile : 'ruft Sie an …';
+    geraet.classList.toggle('ausgehend', !!a.ausgehend);
     $('win-call-name').textContent = an.name + (a.extern ? ' (Extern)' : '');
     $('win-timer').textContent = '';
     setZustand('ruhe');
@@ -548,6 +550,8 @@
     K.ring(a.klingel, a.geraet !== 'teams');
     cancelAnimationFrame(ringId);
     ringId = requestAnimationFrame(ringZeichnen);
+    // Ausgehender Anruf (du rufst die Hotline an): kein Annehmen, nach ein paar Freizeichen ist er dran
+    if (a.ausgehend) { const ep = S.epoche; setTimeout(() => { if (ep === S.epoche) annehmen(); }, 3600); return; }
     (a.geraet === 'teams' ? $('win-annehmen') : $('ph-annehmen')).focus({ preventScroll: true });
   }
 
@@ -703,13 +707,20 @@
   // Jede Zeile hat einen eigenen Clip; dazwischen läuft die Idle-Schleife (sie hört zu).
   // Der Clip läuft stumm; der Ton derselben Aufnahme kommt als .m4a durch die Leitung (Untertitel, Filter, Pegel
   // wie bei den Audioanrufen). Weicht das Bild mehr als 0,12 s vom Ton ab, springt es nach.
-  const VID = { box: $('ph-video'), idle: $('vid-idle'), talk: $('vid-talk'), standbild: $('vid-standbild'), warn: $('vid-warn') };
-  let vLauf = null;
+  // Zwei Bühnen: das Handy (WhatsApp-Video) und die große Kachel im Teams-Fenster; VID zeigt auf die des laufenden Anrufs
+  const BUEHNEN = {
+    phone: { box: $('ph-video'), idle: $('vid-idle'), talk: $('vid-talk'), standbild: $('vid-standbild'), warn: $('vid-warn') },
+    teams: { box: $('win-video'), idle: $('win-vid-idle'), talk: $('win-vid-talk'), standbild: $('win-vid-standbild'), warn: $('win-vid-warn') }
+  };
+  let VID = BUEHNEN.phone, vLauf = null;
   C.anrufe.forEach(a => { if (a.video) a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; }); });
   function videoVorbereiten(a) {
     videoStop();
-    VID.idle.removeAttribute('src'); VID.talk.removeAttribute('src'); VID.talk.style.opacity = 0;
-    VID.standbild.classList.remove('an'); VID.warn.hidden = true;
+    Object.values(BUEHNEN).forEach(b => {
+      b.idle.removeAttribute('src'); b.talk.removeAttribute('src'); b.talk.style.opacity = 0;
+      b.standbild.classList.remove('an'); b.warn.hidden = true;
+    });
+    VID = a.geraet === 'teams' ? BUEHNEN.teams : BUEHNEN.phone;
     geraet.classList.toggle('mit-video', !!a.video);
     if (!a.video) { geraet.style.removeProperty('--poster'); return; }
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf

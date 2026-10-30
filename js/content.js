@@ -46,6 +46,7 @@ window.CONTENT = {
     eingehend: 'Eingehender Anruf',
     eingehendVideo: 'Eingehender Videoanruf',
     instabil: 'Verbindung instabil',
+    ausgehend: 'Ausgehender Anruf · Verbindung wird hergestellt …',
     annehmen: 'Annehmen',
     ablehnen: 'Ablehnen',
     ablehnenTipp: 'Heute gehst du ran – auflegen kannst du jederzeit.',
@@ -315,6 +316,60 @@ window.CONTENT = {
       beute: 0
     },
 
+    {
+      // Echter Videoanruf: Du rufst selbst die IT-Hotline an (Pilot-Call 06, Ordner „Videos Case 6 – Das Headset Ticket“).
+      // Das Bild friert einmal kurz ein (WLAN) – steckt im Clip c6_0 selbst, samt Tonaussetzer.
+      // c6_2b: der Clip mit „Nein, auf keinen Fall, das brauchen wir nicht …“ fehlt noch. Bis dahin fragt Option B
+      // nach dem Termin; mit dem Clip wird sie wieder zur Frage nach Passwort oder Code (wert: 'gut').
+      id: 'c6',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: false,
+      ausgehend: true,
+      video: { poster: 'assets/video/chen-poster.jpg', idle: 'assets/video/c6_idle.mp4', clips: ['c6_0', 'c6_1a', 'c6_1b', 'c6_2a', 'c6_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Freitag, 13:20',
+      storyTitel: 'Das Headset-Ticket',
+      lage: 'Dein Headset gibt seit heute Morgen keinen Ton von sich. Du hast ein Ticket eröffnet und rufst jetzt selbst die IT-Hotline aus dem Intranet an. Daniel Chen nimmt ab.',
+      anrufer: { name: 'Daniel Chen', zeile: 'IT-Service Desk · Verfügbar', initialen: 'DC', farbe: '#2E7D6B', foto: 'assets/chen-profil.jpg' },
+      posteingang: [
+        ['IT-Service', 'Ticket 51877 angelegt: Headset ohne Ton'],
+        ['Lena Hofmann', 'Kurzer Call um drei?'],
+        ['Kalender', 'Teammeeting · Mo 9:30']
+      ],
+      start: { id: 'c6_0', tts: 'Hallo, Daniel Chen, IT-Service. Ich hab Ihr Ticket hier – Headset, seit heute Morgen kein Ton, richtig? … Sorry, bei mir ruckelt’s heute, wir haben WLAN-Probleme im Gebäude. Okay: Klicken Sie mal unten rechts auf das Lautsprechersymbol. Welches Gerät ist da ausgewählt?' },
+      runden: [
+        [
+          { text: 'Moment … da steht „Laptop-Lautsprecher“.', wert: 'neutral',
+            antwort: { id: 'c6_1a', tts: 'Da haben wir’s schon. Stellen Sie das bitte auf Ihr Headset um. … Hören Sie mich jetzt über das Headset? Wenn nicht, schauen wir uns das gleich gemeinsam an.' } },
+          { text: 'Ihr Bild hat gerade gehangen. Sind Sie wirklich vom IT-Service?', wert: 'gut',
+            antwort: { id: 'c6_1b', tts: 'Berechtigte Frage! Sie haben mich ja selbst über die Hotline angerufen. Und im IT-Portal steht bei Ihrem Ticket mein Name als Bearbeiter. Das Ruckeln ist unser WLAN – sorry dafür. Wollen wir weitermachen?' } }
+        ],
+        [
+          { text: 'Soll ich meinen Bildschirm teilen?', wert: 'neutral',
+            antwort: { id: 'c6_2a', tts: 'Gern, über den Button oben im Call. Sie sehen ja, was Sie zeigen, und können jederzeit stoppen. … Ah, da ist es: Der Treiber ist veraltet. Ich trage das ins Ticket ein und schicke Ihnen eine kurze Anleitung.' } },
+          { text: 'Und wenn es danach immer noch nicht geht?', wert: 'neutral',
+            antwort: { id: 'c6_2b', tts: 'Wenn’s danach immer noch nicht geht, trage ich das ins Ticket ein, und wir machen einen Termin vor Ort.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Du hast angerufen', text: 'Du hast selbst die Hotline aus dem Intranet gewählt – zu deinem eigenen Ticket. Wer den Kontakt startet, entscheidet über das Risiko.' },
+        { art: 'gruen', titel: 'Kein „Extern“', geraet: 'namensschild', text: 'Daniel erscheint im Firmen-Teams mit Namen und Abteilung – ohne „Extern“. Vergleiche mit dem falschen Helpdesk aus Level 1.' },
+        { art: 'gruen', titel: 'Gelassen auf deine Frage', zitat: 'Sie haben mich ja selbst über die Hotline angerufen', text: 'Kein Druck, keine Ausrede: Er verweist auf deinen eigenen Anruf und auf das Portal, wo du alles selbst prüfen kannst.', wenn: 'c6_1b' },
+        { art: 'gruen', titel: 'Bildschirm teilen – hier in Ordnung', zitat: 'Sie sehen ja, was Sie zeigen', text: 'Du hast den Kontakt gestartet, siehst, was du zeigst, und kannst jederzeit stoppen. Fernsteuerung, Passwort oder Code verlangt er nicht.', wenn: 'c6_2a' },
+        { art: 'gruen', titel: 'Prozess statt Druck', zitat: 'wir machen einen Termin vor Ort', text: 'Ticket, Anleitung, Termin vor Ort – so läuft echter Support. Niemand drängt dich zu etwas.', wenn: 'c6_2b' },
+        { art: 'info', titel: 'Das Ruckeln ist kein Beweis', zitat: 'bei mir ruckelt’s heute', text: 'Bildstörungen gibt es bei jedem schlechten WLAN. Ein Ruckler macht noch keinen Deepfake – und ein flüssiges Bild noch keinen echten Anruf.' }
+      ],
+      kern: 'Du hast selbst angerufen, über die bekannte Hotline, zu deinem eigenen Ticket. Eine Bildstörung beweist keinen Deepfake – entscheidend ist, wer den Kontakt gestartet hat.',
+      tipp: 'Frag dich zuerst: Wer hat den Kontakt gestartet? Rufst du selbst über die Hotline aus dem Intranet an, ist der Weg geprüft. Ruft „die IT“ dich an: Ticketnummer nennen lassen und im Portal prüfen.',
+      hacker: { echt: 'Gähn. Da hat nur einer sein Headset repariert.', fehlalarm: 'Wegen eines Rucklers gleich Fake? Dann viel Spaß ohne Ton im nächsten Meeting!' },
+      beute: 0
+    },
+
+    // nicht im Spiel (Level 2 zählt nur zwei Anrufe): der frühere echte IT-Anruf aus der Vishing Challenge
     {
       // Gegenstück zum falschen Helpdesk (c3): gleicher Kanal, aber intern, mit eigenem Ticket und ohne Druck
       id: 'c7',

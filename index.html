@@ -200,6 +200,13 @@
                 </div>
                 <div class="mail-lesen" id="win-lesen"></div>
               </div>
+              <!-- Videoanruf im Teams-Fenster: große Kachel mit Idle-Schleife und Clip -->
+              <div class="win-video" id="win-video">
+                <video id="win-vid-idle" class="vid" playsinline muted loop preload="auto"></video>
+                <video id="win-vid-talk" class="vid vid-talk" playsinline muted preload="auto"></video>
+                <canvas id="win-vid-standbild" class="vid-standbild" aria-hidden="true"></canvas>
+                <p class="vid-warn win-vid-warn" id="win-vid-warn" hidden></p>
+              </div>
               <div class="win-kachel">
                 <div class="ph-avatar-wrap">
                   <canvas class="ph-ring" id="win-ring" width="320" height="320" aria-hidden="true"></canvas>

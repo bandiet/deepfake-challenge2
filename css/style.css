@@ -348,6 +348,13 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .vid-warn { position: absolute; z-index: 2; left: 50%; top: 104px; transform: translateX(-50%); margin: 0; padding: 5px 10px 5px 26px; border-radius: 999px; background: rgba(0,0,0,.55); font: 600 10px/1.35 var(--mono); color: var(--gold); width: max-content; max-width: 84%; text-align: center; }
 .vid-warn::before { content: ""; position: absolute; left: 10px; top: 50%; width: 10px; height: 8px; transform: translateY(-50%); background: linear-gradient(90deg, var(--gold) 0 2px, transparent 2px 4px, var(--gold) 4px 6px, transparent 6px 8px, rgba(255,210,77,.3) 8px 10px); }
 .geraet.mit-video .phone-tasten-talk .rund-deko { background: rgba(0,0,0,.4); }
+/* Videoanruf im Teams-Fenster: das Bild füllt die Kachel, Namensschild und eigene Kachel liegen darüber */
+.win-video { display: none; position: absolute; inset: 0; z-index: 1; background: #000 var(--poster, none) center / cover no-repeat; }
+.geraet.mit-video[data-zustand="talk"] .win-video, .geraet.mit-video[data-zustand="ende"] .win-video { display: block; }
+.geraet.mit-video[data-art="teams"] .win-kachel { visibility: hidden; }
+.win-vid-warn { top: 14px; }
+/* Ausgehender Anruf: keine Annehmen-/Ablehnen-Tasten, Teams verbindet von selbst */
+.geraet.ausgehend .win-toast-tasten { display: none; }
 
 /* Teams-artiges Fenster (angelehnt an das aktuelle Teams im dunklen Design)
    Vor dem Anruf: Posteingang mit Suchleiste. Im Anruf: Leiste mit Zeit und Name links,
