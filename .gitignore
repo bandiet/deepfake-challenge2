@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+tools/raw/
+dist/artifact/
+# SCORM-Pakete (python3 tools/bouw-artifact.py baut sie neu)
+dist/*.zip
+
+# Entwurfsvergleich (lokal, wird nicht veröffentlicht)
+entwurf/

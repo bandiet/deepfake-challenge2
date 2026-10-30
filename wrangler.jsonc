@@ -1,0 +1,10 @@
+// Cloudflare Workers: dieses Projekt ist eine statische Website. Alles in dist/site
+// (gebaut von tools/bouw-artifact.py) geht unverändert online; es gibt keinen Servercode.
+// "name" muss dem Namen des Workers im Cloudflare-Dashboard entsprechen.
+{
+  "name": "deepfake-challenge",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/site"
+  }
+}

@@ -1,0 +1,182 @@
+[
+ {
+  "id": "n1",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "Ein paar Sekunden Audio. Mehr braucht eine KI nicht, um eine Stimme zu klonen. [pause]"
+ },
+ {
+  "id": "n2",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "Ein einziges Foto reicht, um ein Gesicht im Videocall sprechen zu lassen. [pause]"
+ },
+ {
+  "id": "n3",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "Echt oder künstlich… hören kann man den Unterschied kaum noch. [pause]"
+ },
+ {
+  "id": "n4",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "Gleich klingelt dein Telefon. Fünfmal. Manche Anrufe sind echt. Manche nicht. [pause]"
+ },
+ {
+  "id": "n5",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "Hör genau hin. Hak nach. Und entscheide: Mensch… oder KI? [pause]"
+ },
+ {
+  "id": "n6",
+  "voice": "jdKpAe6rxAe99tFGbsAc",
+  "tts": "[whispers] Ach, übrigens… die Stimme, die du gerade hörst, gehört keinem Menschen. [pause]"
+ },
+ {
+  "id": "c1_0",
+  "voice": "aTTiK3YzK3dXETpuDE2h",
+  "tts": "[panicked] Hey, ich bin’s, Jonas! Bitte leg nicht auf! Mein Handy ist weg, ich ruf von ’nem fremden Handy an… [breathing heavily] Ich hatte ’nen Unfall mit dem Roller. Mir ist nichts passiert, aber das Auto von dem Mann ist total kaputt. Die Polizei ist hier und sagt, ich muss sofort achthundert Euro Kaution zahlen, sonst nehmen die mich mit. Kannst du mir das schicken? Bitte, jetzt gleich! [pause]"
+ },
+ {
+  "id": "c1_1a",
+  "voice": "aTTiK3YzK3dXETpuDE2h",
+  "tts": "[relieved] Danke, danke! Der Polizist hier gibt mir gleich ’ne Kontonummer. Mach bitte ’ne Echtzeitüberweisung, dann ist das Geld sofort da. Aber beeil dich, die werden hier echt ungeduldig! [pause]"
+ },
+ {
+  "id": "c1_1b",
+  "voice": "aTTiK3YzK3dXETpuDE2h",
+  "tts": "[frustrated] Was?! Ich steh hier mit der Polizei und du willst ein Quiz machen?! [sighs] Keine Ahnung, ich bin total durch… Bitte, ich brauch das Geld jetzt, nicht in ’ner Stunde! [pause]"
+ },
+ {
+  "id": "c1_2a",
+  "voice": "aTTiK3YzK3dXETpuDE2h",
+  "tts": "[relieved] Danke! Ich schick dir alles per WhatsApp. Und… bitte sag Mama nichts, okay? Die flippt sonst total aus. Ich meld mich! [pause]"
+ },
+ {
+  "id": "c1_2b",
+  "voice": "aTTiK3YzK3dXETpuDE2h",
+  "tts": "[panicked] Nein, nein, nicht auflegen! Mein Handy ist doch weg, da erreichst du mich nicht! Bitte, die nehmen mich sonst mit… [pause]"
+ },
+ {
+  "id": "c2_0",
+  "voice": "C4QktxZ39Uccr2xNdFHg",
+  "tts": "Guten Tag, hier ist Sabine Krüger von der Nordlicht Bank, Kartenservice. Sie hatten heute Mittag bei uns angerufen, weil der Automat Ihre Karte eingezogen hat, und um einen Rückruf gebeten. Passt es gerade kurz? [pause]"
+ },
+ {
+  "id": "c2_1a",
+  "voice": "C4QktxZ39Uccr2xNdFHg",
+  "tts": "Ja, die Ersatzkarte ist heute rausgegangen. Sie sollte in drei bis fünf Werktagen bei Ihnen sein, die PIN kommt wie immer separat per Post. Ihre alte Karte ist gesperrt, da kann also nichts passieren. [pause]"
+ },
+ {
+  "id": "c2_1b",
+  "voice": "C4QktxZ39Uccr2xNdFHg",
+  "tts": "[warmly] Gute Frage – genau richtig, dass Sie das fragen! Sie können gern auflegen und uns über die Nummer auf der Rückseite Ihrer Karte oder auf unserer Website zurückrufen. Kurz zur Info: Ihre Ersatzkarte ist heute rausgegangen, und die alte ist gesperrt. [pause]"
+ },
+ {
+  "id": "c2_2a",
+  "voice": "C4QktxZ39Uccr2xNdFHg",
+  "tts": "[surprised] Nein, auf keinen Fall! PIN und TAN fragen wir niemals ab – weder am Telefon noch per Mail. Wenn das jemals jemand von Ihnen will, legen Sie bitte sofort auf. Ansonsten: Einen schönen Tag noch! [pause]"
+ },
+ {
+  "id": "c2_2b",
+  "voice": "C4QktxZ39Uccr2xNdFHg",
+  "tts": "Sehr gerne. Und falls die Karte bis nächste Woche nicht da ist, melden Sie sich einfach über die Hotline. Einen schönen Tag noch! [pause]"
+ },
+ {
+  "id": "c3_0",
+  "voice": "qVRpsZJDV29g1CIPzssm",
+  "tts": "Hallo, hier ist Marcel vom IT-Helpdesk. Wir sehen gerade, dass Ihr Postfach mit Spam regelrecht bombardiert wird – haben Sie sicher schon gemerkt. Das ist ein laufender Angriff, da sind mehrere Kollegen betroffen. Ich würde das gern sofort für Sie filtern, bevor da was Schlimmeres reinrutscht. Haben Sie zwei Minuten? [pause]"
+ },
+ {
+  "id": "c3_1a",
+  "voice": "qVRpsZJDV29g1CIPzssm",
+  "tts": "Super. Drücken Sie bitte einmal die Windows-Taste und tippen Sie „Remotehilfe“ ein. Ich gebe Ihnen gleich einen Code, dann schalte ich mich kurz auf Ihren Rechner. Dauert keine fünf Minuten. [pause]"
+ },
+ {
+  "id": "c3_1b",
+  "voice": "qVRpsZJDV29g1CIPzssm",
+  "tts": "[chuckles] Nein, ein Ticket gibt’s dafür noch nicht – wir sind ja proaktiv dran, das läuft gerade alles parallel. Ehrlich gesagt: Je länger wir warten, desto größer das Risiko. Ich brauche nur kurz Zugriff über die Remotehilfe, dann ist das erledigt. [pause]"
+ },
+ {
+  "id": "c3_2a",
+  "voice": "qVRpsZJDV29g1CIPzssm",
+  "tts": "Perfekt. Der Code lautet: sieben, vier, eins, neun, zwei, acht. Geben Sie den ein und klicken Sie auf „Zulassen“… Sehr gut. Ich übernehme ab hier. [pause]"
+ },
+ {
+  "id": "c3_2b",
+  "voice": "qVRpsZJDV29g1CIPzssm",
+  "tts": "[sighs] Die Hotline ist gerade komplett überlastet, genau wegen dieses Angriffs – da warten Sie ewig. Wenn Ihr Konto in der Zwischenzeit gesperrt wird, kann ich auch nichts mehr machen… Na gut. Ihre Entscheidung. [pause]"
+ },
+ {
+  "id": "c4_0",
+  "voice": "NE7AIW5DoJ7lUosXV2KR",
+  "tts": "Hey! [laughs] Sorry, dass ich so spät noch störe. Du, ich sitz grad an der Präsentation für morgen und finde die Folie mit den Kundenzahlen nicht mehr. Hast du die noch? Die war, glaub ich, in deiner Version vom Montag. [pause]"
+ },
+ {
+  "id": "c4_1a",
+  "voice": "NE7AIW5DoJ7lUosXV2KR",
+  "tts": "Oh, super, danke! Leg sie am besten einfach in unseren Team-Ordner, dann haben alle die aktuelle Version. Ich guck dann gleich rein. [pause]"
+ },
+ {
+  "id": "c4_1b",
+  "voice": "NE7AIW5DoJ7lUosXV2KR",
+  "tts": "[laughs] Ja klar, gute Frage! Für die Präsentation morgen beim Vorstand – die Folie zum dritten Quartal, die wir im Weekly besprochen haben. Leg sie einfach in unseren Team-Ordner, da kommen alle dran. [pause]"
+ },
+ {
+  "id": "c4_2a",
+  "voice": "NE7AIW5DoJ7lUosXV2KR",
+  "tts": "Klar, kein Stress! Ich bin noch ’ne Stunde online. Bis gleich! [pause]"
+ },
+ {
+  "id": "c4_2b",
+  "voice": "NE7AIW5DoJ7lUosXV2KR",
+  "tts": "Nee, alles gut, den Rest mach ich. Danke dir, du rettest mir echt den Abend! [laughs] Bis morgen! [pause]"
+ },
+ {
+  "id": "c5_0",
+  "voice": "1iF3vHdwHKuVKSPDK23Z",
+  "tts": "Hallo! Gut, dass ich Sie erreiche. Katrin Albers hier. Ich sitze gerade in Zürich zwischen zwei Terminen, deshalb rufe ich vom privaten Handy an. Es geht um etwas sehr Vertrauliches: Wir stehen kurz vor einer Übernahme. Das darf noch niemand wissen, wirklich niemand. Ich brauche heute noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro an die Kanzlei. Können Sie das für mich anstoßen? [pause]"
+ },
+ {
+  "id": "c5_1a",
+  "voice": "1iF3vHdwHKuVKSPDK23Z",
+  "tts": "Wunderbar, ich wusste, dass ich mich auf Sie verlassen kann. Die Kanzlei schickt Ihnen gleich die Kontodaten per Mail. Bitte als Eilüberweisung, heute noch – und nicht über die normale Freigabe, sonst ist es morgen im ganzen Haus rum. [pause]"
+ },
+ {
+  "id": "c5_1b",
+  "voice": "1iF3vHdwHKuVKSPDK23Z",
+  "tts": "[impatient] Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Sie sehen mich doch und hören mich – das reicht doch wohl. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte heute noch, und bitte diskret. [pause]"
+ },
+ {
+  "id": "c5_2a",
+  "voice": "1iF3vHdwHKuVKSPDK23Z",
+  "tts": "Danke. Ich verlasse mich auf Sie. Und denken Sie dran: Kein Wort zu niemandem. Bis dann. [pause]"
+ },
+ {
+  "id": "c5_2b",
+  "voice": "1iF3vHdwHKuVKSPDK23Z",
+  "tts": "[annoyed] Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas… Die Verbindung hier ist furchtbar, ich… [pause]"
+ },
+ {
+  "id": "c7_0",
+  "voice": "d9Ln92LAVKPJLW7vlW1m",
+  "tts": "Hallo, hier ist Tobias Brandt vom IT-Service. Ich rufe wegen Ihres Tickets von heute Morgen an – Excel stürzt bei Ihnen beim Speichern ab, richtig? Haben Sie gerade fünf Minuten? Dann schauen wir uns das kurz zusammen an. [pause]"
+ },
+ {
+  "id": "c7_1a",
+  "voice": "d9Ln92LAVKPJLW7vlW1m",
+  "tts": "Super. Schließen Sie Excel bitte einmal komplett. Dann halten Sie die Steuerungstaste gedrückt und starten Excel neu – es fragt dann, ob es im abgesicherten Modus starten soll. Klicken Sie auf „Ja“. Wenn es so stabil läuft, ist nur ein Add-in schuld – das schalte ich dann zentral für Sie ab. [pause]"
+ },
+ {
+  "id": "c7_1b",
+  "voice": "d9Ln92LAVKPJLW7vlW1m",
+  "tts": "[laughs] Gute Frage, richtig so! Vier, acht, zwei, eins, drei – aufgemacht heute um acht Uhr zwölf: „Excel stürzt beim Speichern ab“. Im IT-Portal steht auch mein Name als Bearbeiter drin. [pause]"
+ },
+ {
+  "id": "c7_2a",
+  "voice": "d9Ln92LAVKPJLW7vlW1m",
+  "tts": "[surprised] Nein, auf keinen Fall! Ihr Passwort brauchen wir nie – das geben Sie bitte auch sonst niemandem am Telefon. Ich schalte das Add-in zentral ab und schreibe alles ins Ticket. Schönen Tag noch! [pause]"
+ },
+ {
+  "id": "c7_2b",
+  "voice": "d9Ln92LAVKPJLW7vlW1m",
+  "tts": "Klar, gar kein Problem! Die Nummer der Hotline steht im Intranet. Nennen Sie einfach die Ticketnummer, dann landen Sie wieder bei mir. Bis gleich! [pause]"
+ }
+]
