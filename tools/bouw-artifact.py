@@ -38,14 +38,15 @@ eingebettet = re.sub(r'<script src="(js/[^"]+)"></script>', js_einbetten, eingeb
 # Medien: nur, was die Seite wirklich nutzt
 content = open(os.path.join(P, 'js', 'content.js'), encoding='utf-8').read()
 pfade = []
-for sid in sorted(set(re.findall(r"id: '(c\d_\w+)'", content))):   # nur verwendete Stimmen
-    # Zeilen aus Videoanrufen: Ton als .m4a, Bild als stummes .mp4
-    if os.path.exists(os.path.join(P, 'assets', 'stem', sid + '.m4a')):
+da = lambda f: os.path.exists(os.path.join(P, f))
+for sid in sorted(set(re.findall(r"id: '(c\d+_\w+)'", content))):   # nur verwendete Stimmen
+    # Zeilen aus Videoanrufen: Ton als .m4a, Bild als stummes .mp4 (Anrufe, deren Videos noch fehlen, fallen weg)
+    if da(f'assets/stem/{sid}.m4a'):
         pfade += [f'assets/stem/{sid}.m4a', f'assets/video/{sid}.mp4']
-    else:
+    elif da(f'assets/stem/{sid}.mp3'):
         pfade.append(f'assets/stem/{sid}.mp3')
 # Idle-Schleifen und Standbilder der Videoanrufe
-pfade += sorted(set(re.findall(r"(?:poster|idle): '(assets/[^']+)'", content)))
+pfade += [f for f in sorted(set(re.findall(r"(?:poster|idle): '(assets/[^']+)'", content))) if da(f)]
 for ordner in ('sfx', 'musik'):
     for n in sorted(os.listdir(os.path.join(P, 'assets', ordner))):
         if n.endswith('.mp3'):

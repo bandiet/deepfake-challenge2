@@ -24,7 +24,7 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
 
 
-port = int(sys.argv[1]) if len(sys.argv) > 1 else 8815
+port = int(sys.argv[1]) if len(sys.argv) > 1 else 8816
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-print(f'Deepfake Challenge läuft on http://127.0.0.1:{port}', flush=True)
+print(f'Deepfake Challenge v2 läuft on http://127.0.0.1:{port}', flush=True)
 Server(('127.0.0.1', port), NoCache).serve_forever()

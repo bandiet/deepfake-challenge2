@@ -1073,9 +1073,8 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   .sternenflug .flieg:nth-of-type(n+6) { display: none; }
 }
 
-/* Kompaktes Telefon (Karte): der Videoanruf zeigt das Bild im Querformat, so wie es aufgenommen ist */
+/* Kompaktes Telefon (Karte): die Videos am Handy sind Hochformat wie das Telefon selbst */
 @media (max-width: 760px) {
-  .geraet.mit-video[data-zustand="talk"] .phone, .geraet.mit-video[data-zustand="ende"] .phone { aspect-ratio: 3 / 2; }
   .vid-self { bottom: auto; top: 10px; right: 10px; width: 18%; border-radius: 8px; }
   .vid-kopf { padding: 10px 14px 24px; text-align: left; }
   .vid-name { font-size: 15px; }

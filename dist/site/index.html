@@ -1082,9 +1082,8 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   .sternenflug .flieg:nth-of-type(n+6) { display: none; }
 }
 
-/* Kompaktes Telefon (Karte): der Videoanruf zeigt das Bild im Querformat, so wie es aufgenommen ist */
+/* Kompaktes Telefon (Karte): die Videos am Handy sind Hochformat wie das Telefon selbst */
 @media (max-width: 760px) {
-  .geraet.mit-video[data-zustand="talk"] .phone, .geraet.mit-video[data-zustand="ende"] .phone { aspect-ratio: 3 / 2; }
   .vid-self { bottom: auto; top: 10px; right: 10px; width: 18%; border-radius: 8px; }
   .vid-kopf { padding: 10px 14px 24px; text-align: left; }
   .vid-name { font-size: 15px; }
@@ -1573,8 +1572,9 @@ window.CONTENT = {
   },
 
   /* ---------------- die Anrufe (Reihenfolge = Spielreihenfolge; Level siehe unten) ----------------
-     signale: nach Wichtigkeit sortiert. Im Feedback erscheinen die ersten drei, die zum Gesprächsverlauf passen
+     signale: nach Wichtigkeit sortiert. Im Feedback erscheinen die ersten zwei, die zum Gesprächsverlauf passen
      (wenn = nur nach dieser Antwort, wennNicht = nur ohne sie), danach „Das schützt dich“ (tipp).
+     Jede Lehre steht nur bei einem Anruf (Rückruf abgeblockt: c5, „Extern“: c3, Stimme: c1, Gesicht: c5).
      zitat: Stelle(n) im Gespräch, die beim Hinweis im Transkript aufleuchten – exakt wie im Untertitel.
      geraet: was am Gerät mit aufleuchtet – anrufer (Nummer/Name), extern („Extern“ bei Teams), namensschild (Teams). */
   anrufe: [
@@ -1607,62 +1607,97 @@ window.CONTENT = {
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Unbekannte Nummer, „Handy weg“', geraet: 'anrufer', zitat: 'Mein Handy ist weg', text: 'Der klassische Einstieg beim Schockanruf: So erklärt der Betrüger, warum er nicht von Jonas’ Nummer anruft.' },
-        { art: 'rot', titel: 'Panik – und Geld sofort', zitat: ['sonst nehmen die mich mit', 'achthundert Euro Kaution', 'Echtzeitüberweisung'], text: '„Jetzt gleich“, „sonst nehmen die mich mit“ – Panik soll verhindern, dass du nachdenkst. Und keine Polizei kassiert Kaution per Überweisung auf ein Konto, das dir am Telefon genannt wird.' },
-        { art: 'rot', titel: 'Kein Rückruf erlaubt', zitat: 'da erreichst du mich nicht', text: 'Wer wirklich in Not ist, hat nichts gegen einen Rückruf über einen bekannten Weg – oder über seine Freunde vor Ort.', wenn: 'c1_2b' },
-        { art: 'rot', titel: 'Weicht der Kontrollfrage aus', zitat: 'du willst ein Quiz machen', text: 'Statt zu antworten, macht er mehr Druck. Echte Angehörige kennen Omas Katze.', wenn: 'c1_1b' },
-        { art: 'rot', titel: '„Sag Mama nichts“', zitat: 'sag Mama nichts', text: 'Geheimhaltung isoliert dich – niemand soll dir raten, erst einmal nachzuprüfen.', wenn: 'c1_2a' },
-        { art: 'info', titel: 'Die Stimme klang echt', text: 'Jonas’ Strandvideos liefern genug Material für einen Stimmklon. Auch die verdächtige Stille im Hintergrund – angeblich mitten im Unfallchaos – ist nur ein schwacher Hinweis. Verlass dich nicht auf dein Ohr.' }
+        { art: 'rot', titel: 'Fremde Nummer, Panik, Geld sofort', geraet: 'anrufer', zitat: ['Mein Handy ist weg', 'sonst nehmen die mich mit', 'achthundert Euro Kaution'], text: '„Handy weg“ erklärt die fremde Nummer, „sonst nehmen die mich mit“ soll dich vom Nachdenken abhalten. Und keine Polizei kassiert Kaution per Überweisung auf ein Konto, das dir am Telefon genannt wird.' },
+        { art: 'info', titel: 'Die Stimme klang echt', text: 'Jonas’ Strandvideos liefern genug Material für einen Stimmklon. Verlass dich nicht auf dein Ohr – sondern auf das Muster.' }
       ],
       kern: 'Unbekannte Nummer, Panik, Geld sofort – und ein Rückruf ist „nicht möglich“. Das ist das Muster des Schockanrufs, egal wie echt die Stimme klingt.',
-      tipp: 'Auflegen. Jonas über seine bekannte Nummer anrufen – oder jemanden, der bei ihm ist. Vereinbart in der Familie ein Codewort für echte Notfälle.',
+      tipp: 'Vereinbart in der Familie ein Codewort für echte Notfälle. Und im Zweifel: auflegen und Jonas über seine bekannte Nummer anrufen.',
       hacker: { reingelegt: '800 € für ein paar Sekunden Instagram-Audio. Lohnt sich!', erwischt: 'Mist. Die Stimme war doch perfekt …' },
       beute: 800,
       beuteText: '800 € Kaution'
     },
 
     {
-      // CEO-Fraud als Deepfake-Videoanruf. Bild und Ton kommen aus den Clips in assets/video (Video 1);
-      // c5_0 = Teil 1 und 1c hintereinander. c5_2b endet mit einem Verbindungsabbruch.
+      id: 'c2',
+      echt: true,
+      kanal: 'telefon',
+      geraet: 'phone',
+      stimme: 'C4QktxZ39Uccr2xNdFHg', // Johanna
+      klang: 'telefon',              // schmalbandig wie eine echte Telefonleitung
+      atmo: 'callcenter',
+      klingel: 'telefon',
+      zeit: 'Montag, 19:12',
+      storyTitel: 'Ist das wirklich die Bank?',
+      lage: 'Mittags hat der Automat deine Karte geschluckt. Du hast die Bank angerufen und um Rückruf gebeten. Gestern warnte sie noch vor falschen Bankmitarbeitern. Jetzt: eine fremde Nummer.',
+      anrufer: { name: '+49 69 2471 5583', zeile: 'Festnetz · Frankfurt am Main', initialen: '?', farbe: '#4F5B78' },
+      start: { id: 'c2_0', tts: 'Guten Tag, hier ist Sabine Krüger von der Nordlicht Bank, Kartenservice. Sie hatten heute Mittag bei uns angerufen, weil der Automat Ihre Karte eingezogen hat, und um einen Rückruf gebeten. Passt es gerade kurz? [pause]' },
+      runden: [
+        [
+          { text: 'Ja, passt. Ist die neue Karte schon unterwegs?', wert: 'neutral',
+            antwort: { id: 'c2_1a', tts: 'Ja, die Ersatzkarte ist heute rausgegangen. Sie sollte in drei bis fünf Werktagen bei Ihnen sein, die PIN kommt wie immer separat per Post. Ihre alte Karte ist gesperrt, da kann also nichts passieren. [pause]' } },
+          { text: 'Woher weiß ich, dass Sie wirklich von der Bank sind?', wert: 'gut',
+            antwort: { id: 'c2_1b', tts: '[warmly] Gute Frage – genau richtig, dass Sie das fragen! Sie können gern auflegen und uns über die Nummer auf der Rückseite Ihrer Karte oder auf unserer Website zurückrufen. Kurz zur Info: Ihre Ersatzkarte ist heute rausgegangen, und die alte ist gesperrt. [pause]' } }
+        ],
+        [
+          { text: 'Muss ich zur Freischaltung noch etwas bestätigen – PIN oder TAN?', wert: 'gut',
+            antwort: { id: 'c2_2a', tts: '[surprised] Nein, auf keinen Fall! PIN und TAN fragen wir niemals ab – weder am Telefon noch per Mail. Wenn das jemals jemand von Ihnen will, legen Sie bitte sofort auf. Ansonsten: Einen schönen Tag noch! [pause]' } },
+          { text: 'Super, danke. Dann warte ich auf die Post.', wert: 'neutral',
+            antwort: { id: 'c2_2b', tts: 'Sehr gerne. Und falls die Karte bis nächste Woche nicht da ist, melden Sie sich einfach über die Hotline. Einen schönen Tag noch! [pause]' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Du hast den Rückruf angefordert', zitat: 'um einen Rückruf gebeten', text: 'Anlass und Zeitpunkt passen genau zu dem, was du selbst ausgelöst hast. Callcenter rufen oft von Sammelnummern an – die fremde Nummer allein macht noch keinen Fake.' },
+        { art: 'gruen', titel: 'PIN und TAN tabu', zitat: 'PIN und TAN fragen wir niemals ab', text: 'Auf deine Frage kam sofort: niemals am Telefon. Ein Betrüger hätte zugegriffen.', wenn: 'c2_2a' },
+        { art: 'gruen', titel: 'Rückruf ausdrücklich erwünscht', zitat: 'über die Nummer auf der Rückseite Ihrer Karte', text: 'Sie bietet von sich aus an, dass du über die offizielle Nummer zurückrufst.', wenn: 'c2_1b' },
+        { art: 'gruen', titel: 'Sie verlangt nichts', zitat: 'die PIN kommt wie immer separat per Post', text: 'Keine PIN, keine TAN, keine Freigabe in der App, kein Geld, kein „sofort“. Sie gibt nur Informationen – in ruhigem Ton.' }
+      ],
+      kern: 'Du hast den Rückruf selbst angefordert – und sie wollte nichts von dir. Eine fremde Nummer allein macht noch keinen Fake.',
+      tipp: 'Echte Bankmitarbeitende fragen nie nach PIN, TAN oder Freigaben in der App. Im Zweifel: auflegen und die Nummer von der Kartenrückseite wählen.',
+      hacker: { echt: 'Gähn. Das war wirklich nur die Bank.', fehlalarm: 'Hehe – jetzt traust du nicht mal mehr deiner Bank. Misstrauen macht müde …' },
+      beute: 0
+    },
+
+    {
+      // CEO-Fraud als Deepfake-Videoanruf (Alex Morgan, Hotel-Lounge, Hochformat). Bild und Ton aus
+      // Alex_hotel_DF02_DE_v3: pro Zeile mehrere Clips mit Überblendung (tools siehe LEESMIJ). Das Bild bleibt makellos.
       id: 'c5',
       echt: false,
       kanal: 'whatsapp',
       geraet: 'phone',
-      video: { poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
+      video: { poster: 'assets/video/morgan-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
       klang: 'messenger',
       atmo: null,
       klingel: 'messenger',
-      zeit: 'Donnerstag, 16:52',
-      storyTitel: 'Die Chefin persönlich – am Handy?',
-      lage: 'Du vertrittst deine Teamleitung und darfst Zahlungen freigeben. Die Chefin, Dr. Katrin Albers, kennst du aus Townhall-Videos. Jetzt: ein WhatsApp-Videoanruf mit ihrem Foto – von einer fremden Nummer.',
-      anrufer: { name: '+49 157 3308 1146', videoName: '~Katrin Albers', zeile: 'WhatsApp-Video · ~Katrin Albers', initialen: 'KA', farbe: '#8A6A3C', foto: 'assets/albers-profil.jpg' },
-      start: { id: 'c5_0', tts: 'Hallo! Gut, dass ich Sie erreiche. Katrin Albers hier. Ich sitze gerade in Zürich zwischen zwei Terminen, deshalb rufe ich vom privaten Handy an. Es geht um etwas sehr Vertrauliches: Wir stehen kurz vor einer Übernahme. Das darf noch niemand wissen, wirklich niemand. Ich brauche heute noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro an die Kanzlei. Können Sie das für mich anstoßen? [pause]' },
+      zeit: 'Donnerstag, 16:40',
+      storyTitel: 'Die CEO persönlich – vom Privathandy?',
+      lage: 'Du vertrittst eine Kollegin in der Buchhaltung und darfst Zahlungen anlegen. Auf dem Diensthandy: ein Videoanruf von einer fremden Nummer – im Profilbild CEO Alex Morgan.',
+      anrufer: { name: '+44 7700 900418', videoName: '~Alex Morgan', zeile: 'WhatsApp-Video · ~Alex Morgan', initialen: 'AM', farbe: '#3C5A8A', foto: 'assets/morgan-profil.jpg' },
+      start: { id: 'c5_0', tts: 'Hallo, hier ist Alex Morgan. Gut, dass ich Sie erreiche – ich rufe vom Privathandy an, ich bin unterwegs. Wir stehen kurz vor einer Übernahme, das ist streng vertraulich. Heute muss noch eine Anzahlung von neunzigtausend Euro raus. Man hat mir gesagt, auf Sie ist Verlass. Kann ich auf Sie zählen?' },
       runden: [
         [
-          { text: 'Natürlich. Wohin soll das Geld gehen?', wert: 'riskant',
-            antwort: { id: 'c5_1a', tts: 'Wunderbar, ich wusste, dass ich mich auf Sie verlassen kann. Die Kanzlei schickt Ihnen gleich die Kontodaten per Mail. Bitte als Eilüberweisung, heute noch – und nicht über die normale Freigabe, sonst ist es morgen im ganzen Haus rum. [pause]' } },
-          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück.', wert: 'gut',
-            antwort: { id: 'c5_1b', tts: '[impatient] Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte heute noch, und bitte diskret. [pause]' } }
+          { text: 'Ja, natürlich. Was genau soll ich tun?', wert: 'riskant',
+            antwort: { id: 'c5_1a', tts: 'Danke, das wusste ich. Die Kontodaten schickt Ihnen gleich unser Anwalt, Doktor Brandt, per Mail – es ist ein Treuhandkonto im Ausland. Buchen Sie das bitte als Eilüberweisung. Und sprechen Sie mit niemandem darüber, auch nicht intern.' } },
+          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück, okay?', wert: 'gut',
+            antwort: { id: 'c5_1b', tts: 'Das geht gerade nicht, ich bin am Flughafen, gleich ist Boarding. Bitte keine Rückrufe und keine Mails ans Büro – je weniger Leute davon wissen, desto besser. Unser Anwalt schickt Ihnen die Kontodaten gleich direkt.' } }
         ],
         [
-          { text: 'In Ordnung, ich kümmere mich darum.', wert: 'riskant',
-            antwort: { id: 'c5_2a', tts: 'Danke. Ich verlasse mich auf Sie. Und denken Sie dran: Kein Wort zu niemandem. Bis dann. [pause]' } },
-          { text: 'Vorher kurz: Wie heißt das Projekt, das Sie mir letzte Woche übergeben haben?', wert: 'gut',
-            antwort: { id: 'c5_2b', tts: '[annoyed] Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas… Die Verbindung hier ist furchtbar, ich… [pause]', glitch: true } }
+          { text: 'Okay, ich überweise das heute noch.', wert: 'riskant',
+            antwort: { id: 'c5_2a', tts: 'Perfekt, danke. Schicken Sie mir die Bestätigung bitte hier auf diese Nummer. Das bleibt unter uns, bis die Übernahme offiziell ist. Ich werde nicht vergessen, dass Sie mir geholfen haben.' } },
+          { text: 'Ohne zweite Freigabe überweise ich nichts.', wert: 'gut',
+            antwort: { id: 'c5_2b', tts: 'Ich verstehe, dass das ungewöhnlich ist. Aber ich bin die CEO, und ich übernehme die Verantwortung. Wenn die Zahlung heute nicht rausgeht, platzt der Deal. Die zweite Freigabe ist in diesem Fall nur Formsache. Bitte machen Sie das jetzt.' } }
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Fremde Nummer, vertraute Stimme', geraet: 'anrufer', zitat: 'vom privaten Handy', text: 'Ein Profilfoto kann jeder hochladen. Und Townhall-Videos liefern genug Material für Gesicht und Stimme.' },
-        { art: 'rot', titel: 'Geheim, eilig, am Prozess vorbei', zitat: ['Das darf noch niemand wissen', 'nicht über die normale Freigabe', 'Eilüberweisung'], text: '„Das darf niemand wissen“, „heute noch“, „nicht über die normale Freigabe“ – die Chefin persönlich macht Druck, damit niemand gegenprüft.' },
-        { art: 'rot', titel: 'Kontrollfrage? Leitung tot.', zitat: 'Was soll das denn jetzt', text: 'Statt einer Antwort kam Ärger – und dann brach die Verbindung ab. Wer eine einfache Frage zum gemeinsamen Alltag nicht beantworten kann, ist nicht die, die sie vorgibt zu sein.', wenn: 'c5_2b' },
-        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Dafür ist jetzt wirklich keine Zeit', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit Zeitdruck abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
-        { art: 'info', titel: 'Gesicht und Stimme sind KI', text: 'Diese Chefin gibt es nicht: Gesicht, Mimik und Stimme sind komplett KI-erzeugt. Ein Videoanruf beweist deshalb nicht mehr, wer am anderen Ende sitzt.' }
+        { art: 'rot', titel: 'Geheim, eilig, Auslandskonto', zitat: ['streng vertraulich', 'Treuhandkonto im Ausland'], text: 'Eine geheime Übernahme, Geld noch heute, ein Konto im Ausland über einen „Anwalt“ – und Schmeichelei obendrauf. Das ist das Muster des CEO-Betrugs.' },
+        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Bitte keine Rückrufe', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit „gleich ist Boarding“ abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
+        { art: 'rot', titel: 'Freigabe „nur Formsache“', zitat: 'nur Formsache', text: 'Das Vier-Augen-Prinzip ist nie Formsache – es ist genau für solche Anrufe da. Wer es mit Autorität wegdrückt, will, dass niemand gegenprüft.', wenn: 'c5_2b' },
+        { art: 'info', titel: 'Das Bild war makellos', geraet: 'anrufer', text: 'Kein Ruckeln, keine Ränder: Gesicht und Stimme dieser CEO sind komplett KI-erzeugt. Ein perfektes Videobild beweist nicht, wer am anderen Ende sitzt.' }
       ],
-      kern: 'Geheim, eilig, am Prozess vorbei – und der Rückruf wird abgeblockt. Auch ein bekanntes Gesicht im Video beweist nichts.',
-      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Auflegen, über die bekannte Nummer zurückrufen, Vier-Augen-Prinzip einhalten.',
-      hacker: { reingelegt: '48.500 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
-      beute: 48500,
-      beuteText: '48.500 € Anzahlung'
+      kern: 'Geheim, eilig, Auslandskonto – und Rückruf und zweite Freigabe sollen wegfallen. Auch ein perfektes Gesicht im Video ersetzt keinen Rückruf.',
+      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Nichts überweisen, über die bekannte Nummer zurückrufen und den Vorfall melden.',
+      hacker: { reingelegt: '90.000 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
+      beute: 90000,
+      beuteText: '90.000 € Anzahlung'
     },
 
     {
@@ -1695,11 +1730,8 @@ window.CONTENT = {
         ]
       ],
       signale: [
-        { art: 'rot', titel: '„Extern“ im Teams-Anruf', geraet: 'extern', text: 'Deine IT ruft aus dem eigenen Unternehmen an – nicht von einem fremden Konto wie „…onmicrosoft.com“. Seit 2026 warnt Teams manchmal bei solchen Anrufen; fehlt die Warnung, ist der Anruf trotzdem nicht geprüft.' },
-        { art: 'rot', titel: 'Erst Spam, dann der „Retter“', zitat: 'mit Spam regelrecht bombardiert', text: 'Die Spam-Flut war kein Zufall: Angreifer lösen sie selbst aus, um danach als Helfer anzurufen. Diese Masche läuft 2026 gezielt gegen Unternehmen.' },
-        { art: 'rot', titel: 'Rückruf wird schlechtgeredet', zitat: 'Die Hotline ist gerade komplett überlastet', text: 'Echter Support hat kein Problem damit, dass du die offizielle Hotline wählst. „Hotline überlastet“ und „Konto gesperrt“ sollen dich davon abhalten.', wenn: 'c3_2b' },
-        { art: 'rot', titel: 'Kein Ticket, aber Druck', zitat: 'Je länger wir warten, desto größer das Risiko', text: 'Ein Ticket gibt es nicht – dafür Zeitdruck statt Prozess.', wenn: 'c3_1b' },
-        { art: 'rot', titel: 'Fernzugriff über die Remotehilfe', zitat: ['schalte ich mich kurz auf Ihren Rechner', 'Zugriff über die Remotehilfe'], text: 'Wer auf deinen Bildschirm darf, sieht und steuert alles – Passwörter, Daten, Netzwerk. In echten Fällen lag zwischen so einem Anruf und verschlüsselten Servern weniger als ein Tag.' }
+        { art: 'rot', titel: 'Erst Spam, dann der „Retter“', zitat: 'mit Spam regelrecht bombardiert', text: 'Die Spam-Flut war kein Zufall: Angreifer lösen sie selbst aus, um danach als Helfer anzurufen – und wollen dann per Remotehilfe auf deinen Rechner. Diese Masche läuft 2026 gezielt gegen Unternehmen.' },
+        { art: 'rot', titel: '„Extern“ im Teams-Anruf', geraet: 'extern', text: 'Deine IT ruft aus dem eigenen Unternehmen an – nicht von einem fremden Konto wie „…onmicrosoft.com“. Fehlt die Warnung, ist der Anruf trotzdem nicht geprüft.' }
       ],
       kern: 'Deine IT ruft nicht von außen an, um dir ungefragt Fernzugriff abzuschwatzen – erst recht nicht direkt nach einer Spam-Flut, die sie angeblich „filtern“ will.',
       tipp: 'Fernzugriff nur, wenn DU ein Ticket eröffnet hast und der Kontakt über den bekannten IT-Kanal läuft. Im Zweifel: auflegen und die IT über die Nummer im Intranet anrufen.',
@@ -1710,46 +1742,6 @@ window.CONTENT = {
       schadenText: 'Über die Remotehilfe war er schon auf deinem Rechner, bevor du aufgelegt hast. Fernzugriff lässt sich nicht zurücknehmen.'
     },
 
-    {
-      id: 'c2',
-      echt: true,
-      kanal: 'telefon',
-      geraet: 'phone',
-      stimme: 'C4QktxZ39Uccr2xNdFHg', // Johanna
-      klang: 'telefon',              // schmalbandig wie eine echte Telefonleitung
-      atmo: 'callcenter',
-      klingel: 'telefon',
-      zeit: 'Montag, 19:12',
-      storyTitel: 'Ist das wirklich die Bank?',
-      lage: 'Mittags hat der Automat deine Karte geschluckt. Du hast die Bank angerufen und um Rückruf gebeten. Gestern warnte sie noch vor falschen Bankmitarbeitern. Jetzt: eine fremde Nummer.',
-      anrufer: { name: '+49 69 2471 5583', zeile: 'Festnetz · Frankfurt am Main', initialen: '?', farbe: '#4F5B78' },
-      start: { id: 'c2_0', tts: 'Guten Tag, hier ist Sabine Krüger von der Nordlicht Bank, Kartenservice. Sie hatten heute Mittag bei uns angerufen, weil der Automat Ihre Karte eingezogen hat, und um einen Rückruf gebeten. Passt es gerade kurz? [pause]' },
-      runden: [
-        [
-          { text: 'Ja, passt. Ist die neue Karte schon unterwegs?', wert: 'neutral',
-            antwort: { id: 'c2_1a', tts: 'Ja, die Ersatzkarte ist heute rausgegangen. Sie sollte in drei bis fünf Werktagen bei Ihnen sein, die PIN kommt wie immer separat per Post. Ihre alte Karte ist gesperrt, da kann also nichts passieren. [pause]' } },
-          { text: 'Woher weiß ich, dass Sie wirklich von der Bank sind?', wert: 'gut',
-            antwort: { id: 'c2_1b', tts: '[warmly] Gute Frage – genau richtig, dass Sie das fragen! Sie können gern auflegen und uns über die Nummer auf der Rückseite Ihrer Karte oder auf unserer Website zurückrufen. Kurz zur Info: Ihre Ersatzkarte ist heute rausgegangen, und die alte ist gesperrt. [pause]' } }
-        ],
-        [
-          { text: 'Muss ich zur Freischaltung noch etwas bestätigen – PIN oder TAN?', wert: 'gut',
-            antwort: { id: 'c2_2a', tts: '[surprised] Nein, auf keinen Fall! PIN und TAN fragen wir niemals ab – weder am Telefon noch per Mail. Wenn das jemals jemand von Ihnen will, legen Sie bitte sofort auf. Ansonsten: Einen schönen Tag noch! [pause]' } },
-          { text: 'Super, danke. Dann warte ich auf die Post.', wert: 'neutral',
-            antwort: { id: 'c2_2b', tts: 'Sehr gerne. Und falls die Karte bis nächste Woche nicht da ist, melden Sie sich einfach über die Hotline. Einen schönen Tag noch! [pause]' } }
-        ]
-      ],
-      signale: [
-        { art: 'gruen', titel: 'Du hast den Rückruf angefordert', zitat: 'um einen Rückruf gebeten', text: 'Anlass und Zeitpunkt passen genau zu dem, was du selbst ausgelöst hast.' },
-        { art: 'gruen', titel: 'PIN und TAN tabu', zitat: 'PIN und TAN fragen wir niemals ab', text: 'Auf deine Frage kam sofort: niemals am Telefon. Ein Betrüger hätte zugegriffen.', wenn: 'c2_2a' },
-        { art: 'gruen', titel: 'Rückruf ausdrücklich erwünscht', zitat: 'über die Nummer auf der Rückseite Ihrer Karte', text: 'Sie bietet von sich aus an, dass du über die offizielle Nummer zurückrufst.', wenn: 'c2_1b' },
-        { art: 'gruen', titel: 'Sie verlangt nichts', zitat: 'die PIN kommt wie immer separat per Post', text: 'Keine PIN, keine TAN, keine Freigabe in der App, kein Geld, kein „sofort“. Sie gibt nur Informationen – in ruhigem Ton.' },
-        { art: 'info', titel: 'Die Nummer beweist nichts', geraet: 'anrufer', text: 'Callcenter rufen oft von Sammelnummern an – eine fremde Nummer macht noch keinen Fake. Umgekehrt lässt sich auch eine bekannte Nummer fälschen (Call-ID-Spoofing).' }
-      ],
-      kern: 'Du hast den Rückruf selbst angefordert – und sie wollte nichts von dir. Eine fremde Nummer allein macht noch keinen Fake.',
-      tipp: 'Echte Bankmitarbeitende fragen nie nach PIN, TAN oder Freigaben in der App. Im Zweifel: auflegen und die Nummer von der Kartenrückseite wählen.',
-      hacker: { echt: 'Gähn. Das war wirklich nur die Bank.', fehlalarm: 'Hehe – jetzt traust du nicht mal mehr deiner Bank. Misstrauen macht müde …' },
-      beute: 0
-    },
 
     {
       id: 'c4',
@@ -1781,8 +1773,7 @@ window.CONTENT = {
         ]
       ],
       signale: [
-        { art: 'gruen', titel: 'Interner Kontakt', geraet: 'namensschild', text: 'Kein „Extern“-Hinweis, bekannter Name, bekanntes Profil im Firmen-Teams.' },
-        { art: 'gruen', titel: 'Der normale Weg', zitat: 'in unseren Team-Ordner', text: 'Sie will die Datei im gemeinsamen Team-Ordner – nicht an eine private Mailadresse.' },
+        { art: 'gruen', titel: 'Der normale Weg', zitat: 'in unseren Team-Ordner', text: 'Sie will die Datei im gemeinsamen Team-Ordner – nicht an eine private Mailadresse. Und sie ruft intern an, ohne „Extern“.' },
         { art: 'gruen', titel: 'Kein Druck, keine Geheimnisse', zitat: 'kein Stress', text: 'Nachfragen und Rückruf sind für sie völlig okay.', wenn: 'c4_2a' },
         { art: 'gruen', titel: 'Der Anlass passt', zitat: ['Präsentation für morgen', 'im Weekly besprochen'], text: 'Ihr habt im Weekly darüber gesprochen, die Präsentation ist morgen. Keine Eile, kein „sag niemandem was“.' }
       ],
@@ -1832,12 +1823,8 @@ window.CONTENT = {
         ]
       ],
       signale: [
-        { art: 'gruen', titel: 'Du hast angerufen', text: 'Du hast selbst die Hotline aus dem Intranet gewählt – zu deinem eigenen Ticket. Wer den Kontakt startet, entscheidet über das Risiko.' },
-        { art: 'gruen', titel: 'Kein „Extern“', geraet: 'namensschild', text: 'Daniel erscheint im Firmen-Teams mit Namen und Abteilung – ohne „Extern“. Vergleiche mit dem falschen Helpdesk aus Level 1.' },
-        { art: 'gruen', titel: 'Gelassen auf deine Frage', zitat: 'Sie haben mich ja selbst über die Hotline angerufen', text: 'Kein Druck, keine Ausrede: Er verweist auf deinen eigenen Anruf und auf das Portal, wo du alles selbst prüfen kannst.', wenn: 'c6_1b' },
-        { art: 'gruen', titel: 'Bildschirm teilen – hier in Ordnung', zitat: 'Sie sehen ja, was Sie zeigen', text: 'Du hast den Kontakt gestartet, siehst, was du zeigst, und kannst jederzeit stoppen. Fernsteuerung, Passwort oder Code verlangt er nicht.', wenn: 'c6_2a' },
-        { art: 'gruen', titel: 'Prozess statt Druck', zitat: 'wir machen einen Termin vor Ort', text: 'Ticket, Anleitung, Termin vor Ort – so läuft echter Support. Niemand drängt dich zu etwas.', wenn: 'c6_2b' },
-        { art: 'info', titel: 'Das Ruckeln ist kein Beweis', zitat: 'bei mir ruckelt’s heute', text: 'Bildstörungen gibt es bei jedem schlechten WLAN. Ein Ruckler macht noch keinen Deepfake – und ein flüssiges Bild noch keinen echten Anruf.' }
+        { art: 'gruen', titel: 'Du hast angerufen', geraet: 'namensschild', text: 'Du hast selbst die Hotline aus dem Intranet gewählt – zu deinem eigenen Ticket. Wer den Kontakt startet, entscheidet über das Risiko.' },
+        { art: 'info', titel: 'Das Ruckeln ist kein Beweis', text: 'Bildstörungen gibt es bei jedem schlechten WLAN. Ein Ruckler macht noch keinen Deepfake – und ein flüssiges Bild noch keinen echten Anruf.' }
       ],
       kern: 'Du hast selbst angerufen, über die bekannte Hotline, zu deinem eigenen Ticket. Eine Bildstörung beweist keinen Deepfake – entscheidend ist, wer den Kontakt gestartet hat.',
       tipp: 'Frag dich zuerst: Wer hat den Kontakt gestartet? Rufst du selbst über die Hotline aus dem Intranet an, ist der Weg geprüft. Ruft „die IT“ dich an: Ticketnummer nennen lassen und im Portal prüfen.',
@@ -1893,6 +1880,130 @@ window.CONTENT = {
       tipp: 'Echte IT fragt nie nach deinem Passwort oder einem MFA-Code. Ruft sie an: Ticketnummer nennen lassen und im Portal prüfen – oder selbst über die Hotline aus dem Intranet zurückrufen.',
       hacker: { echt: 'Gähn. Das war wirklich nur die IT.', fehlalarm: 'Jetzt traust du nicht mal mehr deiner eigenen IT. Viel Spaß mit dem kaputten Excel!' },
       beute: 0
+    },
+
+    /* ---- Die folgenden Anrufe warten noch auf ihre Videos (Texte aus „Deepfake Challenge – drei neue Videos“).
+       Sie stehen hinter c7 und sind damit nicht im Spiel; mit den Clips rücken sie an ihren Platz (siehe levels). ---- */
+    {
+      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat)
+      id: 'c8',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: true,
+      video: { poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Mittwoch, 10:00',
+      storyTitel: 'Neue Bankverbindung – ab Dezember?',
+      lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
+      anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
+      start: { id: 'c8_0', tts: 'Guten Morgen! Kurz vorweg: Wir wechseln zum ersten Dezember unsere Bank. Sie bekommen diese Woche ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt. Passt das?' },
+      runden: [
+        [
+          { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
+            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso, per Post und übers Lieferantenportal. Die alte Verbindung gilt ja noch bis Ende November. Keine Eile.' } },
+          { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
+            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt. Die Nummern haben Sie ja.' } }
+        ],
+        [
+          { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur noch die Rechnung vom September. Die zahlen Sie bitte ganz normal aufs bisherige Konto.' } },
+          { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen, damit Sie nicht überrascht sind.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
+        { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
+      ],
+      kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
+      tipp: 'Neue Bankdaten trägst du erst ein, wenn du sie über einen bekannten Kontakt bestätigt hast – auch wenn alles echt wirkt.',
+      hacker: { echt: 'Gähn. Nur eine Ankündigung. Aber merk dir das gut … 😏', fehlalarm: 'Schon bei „neue Bank“ Alarm? Dann wird Level 2 lustig.' },
+      beute: 0
+    },
+
+    {
+      // Level 2 nach c3: die falsche Sofia nutzt die Ankündigung aus (WhatsApp-Video, Hochformat). Clips liefert Arne.
+      id: 'c9',
+      echt: false,
+      kanal: 'whatsapp',
+      geraet: 'phone',
+      video: { poster: 'assets/video/laurent-handy-poster.jpg', idle: 'assets/video/c9_idle.mp4', clips: ['c9_0', 'c9_1a', 'c9_1b', 'c9_2a', 'c9_2b'] },
+      klang: 'messenger',
+      atmo: null,
+      klingel: 'messenger',
+      zeit: 'Freitag, 11:50',
+      storyTitel: 'Die Umstellung wurde vorgezogen?',
+      lage: 'Zwei Tage nach eurem Abstimmungstermin ruft Sofia Laurent an – diesmal nicht über Teams, sondern von einer Handynummer, die du nicht kennst.',
+      anrufer: { name: '+49 151 2290 4471', zeile: 'WhatsApp-Video', initialen: '?', farbe: '#5B6B8C' },
+      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier, ich bin unterwegs. Unsere Bankumstellung wurde vorgezogen, das alte Konto schließt nächste Woche. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
+      runden: [
+        [
+          { text: 'Ah, Sie hatten es ja angekündigt. Schicken Sie mir die Daten.', wert: 'riskant',
+            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt gerade. Nehmen Sie bitte nur diese Daten. Die im Portal sind veraltet.' } },
+          { text: 'Ich warte lieber auf Ihr offizielles Schreiben.', wert: 'gut',
+            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Lassen Sie uns das jetzt direkt machen.' } }
+        ],
+        [
+          { text: 'Okay, ich trage die neuen Daten heute noch ein.', wert: 'riskant',
+            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir kurz ein Foto der Buchung hier aufs Handy.' } },
+          { text: 'Ich rufe kurz Herrn Vogt an und lasse es mir bestätigen.', wert: 'gut',
+            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub, und die Zentrale weiß noch nichts. Das läuft nur über mich. Sie kennen mich doch. Nur dieses eine Mal?' } }
+        ]
+      ],
+      signale: [
+        { art: 'rot', titel: 'Die Geschichte stimmt – der Weg nicht', geraet: 'anrufer', zitat: ['private Adresse', 'Die im Portal sind veraltet'], text: 'Die Ankündigung war echt – solches Wissen stammt oft aus gehackten Postfächern. Aber: fremde Nummer, private Mailadresse, „nicht die Daten im Portal“.' },
+        { art: 'rot', titel: 'Bestätigung ausgebremst', zitat: 'Das läuft nur über mich', text: 'Neue Bankdaten bestätigst du über bekannte Kontakte – nie bei der Person, die sie gerade ändern will.', wenn: 'c9_2b' },
+        { art: 'rot', titel: 'Brille und Wange verformen sich', text: 'Als die Hand vors Gesicht ging, verbogen sich kurz Brille und Wange – ein typischer Fehler beim Live-Deepfake. Achte darauf, aber verlass dich nicht darauf.' }
+      ],
+      kern: 'Die Geschichte war wahr, der Weg nicht: fremde Nummer, private Mail, und der Rückruf bei Herrn Vogt wurde ausgebremst.',
+      tipp: 'Neue Bankdaten bestätigst du über bekannte Kontakte – nie bei der Person, die sie gerade ändern will.',
+      hacker: { reingelegt: '86.400 €! Danke für die Vorarbeit in Level 1. 😈', erwischt: 'Ich kannte sogar die echte Ankündigung … und trotzdem!' },
+      beute: 86400,
+      beuteText: '86.400 € September-Rechnung'
+    },
+
+    {
+      // Level 2 statt c6: der kranke Jamie (Teams-Video vom Handy, Hochformat)
+      id: 'c10',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: false,
+      video: { poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4', clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Donnerstag, 19:30',
+      storyTitel: 'Klingt so heiser – ist das Jamie?',
+      lage: 'Dein Teamleiter Jamie Rivera ruft dich abends an. Morgen um zehn hat er einen Kundentermin bei der Firma Hartmann.',
+      anrufer: { name: 'Jamie Rivera', zeile: 'Teamleitung · Verfügbar', initialen: 'JR', farbe: '#2E6B7D' },
+      start: { id: 'c10_0', tts: 'Hey, sorry für den späten Anruf. Mich hat’s richtig erwischt, ich bin morgen raus. Kannst du um zehn den Termin bei Hartmann übernehmen?' },
+      runden: [
+        [
+          { text: 'Oh je, gute Besserung! Klar, ich übernehme.', wert: 'neutral',
+            antwort: { id: 'c10_1a', tts: 'Danke, du rettest mich. Die Unterlagen liegen im Teamordner unter Hartmann. Ich leite dir gleich die Einladung weiter.' } },
+          { text: 'Du klingst ganz anders – bist du das wirklich?', wert: 'gut',
+            antwort: { id: 'c10_1b', tts: 'Ja, ich klinge wie ein Reibeisen. Ruf mich gern zurück, auf dem Handy oder in Teams. Ich liege eh den ganzen Abend auf dem Sofa.' } }
+        ],
+        [
+          { text: 'Soll ich Herrn Hartmann die Unterlagen vorab schicken?', wert: 'neutral',
+            antwort: { id: 'c10_2a', tts: 'Ja, gern, morgen früh ganz normal per Mail. Herr Hartmann weiß schon, dass du kommst.' } },
+          { text: 'Ich komme nicht in den Kundenordner. Gibst du mir kurz dein Passwort?', wert: 'riskant',
+            antwort: { id: 'c10_2b', tts: 'Oh nein, bloß nicht. Ich schreib gleich der IT, die schalten dich morgen früh frei.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Die Bitte ist harmlos', zitat: 'im Teamordner', text: 'Einen Termin übernehmen, Unterlagen aus dem Teamordner – nichts Riskantes, kein Geld, keine Geheimnisse. Ein Rückruf ist ihm sogar willkommen.' },
+        { art: 'gruen', titel: 'Passwort? Abgelehnt.', zitat: 'bloß nicht', text: 'Selbst als du ihm dein Passwort angeboten hast, hat er abgelehnt und die IT eingeschaltet. Ein Betrüger hätte zugegriffen.', wenn: 'c10_2b' },
+        { art: 'info', titel: 'Anders klingen ist kein Beweis', text: 'Erinnerst du dich an Jonas? Seine Stimme klang perfekt und war fake. Hier ist es umgekehrt: Erkältung, körniges Bild, später Abend – und trotzdem echt.' }
+      ],
+      kern: 'Die Stimme klang fremd, das Bild war körnig – trotzdem war es Jamie. Entscheidend war nicht der Klang, sondern die Bitte.',
+      tipp: '„Klingt anders“ ist ein Grund nachzufragen – kein Beweis für einen Fake. Achte darauf, was jemand von dir will.',
+      hacker: { echt: 'Gähn. Nur ein verschnupfter Teamleiter.', fehlalarm: 'Fake, nur weil er erkältet ist? Gute Besserung an dein Vertrauen!' },
+      beute: 0
     }
   ],
 
@@ -1901,9 +2012,10 @@ window.CONTENT = {
      sonst wird das Level wiederholt (im LMS gilt die Challenge erst als abgeschlossen, wenn alle Levels bestanden sind).
      Nach Level 1 kommt der Sicherheitstipp, nach dem letzten Level „Zum Schluss“ (unten). */
   levels: [
-    // Level 2 bekommt noch weitere Fälle (kombinierte Angriffe); bis dahin nur die zwei echten Anrufe
-    { anzahl: 4, mindestens: 3, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
-    { anzahl: 2, mindestens: 1, kicker: 'Anrufe im Job – wem kannst du trauen?' }
+    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia echt (Level 1, vor c5),
+    // Sofia fake (Level 2, nach c3) und Jamie (Level 2, statt c6) – die Texte stehen schon unten (c8–c10).
+    { anzahl: 3, mindestens: 2, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
+    { anzahl: 3, mindestens: 2, kicker: 'Anrufe im Job – wem kannst du trauen?' }
   ],
   levelIntro: {
     kicker: 'Level {n} von {gesamt}',
@@ -1946,7 +2058,7 @@ window.CONTENT = {
         beispiel: 'Jonas klang wie Jonas – seine Strandvideos auf Instagram reichten für den Klon.' },
       { bild: 'assets/nugget-gesicht.png', farbe: '#9B7BFF', titel: 'Auch ein Gesicht ist kein Beweis',
         text: 'Aus einem Foto und ein paar Sekunden Video macht KI ein sprechendes Gesicht – mit Mimik, Gesten und passender Stimme, sogar live im Videoanruf. Ruckler, verwaschene Ränder oder Lippen, die nicht ganz passen, können Hinweise sein. Gute Deepfakes zeigen keine davon.',
-        beispiel: 'Die Chefin im Videoanruf: Gesicht und Stimme waren komplett KI.' },
+        beispiel: 'Alex Morgan im Videoanruf: ein makelloses Bild – und komplett KI.' },
       { bild: 'assets/nugget-nummer.webp', farbe: '#2BB8E8', titel: 'Auch Nummern lassen sich fälschen',
         text: 'Nummer und Name im Display können gefälscht sein (Call-ID-Spoofing) – auch die deiner Bank oder deiner Firma. Ein Profilfoto kann jeder hochladen. Und umgekehrt: Eine fremde Nummer allein macht noch keinen Fake.',
         beispiel: 'Die Bank rief von einer fremden Nummer an – und war echt.' },
@@ -1954,7 +2066,7 @@ window.CONTENT = {
         text: 'Oft ist der Anruf nur ein Schritt: Vorher sammeln Betrüger Daten aus sozialen Netzwerken oder Datenlecks – oder lösen selbst eine Spam-Flut aus, um dann als Retter anzurufen. Im Gespräch folgt fast immer dasselbe Muster:',
         liste: [
           { titel: 'Zeitdruck', beispiel: '„Bitte, jetzt gleich!“' },
-          { titel: 'Angst oder Autorität', beispiel: '„Die Polizei ist hier …“ – oder die Chefin persönlich' },
+          { titel: 'Angst oder Autorität', beispiel: '„Die Polizei ist hier …“ – oder die CEO persönlich' },
           { titel: 'Geheimhaltung', beispiel: '„Das darf noch niemand wissen.“' },
           { titel: 'Eine ungewöhnliche Bitte', beispiel: 'Geld, PIN oder TAN, Passwörter – oder Fernzugriff auf deinen Rechner' }
         ] }
@@ -3353,7 +3465,7 @@ window.Feier = (function () {
       if (ep !== S.epoche || S.lauf.beendet) return;
       geraet.classList.remove('spricht');
       ccFertig();
-      // Die Leitung reißt ab (die falsche Chefin bei der Kontrollfrage)
+      // Die Leitung reißt ab (zeile.glitch: der Anrufer bricht das Gespräch ab)
       if (zeile.glitch) { K.fx.glitch(0.45); setTimeout(() => { if (ep === S.epoche) beenden('verbindung'); }, 900); return; }
       const letzte = S.lauf.runde >= a.runden.length;   // danach wird aufgelegt – nicht lange warten
       setTimeout(() => { if (ep === S.epoche && !S.lauf.beendet) danach(); }, letzte ? 120 : 380);
@@ -3591,8 +3703,8 @@ window.Feier = (function () {
     $('fb-kern-label').textContent = F.kern;
     $('fb-kern-text').textContent = a.kern;
 
-    // Hinweise: die ersten drei Signale, die zum Gesprächsverlauf passen, zum Schluss „Das schützt dich“ – höchstens vier Schritte
-    const liste = a.signale.filter(s => (!s.wenn || erg.pfad.includes(s.wenn)) && (!s.wennNicht || !erg.pfad.includes(s.wennNicht))).slice(0, 3)
+    // Hinweise: die ersten zwei Signale, die zum Gesprächsverlauf passen, zum Schluss „Das schützt dich“ – höchstens drei Schritte
+    const liste = a.signale.filter(s => (!s.wenn || erg.pfad.includes(s.wenn)) && (!s.wennNicht || !erg.pfad.includes(s.wennNicht))).slice(0, 2)
       .map(s => ({ art: s.art, label: F.art[s.art], titel: s.titel, text: s.text, zitat: s.zitat, geraet: s.geraet }))
       .concat({ art: 'schutz', label: F.art.schutz, titel: F.tipp, text: a.tipp });
     $('fb-liste').innerHTML = liste.map((h, i) => `<li class="h-karte h-${h.art}" style="--i:${i}">
@@ -3629,9 +3741,12 @@ window.Feier = (function () {
     if (!fb || fb.stufe !== 1) return;
     fb.stufe = 2;
     $('feedback').dataset.stufe = '2'; $('s-spiel').dataset.fbStufe = '2';
-    // erst jetzt kommt der Gesprächsverlauf dazu – links beim Gerät, mit den markierten Stellen
-    transkriptZeigen(fb.liste);
-    transkriptLinks(true);
+    // erst jetzt kommt der Gesprächsverlauf dazu – links beim Gerät, mit den markierten Stellen.
+    // Bei Videoanrufen nicht: neben dem Bild wäre das zu viel Text, dort reichen die Hinweise.
+    if (!S.a.video) {
+      transkriptZeigen(fb.liste);
+      transkriptLinks(true);
+    }
     hinweis(0, true);
   }
   function hinweis(i, erster) {

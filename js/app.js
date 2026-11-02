@@ -692,7 +692,7 @@
       if (ep !== S.epoche || S.lauf.beendet) return;
       geraet.classList.remove('spricht');
       ccFertig();
-      // Die Leitung reißt ab (die falsche Chefin bei der Kontrollfrage)
+      // Die Leitung reißt ab (zeile.glitch: der Anrufer bricht das Gespräch ab)
       if (zeile.glitch) { K.fx.glitch(0.45); setTimeout(() => { if (ep === S.epoche) beenden('verbindung'); }, 900); return; }
       const letzte = S.lauf.runde >= a.runden.length;   // danach wird aufgelegt – nicht lange warten
       setTimeout(() => { if (ep === S.epoche && !S.lauf.beendet) danach(); }, letzte ? 120 : 380);
@@ -930,8 +930,8 @@
     $('fb-kern-label').textContent = F.kern;
     $('fb-kern-text').textContent = a.kern;
 
-    // Hinweise: die ersten drei Signale, die zum Gesprächsverlauf passen, zum Schluss „Das schützt dich“ – höchstens vier Schritte
-    const liste = a.signale.filter(s => (!s.wenn || erg.pfad.includes(s.wenn)) && (!s.wennNicht || !erg.pfad.includes(s.wennNicht))).slice(0, 3)
+    // Hinweise: die ersten zwei Signale, die zum Gesprächsverlauf passen, zum Schluss „Das schützt dich“ – höchstens drei Schritte
+    const liste = a.signale.filter(s => (!s.wenn || erg.pfad.includes(s.wenn)) && (!s.wennNicht || !erg.pfad.includes(s.wennNicht))).slice(0, 2)
       .map(s => ({ art: s.art, label: F.art[s.art], titel: s.titel, text: s.text, zitat: s.zitat, geraet: s.geraet }))
       .concat({ art: 'schutz', label: F.art.schutz, titel: F.tipp, text: a.tipp });
     $('fb-liste').innerHTML = liste.map((h, i) => `<li class="h-karte h-${h.art}" style="--i:${i}">
@@ -968,9 +968,12 @@
     if (!fb || fb.stufe !== 1) return;
     fb.stufe = 2;
     $('feedback').dataset.stufe = '2'; $('s-spiel').dataset.fbStufe = '2';
-    // erst jetzt kommt der Gesprächsverlauf dazu – links beim Gerät, mit den markierten Stellen
-    transkriptZeigen(fb.liste);
-    transkriptLinks(true);
+    // erst jetzt kommt der Gesprächsverlauf dazu – links beim Gerät, mit den markierten Stellen.
+    // Bei Videoanrufen nicht: neben dem Bild wäre das zu viel Text, dort reichen die Hinweise.
+    if (!S.a.video) {
+      transkriptZeigen(fb.liste);
+      transkriptLinks(true);
+    }
     hinweis(0, true);
   }
   function hinweis(i, erster) {
