@@ -362,6 +362,8 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .geraet.mit-video[data-zustand="talk"] .win-video, .geraet.mit-video[data-zustand="ende"] .win-video { display: block; }
 .geraet.mit-video[data-art="teams"] .win-kachel { visibility: hidden; }
 .win-vid-warn { top: 14px; }
+.win-video.hoch { background: #1f1f1f; }
+.win-video.hoch .vid, .win-video.hoch .vid-standbild { object-fit: contain; }
 /* Ausgehender Anruf: keine Annehmen-/Ablehnen-Tasten, Teams verbindet von selbst */
 .geraet.ausgehend .win-toast-tasten { display: none; }
 
@@ -1782,6 +1784,52 @@ window.CONTENT = {
       hacker: { echt: 'Langweilig. Das war wirklich nur Lena.', fehlalarm: 'Jetzt misstraust du schon deiner eigenen Kollegin. Genau das will ich.' },
       beute: 0
     },
+    {
+      // Level 2: der kranke Jamie (Teams-Video vom Handy, Hochformat). Bild und Ton aus ElevenLabs
+      // (Flow „Deepfake Challenge – echte Videos“: Porträt gpt-image-2, Stimme „Nico“ eleven_v3, Lip-Sync Creatify Aurora 480p).
+      id: 'c10',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: false,
+      video: { hoch: true, poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4', clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Donnerstag, 19:30',
+      storyTitel: 'Klingt so heiser – ist das Jamie?',
+      lage: 'Dein Teamleiter Jamie Rivera ruft dich abends an. Morgen um zehn hat er einen Kundentermin bei der Firma Hartmann.',
+      anrufer: { name: 'Jamie Rivera', zeile: 'Teamleitung · Verfügbar', initialen: 'JR', farbe: '#2E6B7D', foto: 'assets/rivera-profil.jpg' },
+      posteingang: [
+        ['Kalender', 'Kundentermin Hartmann · Fr 10:00 (Jamie)'],
+        ['Jamie Rivera', 'Unterlagen Hartmann liegen im Teamordner'],
+        ['Lena Hofmann', 'Danke für die Folie!']
+      ],
+      start: { id: 'c10_0', tts: 'Hey, sorry für den späten Anruf. Mich hat’s richtig erwischt, ich bin morgen raus. Kannst du um zehn den Termin bei Hartmann übernehmen?' },
+      runden: [
+        [
+          { text: 'Oh je, gute Besserung! Klar, ich übernehme.', wert: 'neutral',
+            antwort: { id: 'c10_1a', tts: 'Danke, du rettest mich. Die Unterlagen liegen im Teamordner unter Hartmann. Ich leite dir gleich die Einladung weiter.' } },
+          { text: 'Du klingst ganz anders – bist du das wirklich?', wert: 'gut',
+            antwort: { id: 'c10_1b', tts: 'Ja, ich klinge wie ein Reibeisen. Ruf mich gern zurück, auf dem Handy oder in Teams. Ich liege eh den ganzen Abend auf dem Sofa.' } }
+        ],
+        [
+          { text: 'Soll ich Herrn Hartmann die Unterlagen vorab schicken?', wert: 'neutral',
+            antwort: { id: 'c10_2a', tts: 'Ja, gern, morgen früh ganz normal per Mail. Herr Hartmann weiß schon, dass du kommst.' } },
+          { text: 'Ich komme nicht in den Kundenordner. Gibst du mir kurz dein Passwort?', wert: 'riskant',
+            antwort: { id: 'c10_2b', tts: 'Oh nein, bloß nicht. Ich schreib gleich der IT, die schalten dich morgen früh frei.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Die Bitte ist harmlos', zitat: 'im Teamordner', text: 'Einen Termin übernehmen, Unterlagen aus dem Teamordner – nichts Riskantes, kein Geld, keine Geheimnisse. Ein Rückruf ist ihm sogar willkommen.' },
+        { art: 'gruen', titel: 'Passwort? Abgelehnt.', zitat: 'bloß nicht', text: 'Du wolltest sein Passwort – er hat abgelehnt und die IT eingeschaltet. Ein echter Kollege gibt sein Passwort nicht weiter, auch nicht dir.', wenn: 'c10_2b' },
+        { art: 'info', titel: 'Anders klingen ist kein Beweis', text: 'Erinnerst du dich an Jonas? Seine Stimme klang perfekt und war fake. Hier ist es umgekehrt: Erkältung, körniges Bild, später Abend – und trotzdem echt.' }
+      ],
+      kern: 'Die Stimme klang fremd, das Bild war körnig – trotzdem war es Jamie. Entscheidend war nicht der Klang, sondern die Bitte.',
+      tipp: '„Klingt anders“ ist ein Grund nachzufragen – kein Beweis für einen Fake. Achte darauf, was jemand von dir will.',
+      hacker: { echt: 'Gähn. Nur ein verschnupfter Teamleiter.', fehlalarm: 'Fake, nur weil er erkältet ist? Gute Besserung an dein Vertrauen!' },
+      beute: 0
+    },
 
     {
       // Echter Videoanruf: Du rufst selbst die IT-Hotline an (Pilot-Call 06, Ordner „Videos Case 6 – Das Headset Ticket“).
@@ -1965,46 +2013,6 @@ window.CONTENT = {
       beuteText: '86.400 € September-Rechnung'
     },
 
-    {
-      // Level 2 statt c6: der kranke Jamie (Teams-Video vom Handy, Hochformat)
-      id: 'c10',
-      echt: true,
-      kanal: 'teams',
-      geraet: 'teams',
-      extern: false,
-      video: { poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4', clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b'] },
-      klang: 'teams',
-      atmo: null,
-      klingel: 'teams',
-      zeit: 'Donnerstag, 19:30',
-      storyTitel: 'Klingt so heiser – ist das Jamie?',
-      lage: 'Dein Teamleiter Jamie Rivera ruft dich abends an. Morgen um zehn hat er einen Kundentermin bei der Firma Hartmann.',
-      anrufer: { name: 'Jamie Rivera', zeile: 'Teamleitung · Verfügbar', initialen: 'JR', farbe: '#2E6B7D' },
-      start: { id: 'c10_0', tts: 'Hey, sorry für den späten Anruf. Mich hat’s richtig erwischt, ich bin morgen raus. Kannst du um zehn den Termin bei Hartmann übernehmen?' },
-      runden: [
-        [
-          { text: 'Oh je, gute Besserung! Klar, ich übernehme.', wert: 'neutral',
-            antwort: { id: 'c10_1a', tts: 'Danke, du rettest mich. Die Unterlagen liegen im Teamordner unter Hartmann. Ich leite dir gleich die Einladung weiter.' } },
-          { text: 'Du klingst ganz anders – bist du das wirklich?', wert: 'gut',
-            antwort: { id: 'c10_1b', tts: 'Ja, ich klinge wie ein Reibeisen. Ruf mich gern zurück, auf dem Handy oder in Teams. Ich liege eh den ganzen Abend auf dem Sofa.' } }
-        ],
-        [
-          { text: 'Soll ich Herrn Hartmann die Unterlagen vorab schicken?', wert: 'neutral',
-            antwort: { id: 'c10_2a', tts: 'Ja, gern, morgen früh ganz normal per Mail. Herr Hartmann weiß schon, dass du kommst.' } },
-          { text: 'Ich komme nicht in den Kundenordner. Gibst du mir kurz dein Passwort?', wert: 'riskant',
-            antwort: { id: 'c10_2b', tts: 'Oh nein, bloß nicht. Ich schreib gleich der IT, die schalten dich morgen früh frei.' } }
-        ]
-      ],
-      signale: [
-        { art: 'gruen', titel: 'Die Bitte ist harmlos', zitat: 'im Teamordner', text: 'Einen Termin übernehmen, Unterlagen aus dem Teamordner – nichts Riskantes, kein Geld, keine Geheimnisse. Ein Rückruf ist ihm sogar willkommen.' },
-        { art: 'gruen', titel: 'Passwort? Abgelehnt.', zitat: 'bloß nicht', text: 'Selbst als du ihm dein Passwort angeboten hast, hat er abgelehnt und die IT eingeschaltet. Ein Betrüger hätte zugegriffen.', wenn: 'c10_2b' },
-        { art: 'info', titel: 'Anders klingen ist kein Beweis', text: 'Erinnerst du dich an Jonas? Seine Stimme klang perfekt und war fake. Hier ist es umgekehrt: Erkältung, körniges Bild, später Abend – und trotzdem echt.' }
-      ],
-      kern: 'Die Stimme klang fremd, das Bild war körnig – trotzdem war es Jamie. Entscheidend war nicht der Klang, sondern die Bitte.',
-      tipp: '„Klingt anders“ ist ein Grund nachzufragen – kein Beweis für einen Fake. Achte darauf, was jemand von dir will.',
-      hacker: { echt: 'Gähn. Nur ein verschnupfter Teamleiter.', fehlalarm: 'Fake, nur weil er erkältet ist? Gute Besserung an dein Vertrauen!' },
-      beute: 0
-    }
   ],
 
   /* ---------------- Levels ----------------
@@ -2012,8 +2020,8 @@ window.CONTENT = {
      sonst wird das Level wiederholt (im LMS gilt die Challenge erst als abgeschlossen, wenn alle Levels bestanden sind).
      Nach Level 1 kommt der Sicherheitstipp, nach dem letzten Level „Zum Schluss“ (unten). */
   levels: [
-    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia echt (Level 1, vor c5),
-    // Sofia fake (Level 2, nach c3) und Jamie (Level 2, statt c6) – die Texte stehen schon unten (c8–c10).
+    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia echt (Level 1, vor c5)
+    // und Sofia fake (Level 2, nach c3) – die Texte stehen schon unten (c8, c9). c6 (Headset) ist nicht mehr im Spiel.
     { anzahl: 3, mindestens: 2, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
     { anzahl: 3, mindestens: 2, kicker: 'Anrufe im Job – wem kannst du trauen?' }
   ],
@@ -2147,7 +2155,6 @@ window.CONTENT = {
     quellen: 'Hintergrund: Lagebilder von Polizei und Verbraucherzentralen zu Vishing, Deepfakes und KI-Schockanrufen, Sicherheitsberichte zu Teams-Vishing (2026) sowie die bekannten Fälle eines britischen Energieversorgers (2019), Arup (2024) und Ferrari (2024).'
   }
 };
-
 </script>
 <script>
 /* ------------------------------------------------------------------
@@ -3494,6 +3501,8 @@ window.Feier = (function () {
       b.standbild.classList.remove('an'); b.warn.hidden = true;
     });
     VID = a.geraet === 'teams' ? BUEHNEN.teams : BUEHNEN.phone;
+    // Hochformat im Teams-Fenster (Anruf vom Handy): Bild ganz zeigen, seitlich dunkle Balken wie in Teams
+    BUEHNEN.teams.box.classList.toggle('hoch', !!(a.video && a.video.hoch));
     geraet.classList.toggle('mit-video', !!a.video);
     if (!a.video) { geraet.style.removeProperty('--poster'); return; }
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf

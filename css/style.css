@@ -353,6 +353,8 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .geraet.mit-video[data-zustand="talk"] .win-video, .geraet.mit-video[data-zustand="ende"] .win-video { display: block; }
 .geraet.mit-video[data-art="teams"] .win-kachel { visibility: hidden; }
 .win-vid-warn { top: 14px; }
+.win-video.hoch { background: #1f1f1f; }
+.win-video.hoch .vid, .win-video.hoch .vid-standbild { object-fit: contain; }
 /* Ausgehender Anruf: keine Annehmen-/Ablehnen-Tasten, Teams verbindet von selbst */
 .geraet.ausgehend .win-toast-tasten { display: none; }
 

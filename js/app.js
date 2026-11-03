@@ -721,6 +721,8 @@
       b.standbild.classList.remove('an'); b.warn.hidden = true;
     });
     VID = a.geraet === 'teams' ? BUEHNEN.teams : BUEHNEN.phone;
+    // Hochformat im Teams-Fenster (Anruf vom Handy): Bild ganz zeigen, seitlich dunkle Balken wie in Teams
+    BUEHNEN.teams.box.classList.toggle('hoch', !!(a.video && a.video.hoch));
     geraet.classList.toggle('mit-video', !!a.video);
     if (!a.video) { geraet.style.removeProperty('--poster'); return; }
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf
