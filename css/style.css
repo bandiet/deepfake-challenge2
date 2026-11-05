@@ -993,6 +993,10 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   .dialog { align-content: start; }
   .cc { flex: none; max-height: none; min-height: 120px; }
   .cc-log { max-height: 40vh; }
+  /* Videoanruf: Untertitel höchstens drei Zeilen (scrollt mit), damit Bild, Untertitel und Antworten zusammen passen */
+  .buehne:has(.geraet.mit-video[data-zustand="talk"]) .cc { min-height: 0; }
+  .buehne:has(.geraet.mit-video[data-zustand="talk"]) .cc-log { max-height: 74px; }
+  .buehne:has(.geraet.mit-video[data-zustand="talk"]) .win { aspect-ratio: 16 / 9.5; }
   /* Transkript beim Gerät: untereinander; beim Feedback steht der Verlauf statt des Geräts über dem Panel */
   .geraet-spalte.mit-transkript, .mit-transkript:has(.geraet[data-art="teams"]) { flex-direction: column; align-items: stretch; }
   .geraet, .mit-transkript .geraet, .mit-transkript:has(.geraet[data-art="teams"]) .geraet { flex: none; width: 100%; height: auto; container-type: normal; }

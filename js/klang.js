@@ -253,10 +253,13 @@
   }
 
   // Geräusch des Anrufers (z. B. Hüsteln in der Idle) durch dieselbe Leitung wie seine Stimme
+  const nebentoene = new Set();
   async function nebenton(id, art) {
     init(); const p = await stimmeLaden(id); if (!p) return;
     const s = ctx.createBufferSource(); s.buffer = p.buf; s.connect(leitung(art, stimmBus)); s.start();
+    nebentoene.add(s); s.onended = () => nebentoene.delete(s);
   }
+  function nebentonStop() { nebentoene.forEach(s => { try { s.stop(); } catch (e) { } }); nebentoene.clear(); }
   async function einmal(name, vol) {
     init(); const p = await sfxLaden(name); if (!p) return;
     const g = ctx.createGain(); g.gain.value = vol == null ? 0.8 : vol; g.connect(sfxBus);
@@ -328,7 +331,7 @@
     laden, stimmeLaden, sfxLaden, musikLaden, stemEndung,
     stimme, stimmeStop, fortschritt, textFortschritt, pegel,
     musik, musikVol, musikAus,
-    atmo, atmoStop, ring, ringStop, einmal, nebenton,
+    atmo, atmoStop, ring, ringStop, einmal, nebenton, nebentonStop,
     fx,
     get ctx() { return ctx; }
   };

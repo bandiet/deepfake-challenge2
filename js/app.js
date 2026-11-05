@@ -688,6 +688,13 @@
     $('cc-nochmal').hidden = true;
     geraet.classList.add('spricht');
     const el = ccNeu(a.anrufer.name, ohneTags(zeile.tts), 'anrufer');
+    // Kleiner Bildschirm: nach der Antwortwahl ist die Seite nach unten gescrollt – beim Videoanruf das Bild wieder
+    // ganz zeigen (unterhalb der HUD), sonst schieben Untertitel und Antworten es halb aus dem Bild
+    if (a.video && schmal()) {
+      const c = $('s-spiel'), oben = Math.max(c.getBoundingClientRect().top, $('hud').getBoundingClientRect().bottom) + 8;
+      const g = (a.geraet === 'teams' ? BUEHNEN.teams.box.closest('.win') || BUEHNEN.teams.box : geraet).getBoundingClientRect();
+      if (g.top < oben) c.scrollTo({ top: Math.max(0, c.scrollTop + g.top - oben), behavior: reduziert ? 'auto' : 'smooth' });
+    }
     const fertig = () => {
       if (ep !== S.epoche || S.lauf.beendet) return;
       geraet.classList.remove('spricht');
@@ -745,7 +752,7 @@
   }
   setInterval(() => {
     const v = VID.idle;
-    if (!IDLE.toene.length || v.paused) return;
+    if (!IDLE.toene.length || v.paused || !S.lauf || S.lauf.beendet) return;
     const t = v.currentTime, vor = IDLE.zuletzt; IDLE.zuletzt = t;
     IDLE.toene.forEach(([z, id]) => { if (t >= vor ? (z > vor && z <= t) : (z > vor || z <= t)) K.nebenton(id, S.a.klang); });
   }, 50);
@@ -798,7 +805,8 @@
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
       const ausblenden = async () => {
         // Die Idle beginnt wieder in der Ausgangshaltung – dort, wo der Clip (mit Übergang) aufhört
-        if (IDLE.nah && ep === S.epoche) await idleNeustart();
+        // (nicht mehr nach dem Auflegen: dann bleibt das Bild stehen und es ist still)
+        if (IDLE.nah && ep === S.epoche && S.lauf && !S.lauf.beendet) await idleNeustart();
         vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250);
       };
       if (!zeile.glitch) {
@@ -904,7 +912,7 @@
     if (!L || L.beendet) return;
     L.beendet = true;
     L.aufgelegt = grund === 'aufgelegt';
-    K.stimmeStop(); K.ringStop(); K.atmoStop(); ccFertig(); videoStop();
+    K.stimmeStop(); K.ringStop(); K.atmoStop(); K.nebentonStop(); ccFertig(); videoStop();
     cancelAnimationFrame(ringId); clearInterval(timerId); clearInterval(posteingang.id);
     geraet.classList.remove('spricht');
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
