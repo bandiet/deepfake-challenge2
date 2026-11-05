@@ -745,7 +745,9 @@
     const start = p ? p.start : 0;
     let eingefroren = false;
     vt.src = 'assets/video/' + zeile.id + '.mp4';
-    try { vt.currentTime = start; await vt.play(); } catch (e) { }
+    // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
+    await bereit(vt, start);
+    try { await vt.play(); } catch (e) { }
     if (ep !== S.epoche) { vt.pause(); return; }
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
@@ -754,7 +756,9 @@
       if (!zeile.glitch) {
         // Clips mit Endbild (Grok) kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
         // dann passt das letzte Bild zur Idle-Schleife
-        const rest = S.a.video.auslauf && vt.duration ? vt.duration - vt.currentTime : 0;
+        // (nur wenn das Bild mit dem Ton Schritt gehalten hat – sonst käme die Mundbewegung ohne Ton hinterher)
+        const synchron = Math.abs(vt.currentTime - (start + tok.dauer)) < 0.4;
+        const rest = S.a.video.auslauf && synchron && vt.duration ? vt.duration - vt.currentTime : 0;
         if (rest > 0.1) setTimeout(() => { if (ep === S.epoche && vt.src.endsWith(zeile.id + '.mp4')) ausblenden(); }, rest * 1000);
         else ausblenden();
       }
@@ -770,12 +774,24 @@
       if (f != null && !eingefroren) {
         const soll = start + f * tok.dauer;
         if (vt.paused) vt.play().catch(() => { });
-        if (Math.abs(vt.currentTime - soll) > 0.12 && soll < (vt.duration || 99)) vt.currentTime = soll;
+        if (!vt.seeking && Math.abs(vt.currentTime - soll) > 0.12 && soll < (vt.duration || 99)) vt.currentTime = soll;
         // Kontrollfrage: Das Bild bleibt stehen, der Ton läuft noch kurz weiter – wie ein echter Abbruch
         if (zeile.glitch && f > 0.8) { eingefroren = true; vt.pause(); standbild(vt); VID.warn.textContent = C.telefon.instabil; VID.warn.hidden = false; }
       }
       vLauf.raf = requestAnimationFrame(schritt);
     })();
+  }
+  // Wartet, bis das Video an Stelle t ein Bild zeigen und weiterspielen kann (höchstens 4 s)
+  function bereit(v, t) {
+    return new Promise(ok => {
+      let fertig = false;
+      const los = () => { if (fertig) return; fertig = true; v.removeEventListener('canplay', pruef); v.removeEventListener('seeked', pruef); ok(); };
+      const pruef = () => { if (!v.seeking && v.readyState >= 3) los(); };
+      v.addEventListener('canplay', pruef); v.addEventListener('seeked', pruef);
+      setTimeout(los, 4000);
+      try { v.currentTime = t; } catch (e) { }
+      pruef();
+    });
   }
   function standbild(video) {
     const box = VID.box.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1), cv = VID.standbild;

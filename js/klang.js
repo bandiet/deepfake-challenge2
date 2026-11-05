@@ -22,7 +22,8 @@
     erzaehler: { hp: 40, lp: 18000, drive: 0, gain: 1.0 }
   };
 
-  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13 };
+  // buero und wohnzimmer sind als Datei sehr leise (um −67 dB) – daher über 1: leichtes Rauschen, das in den Pausen durchläuft
+  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13, buero: 1.6, wohnzimmer: 2.0 };
 
   let ctx = null, master = null, musikBus = null, stimmBus = null, analyser = null, sfxBus = null;
   let an = true;
