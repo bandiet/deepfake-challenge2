@@ -716,39 +716,40 @@
   C.anrufe.forEach(a => {
     if (!a.video) return;
     a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; });
-    if (Array.isArray(a.video.idle)) a.video.idle.forEach(t => { if (t.ton) K.stemEndung[t.ton] = '.m4a'; });
+    (a.video.toene || []).forEach(([, id]) => { K.stemEndung[id] = '.m4a'; });
   });
-  // Idle aus Stücken (Seedance): jedes beginnt und endet in der Ausgangshaltung der Clips. Sie wechseln sich ab,
-  // und ein Clip beginnt nur dort, wo das Idle-Bild zur Ausgangshaltung passt (Stückgrenze oder nah-Fenster) –
-  // sonst springt das Bild. Ein String als idle bleibt eine einfache Schleife.
-  const IDLE = { teile: null, letzt: -1, warten: null };
-  function idleNaechstes() {
-    const t = IDLE.teile; if (!t) return;
-    const wahl = f => { const j = t.map((x, i) => f(x) ? i : -1).filter(i => i >= 0); return j[Math.floor(Math.random() * j.length)]; };
-    // Seltene Stücke (Hüsteln) nie zweimal hintereinander und nicht gleich zu Beginn
-    const selten = IDLE.letzt >= 0 && !t[IDLE.letzt].selten && t.some(x => x.selten) && Math.random() < 0.35;
-    const i = selten ? wahl(x => x.selten) : wahl(x => !x.selten);
-    IDLE.letzt = i;
-    VID.idle.src = t[i].src; VID.idle.play().catch(() => { });
-    if (t[i].ton) K.nebenton(t[i].ton, S.a.klang);
-  }
-  // Wartet auf eine Stelle in der Idle, an der ein Clip ohne Sprung beginnen kann (höchstens 6 s)
+  // Idle als ein Film, der in der Ausgangshaltung der Clips beginnt und endet (aus mehreren Stücken zusammengesetzt,
+  // damit die Schleife nicht auffällt; kein Dateiwechsel, also kein leeres Bild dazwischen). Mit nah-Fenstern:
+  // ein Clip beginnt nur dort, wo das Idle-Bild zur Ausgangshaltung passt, und nach dem Clip springt die Idle
+  // auf den Anfang. toene = Geräusche (z. B. Hüsteln) an festen Stellen. Ohne nah bleibt es eine einfache Schleife.
+  const IDLE = { nah: null, toene: [], zuletzt: 0 };
+  const idleNah = () => IDLE.nah.some(([x, y]) => VID.idle.currentTime >= x && VID.idle.currentTime <= y);
   function idleGrenze() {
-    const v = VID.idle, t = IDLE.teile;
-    if (!t || v.paused || v.ended) return Promise.resolve();
-    const nah = () => v.currentTime < 0.15 || (t[IDLE.letzt].nah || []).some(([a, b]) => v.currentTime >= a && v.currentTime <= b);
-    if (nah()) return Promise.resolve();
+    const v = VID.idle;
+    if (!IDLE.nah || v.paused) return Promise.resolve();
     return new Promise(ok => {
-      const los = () => { if (IDLE.warten !== los) return; IDLE.warten = null; clearInterval(iv); v.pause(); ok(); };
-      IDLE.warten = los;
-      const iv = setInterval(() => { if (nah()) los(); }, 40);
-      setTimeout(los, 6000);
+      const t0 = performance.now();
+      const iv = setInterval(() => {
+        if (!idleNah() && performance.now() - t0 < 8000) return;
+        clearInterval(iv); v.pause(); ok();
+      }, 30);
     });
   }
-  Object.values(BUEHNEN).forEach(b => b.idle.addEventListener('ended', () => {
-    if (b !== VID || !IDLE.teile) return;
-    if (IDLE.warten) IDLE.warten(); else idleNaechstes();
-  }));
+  function idleNeustart() {
+    return new Promise(ok => {
+      const v = VID.idle; let fertig = false;
+      const los = () => { if (fertig) return; fertig = true; v.removeEventListener('seeked', los); IDLE.zuletzt = 0; v.play().catch(() => { }); ok(); };
+      v.addEventListener('seeked', los); setTimeout(los, 400);
+      v.currentTime = 0;
+    });
+  }
+  setInterval(() => {
+    const v = VID.idle;
+    if (!IDLE.toene.length || v.paused) return;
+    const t = v.currentTime, vor = IDLE.zuletzt; IDLE.zuletzt = t;
+    IDLE.toene.forEach(([z, id]) => { if (t >= vor ? (z > vor && z <= t) : (z > vor || z <= t)) K.nebenton(id, S.a.klang); });
+  }, 50);
+  let auslauf = null; // läuft gerade der stille Übergang nach einer Zeile? (Promise, erfüllt wenn ausgeblendet)
   function videoVorbereiten(a) {
     videoStop();
     Object.values(BUEHNEN).forEach(b => {
@@ -763,11 +764,14 @@
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf
     geraet.style.setProperty('--poster', `url("${new URL(a.video.poster, location.href).href}")`);
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
-    IDLE.teile = Array.isArray(a.video.idle) ? a.video.idle : null; IDLE.letzt = 0; IDLE.warten = null;
-    VID.idle.loop = !IDLE.teile;
-    VID.idle.src = IDLE.teile ? IDLE.teile[0].src : a.video.idle; VID.idle.load();
-    // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt
-    videoVorbereiten.cache = a.video.clips.map(id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; });
+    IDLE.nah = a.video.nah || null; IDLE.toene = a.video.toene || []; IDLE.zuletzt = 0; auslauf = null;
+    VID.idle.loop = true; VID.talk.playbackRate = 1;
+    VID.idle.src = a.video.idle; VID.idle.load();
+    // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt – den ersten sofort, die übrigen
+    // etwas später, damit er nicht mit ihnen um die Leitung konkurriert
+    const laden = id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; };
+    videoVorbereiten.cache = [laden(a.video.clips[0])];
+    setTimeout(() => { if (S.a === a) videoVorbereiten.cache.push(...a.video.clips.slice(1).map(laden)); }, 4000);
   }
   function videoStart() { VID.idle.play().catch(() => { }); }
   function videoStop() {
@@ -778,31 +782,43 @@
     const ep = S.epoche, vt = VID.talk;
     if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
     VID.standbild.classList.remove('an'); VID.warn.hidden = true;
+    // Läuft noch der stille Übergang der letzten Zeile (schnelle Antwort), spult er doppelt so schnell zu Ende
+    if (auslauf) { vt.playbackRate = 2; await auslauf; if (ep !== S.epoche) return; }
+    vt.playbackRate = 1;
     const p = await K.stimmeLaden(zeile.id);
     const start = p ? p.start : 0;
     let eingefroren = false;
     vt.src = 'assets/video/' + zeile.id + '.mp4';
     // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
-    await Promise.all([bereit(vt, start), idleGrenze()]);
-    if (IDLE.teile) VID.idle.pause(); // hinter dem Clip steht sie still – kein Hüsteln mitten im Satz
+    await Promise.all([bereit(vt, start), idleGrenze()]); // idleGrenze hält die Idle an: kein Hüsteln mitten im Satz
     try { await vt.play(); } catch (e) { }
     if (ep !== S.epoche) { vt.pause(); return; }
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
-      const ausblenden = () => {
+      const ausblenden = async () => {
         // Die Idle beginnt wieder in der Ausgangshaltung – dort, wo der Clip (mit Übergang) aufhört
-        if (IDLE.teile && ep === S.epoche) { IDLE.letzt = -1; idleNaechstes(); }
+        if (IDLE.nah && ep === S.epoche) await idleNeustart();
         vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250);
       };
       if (!zeile.glitch) {
-        // Clips mit Endbild (Grok) kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
+        // Clips mit Endbild kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
         // dann passt das letzte Bild zur Idle-Schleife
         // (nur wenn das Bild mit dem Ton Schritt gehalten hat – sonst käme die Mundbewegung ohne Ton hinterher)
         const synchron = Math.abs(vt.currentTime - (start + tok.dauer)) < 0.4;
         const rest = S.a.video.auslauf && synchron && vt.duration ? vt.duration - vt.currentTime : 0;
-        if (rest > 0.1) setTimeout(() => { if (ep === S.epoche && vt.src.endsWith(zeile.id + '.mp4')) ausblenden(); }, rest * 1000);
-        else ausblenden();
+        if (rest > 0.1) {
+          auslauf = new Promise(ok => {
+            let fertig = false;
+            const los = async () => {
+              if (fertig) return; fertig = true; vt.removeEventListener('ended', los);
+              if (ep === S.epoche) await ausblenden();
+              auslauf = null; ok();
+            };
+            vt.addEventListener('ended', los);
+            setTimeout(los, rest * 1000 + 600);
+          });
+        } else ausblenden();
       }
       fertig();
     });
@@ -823,14 +839,14 @@
       vLauf.raf = requestAnimationFrame(schritt);
     })();
   }
-  // Wartet, bis das Video an Stelle t ein Bild zeigen und weiterspielen kann (höchstens 4 s)
+  // Wartet, bis das Video an Stelle t ein Bild zeigen und weiterspielen kann (höchstens 8 s)
   function bereit(v, t) {
     return new Promise(ok => {
       let fertig = false;
       const los = () => { if (fertig) return; fertig = true; v.removeEventListener('canplay', pruef); v.removeEventListener('seeked', pruef); ok(); };
       const pruef = () => { if (!v.seeking && v.readyState >= 3) los(); };
       v.addEventListener('canplay', pruef); v.addEventListener('seeked', pruef);
-      setTimeout(los, 4000);
+      setTimeout(los, 8000);
       try { v.currentTime = t; } catch (e) { }
       pruef();
     });

@@ -183,14 +183,18 @@ window.CONTENT = {
     },
 
     {
-      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips aus Grok mit
-      // dem Porträt als Start- und Endbild; die Idle ist vorläufig aus ihren Ruhephasen geschnitten (LEESMIJ).
+      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips und die beiden
+      // Idle-Stücke aus Grok, alle mit dem Porträt als Start- und Endbild; nah gemessen mit tools/werk/idlefilm.swift.
       id: 'c8',
       echt: true,
       kanal: 'teams',
       geraet: 'teams',
       extern: true,
-      video: { auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
+      video: {
+        auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4',
+        nah: [[0, 4.2], [7.7, 12.3], [18.6, 20.1]],
+        clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b']
+      },
       klang: 'teams',
       atmo: 'buero',
       klingel: 'teams',
@@ -356,14 +360,14 @@ window.CONTENT = {
       kanal: 'teams',
       geraet: 'teams',
       extern: false,
-      // Jeder Clip endet mit einem stillen Übergang (Seedance) zurück in die Ausgangshaltung; die Idle-Stücke beginnen
-      // und enden dort. nah = Stellen, an denen ein Clip ohne Sprung beginnen kann. B hüstelt (Ton als eigene Datei).
+      // Jeder Clip endet mit einem stillen Übergang (Seedance) zurück in die Ausgangshaltung. Die Idle ist ein Film aus
+      // Seedance-Stücken, die dort beginnen und enden (A ruhig, B hüstelt; tools/werk/idlefilm.swift). nah = Stellen,
+      // an denen ein Clip ohne Sprung beginnen kann (gemessen); toene = das Hüsteln, zeitgleich mit Stück B.
       video: {
-        hoch: true, auslauf: true, poster: 'assets/video/rivera-poster.jpg',
-        idle: [
-          { src: 'assets/video/c10_idleA.mp4', nah: [[0, 1.3], [4.2, 5.1]] },
-          { src: 'assets/video/c10_idleB.mp4', nah: [[0, 0.6]], ton: 'c10_idleB', selten: true }
-        ],
+        hoch: true, auslauf: true, poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4',
+        nah: [[0, 1.0], [1.4, 1.7], [4.4, 6.0], [6.5, 6.8], [9.4, 10.6], [15.0, 16.1], [16.6, 16.8], [19.5, 21.1],
+          [21.6, 21.9], [24.5, 26.2], [26.7, 26.9], [29.6, 30.8], [35.1, 36.2], [36.7, 37.0], [39.7, 40.3]],
+        toene: [[10.08, 'c10_idleB'], [30.25, 'c10_idleB']],
         clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b']
       },
       klang: 'teams',
