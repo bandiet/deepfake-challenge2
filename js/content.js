@@ -470,19 +470,19 @@ window.CONTENT = {
       storyTitel: 'Neue Bankverbindung – ab Dezember?',
       lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
       anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
-      start: { id: 'c8_0', tts: 'Guten Morgen! Kurz vorweg: Wir wechseln zum ersten Dezember unsere Bank. Sie bekommen diese Woche ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt. Passt das?' },
+      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
       runden: [
         [
           { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
-            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso, per Post und übers Lieferantenportal. Die alte Verbindung gilt ja noch bis Ende November. Keine Eile.' } },
+            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
           { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
-            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt. Die Nummern haben Sie ja.' } }
+            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
         ],
         [
           { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
-            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur noch die Rechnung vom September. Die zahlen Sie bitte ganz normal aufs bisherige Konto.' } },
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
           { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
-            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen, damit Sie nicht überrascht sind.' } }
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
         ]
       ],
       signale: [
@@ -509,23 +509,23 @@ window.CONTENT = {
       storyTitel: 'Die Umstellung wurde vorgezogen?',
       lage: 'Zwei Tage nach eurem Abstimmungstermin ruft Sofia Laurent an – diesmal nicht über Teams, sondern von einer Handynummer, die du nicht kennst.',
       anrufer: { name: '+49 151 2290 4471', zeile: 'WhatsApp-Video', initialen: '?', farbe: '#5B6B8C' },
-      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier, ich bin unterwegs. Unsere Bankumstellung wurde vorgezogen, das alte Konto schließt nächste Woche. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
+      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier. Unsere Bankumstellung wurde vorgezogen. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
       runden: [
         [
           { text: 'Ah, Sie hatten es ja angekündigt. Schicken Sie mir die Daten.', wert: 'riskant',
-            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt gerade. Nehmen Sie bitte nur diese Daten. Die im Portal sind veraltet.' } },
+            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt. Nehmen Sie nur diese Daten, die im Portal sind veraltet.' } },
           { text: 'Ich warte lieber auf Ihr offizielles Schreiben.', wert: 'gut',
-            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Lassen Sie uns das jetzt direkt machen.' } }
+            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Machen wir das lieber jetzt.' } }
         ],
         [
           { text: 'Okay, ich trage die neuen Daten heute noch ein.', wert: 'riskant',
-            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir kurz ein Foto der Buchung hier aufs Handy.' } },
+            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir ein Foto der Buchung aufs Handy.' } },
           { text: 'Ich rufe kurz Herrn Vogt an und lasse es mir bestätigen.', wert: 'gut',
-            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub, und die Zentrale weiß noch nichts. Das läuft nur über mich. Sie kennen mich doch. Nur dieses eine Mal?' } }
+            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub. Das läuft nur über mich. Sie kennen mich doch.' } }
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Die Geschichte stimmt – der Weg nicht', geraet: 'anrufer', zitat: ['private Adresse', 'Die im Portal sind veraltet'], text: 'Die Ankündigung war echt – solches Wissen stammt oft aus gehackten Postfächern. Aber: fremde Nummer, private Mailadresse, „nicht die Daten im Portal“.' },
+        { art: 'rot', titel: 'Die Geschichte stimmt – der Weg nicht', geraet: 'anrufer', zitat: ['privaten Adresse', 'die im Portal sind veraltet'], text: 'Die Ankündigung war echt – solches Wissen stammt oft aus gehackten Postfächern. Aber: fremde Nummer, private Mailadresse, „nicht die Daten im Portal“.' },
         { art: 'rot', titel: 'Bestätigung ausgebremst', zitat: 'Das läuft nur über mich', text: 'Neue Bankdaten bestätigst du über bekannte Kontakte – nie bei der Person, die sie gerade ändern will.', wenn: 'c9_2b' },
         { art: 'rot', titel: 'Brille und Wange verformen sich', text: 'Als die Hand vors Gesicht ging, verbogen sich kurz Brille und Wange – ein typischer Fehler beim Live-Deepfake. Achte darauf, aber verlass dich nicht darauf.' }
       ],
