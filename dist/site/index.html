@@ -1660,6 +1660,47 @@ window.CONTENT = {
     },
 
     {
+      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips aus Grok mit
+      // dem Porträt als Start- und Endbild; die Idle ist vorläufig aus ihren Ruhephasen geschnitten (LEESMIJ).
+      id: 'c8',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: true,
+      video: { auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
+      klang: 'teams',
+      atmo: 'buero',
+      klingel: 'teams',
+      zeit: 'Mittwoch, 10:00',
+      storyTitel: 'Neue Bankverbindung – ab Dezember?',
+      lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
+      anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
+      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
+      runden: [
+        [
+          { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
+            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
+          { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
+            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
+        ],
+        [
+          { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
+          { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
+        { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
+      ],
+      kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
+      tipp: 'Neue Bankdaten trägst du erst ein, wenn du sie über einen bekannten Kontakt bestätigt hast – auch wenn alles echt wirkt.',
+      hacker: { echt: 'Gähn. Nur eine Ankündigung. Aber merk dir das gut … 😏', fehlalarm: 'Schon bei „neue Bank“ Alarm? Dann wird Level 2 lustig.' },
+      beute: 0
+    },
+
+    {
       // CEO-Fraud als Deepfake-Videoanruf (Alex Morgan, Hotel-Lounge, Hochformat). Bild und Ton aus
       // Alex_hotel_DF02_DE_v3: pro Zeile mehrere Clips mit Überblendung (tools siehe LEESMIJ). Das Bild bleibt makellos.
       id: 'c5',
@@ -1792,9 +1833,18 @@ window.CONTENT = {
       kanal: 'teams',
       geraet: 'teams',
       extern: false,
-      video: { hoch: true, poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4', clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b'] },
+      // Jeder Clip endet mit einem stillen Übergang (Seedance) zurück in die Ausgangshaltung; die Idle-Stücke beginnen
+      // und enden dort. nah = Stellen, an denen ein Clip ohne Sprung beginnen kann. B hüstelt (Ton als eigene Datei).
+      video: {
+        hoch: true, auslauf: true, poster: 'assets/video/rivera-poster.jpg',
+        idle: [
+          { src: 'assets/video/c10_idleA.mp4', nah: [[0, 1.3], [4.2, 5.1]] },
+          { src: 'assets/video/c10_idleB.mp4', nah: [[0, 0.6]], ton: 'c10_idleB', selten: true }
+        ],
+        clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b']
+      },
       klang: 'teams',
-      atmo: null,
+      atmo: 'wohnzimmer',
       klingel: 'teams',
       zeit: 'Donnerstag, 19:30',
       storyTitel: 'Klingt so heiser – ist das Jamie?',
@@ -1930,48 +1980,8 @@ window.CONTENT = {
       beute: 0
     },
 
-    /* ---- Die folgenden Anrufe warten noch auf ihre Videos (Texte aus „Deepfake Challenge – drei neue Videos“).
-       Sie stehen hinter c7 und sind damit nicht im Spiel; mit den Clips rücken sie an ihren Platz (siehe levels). ---- */
-    {
-      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat)
-      id: 'c8',
-      echt: true,
-      kanal: 'teams',
-      geraet: 'teams',
-      extern: true,
-      video: { poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
-      klang: 'teams',
-      atmo: null,
-      klingel: 'teams',
-      zeit: 'Mittwoch, 10:00',
-      storyTitel: 'Neue Bankverbindung – ab Dezember?',
-      lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
-      anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
-      start: { id: 'c8_0', tts: 'Guten Morgen! Kurz vorweg: Wir wechseln zum ersten Dezember unsere Bank. Sie bekommen diese Woche ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt. Passt das?' },
-      runden: [
-        [
-          { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
-            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso, per Post und übers Lieferantenportal. Die alte Verbindung gilt ja noch bis Ende November. Keine Eile.' } },
-          { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
-            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt. Die Nummern haben Sie ja.' } }
-        ],
-        [
-          { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
-            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur noch die Rechnung vom September. Die zahlen Sie bitte ganz normal aufs bisherige Konto.' } },
-          { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
-            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen, damit Sie nicht überrascht sind.' } }
-        ]
-      ],
-      signale: [
-        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
-        { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
-      ],
-      kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
-      tipp: 'Neue Bankdaten trägst du erst ein, wenn du sie über einen bekannten Kontakt bestätigt hast – auch wenn alles echt wirkt.',
-      hacker: { echt: 'Gähn. Nur eine Ankündigung. Aber merk dir das gut … 😏', fehlalarm: 'Schon bei „neue Bank“ Alarm? Dann wird Level 2 lustig.' },
-      beute: 0
-    },
-
+    /* ---- Dieser Anruf wartet noch auf seine Videos (Text aus „Deepfake Challenge – drei neue Videos“).
+       Er steht hinter c7 und ist damit nicht im Spiel; mit den Clips rückt er an seinen Platz (siehe levels). ---- */
     {
       // Level 2 nach c3: die falsche Sofia nutzt die Ankündigung aus (WhatsApp-Video, Hochformat). Clips liefert Arne.
       id: 'c9',
@@ -1986,23 +1996,23 @@ window.CONTENT = {
       storyTitel: 'Die Umstellung wurde vorgezogen?',
       lage: 'Zwei Tage nach eurem Abstimmungstermin ruft Sofia Laurent an – diesmal nicht über Teams, sondern von einer Handynummer, die du nicht kennst.',
       anrufer: { name: '+49 151 2290 4471', zeile: 'WhatsApp-Video', initialen: '?', farbe: '#5B6B8C' },
-      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier, ich bin unterwegs. Unsere Bankumstellung wurde vorgezogen, das alte Konto schließt nächste Woche. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
+      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier. Unsere Bankumstellung wurde vorgezogen. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
       runden: [
         [
           { text: 'Ah, Sie hatten es ja angekündigt. Schicken Sie mir die Daten.', wert: 'riskant',
-            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt gerade. Nehmen Sie bitte nur diese Daten. Die im Portal sind veraltet.' } },
+            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt. Nehmen Sie nur diese Daten, die im Portal sind veraltet.' } },
           { text: 'Ich warte lieber auf Ihr offizielles Schreiben.', wert: 'gut',
-            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Lassen Sie uns das jetzt direkt machen.' } }
+            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Machen wir das lieber jetzt.' } }
         ],
         [
           { text: 'Okay, ich trage die neuen Daten heute noch ein.', wert: 'riskant',
-            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir kurz ein Foto der Buchung hier aufs Handy.' } },
+            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir ein Foto der Buchung aufs Handy.' } },
           { text: 'Ich rufe kurz Herrn Vogt an und lasse es mir bestätigen.', wert: 'gut',
-            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub, und die Zentrale weiß noch nichts. Das läuft nur über mich. Sie kennen mich doch. Nur dieses eine Mal?' } }
+            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub. Das läuft nur über mich. Sie kennen mich doch.' } }
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Die Geschichte stimmt – der Weg nicht', geraet: 'anrufer', zitat: ['private Adresse', 'Die im Portal sind veraltet'], text: 'Die Ankündigung war echt – solches Wissen stammt oft aus gehackten Postfächern. Aber: fremde Nummer, private Mailadresse, „nicht die Daten im Portal“.' },
+        { art: 'rot', titel: 'Die Geschichte stimmt – der Weg nicht', geraet: 'anrufer', zitat: ['privaten Adresse', 'die im Portal sind veraltet'], text: 'Die Ankündigung war echt – solches Wissen stammt oft aus gehackten Postfächern. Aber: fremde Nummer, private Mailadresse, „nicht die Daten im Portal“.' },
         { art: 'rot', titel: 'Bestätigung ausgebremst', zitat: 'Das läuft nur über mich', text: 'Neue Bankdaten bestätigst du über bekannte Kontakte – nie bei der Person, die sie gerade ändern will.', wenn: 'c9_2b' },
         { art: 'rot', titel: 'Brille und Wange verformen sich', text: 'Als die Hand vors Gesicht ging, verbogen sich kurz Brille und Wange – ein typischer Fehler beim Live-Deepfake. Achte darauf, aber verlass dich nicht darauf.' }
       ],
@@ -2020,9 +2030,9 @@ window.CONTENT = {
      sonst wird das Level wiederholt (im LMS gilt die Challenge erst als abgeschlossen, wenn alle Levels bestanden sind).
      Nach Level 1 kommt der Sicherheitstipp, nach dem letzten Level „Zum Schluss“ (unten). */
   levels: [
-    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia echt (Level 1, vor c5)
-    // und Sofia fake (Level 2, nach c3) – die Texte stehen schon unten (c8, c9). c6 (Headset) ist nicht mehr im Spiel.
-    { anzahl: 3, mindestens: 2, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
+    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia fake (Level 2, nach c3) –
+    // der Text steht schon unten (c9). c6 (Headset) ist nicht mehr im Spiel.
+    { anzahl: 4, mindestens: 3, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
     { anzahl: 3, mindestens: 2, kicker: 'Anrufe im Job – wem kannst du trauen?' }
   ],
   levelIntro: {
@@ -2355,7 +2365,8 @@ window.LMS = (function () {
     erzaehler: { hp: 40, lp: 18000, drive: 0, gain: 1.0 }
   };
 
-  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13 };
+  // buero und wohnzimmer sind als Datei sehr leise (um −67 dB) – daher über 1: leichtes Rauschen, das in den Pausen durchläuft
+  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13, buero: 1.6, wohnzimmer: 2.0 };
 
   let ctx = null, master = null, musikBus = null, stimmBus = null, analyser = null, sfxBus = null;
   let an = true;
@@ -2584,6 +2595,11 @@ window.LMS = (function () {
     eins(); synthRing.timer = setInterval(eins, 1600);
   }
 
+  // Geräusch des Anrufers (z. B. Hüsteln in der Idle) durch dieselbe Leitung wie seine Stimme
+  async function nebenton(id, art) {
+    init(); const p = await stimmeLaden(id); if (!p) return;
+    const s = ctx.createBufferSource(); s.buffer = p.buf; s.connect(leitung(art, stimmBus)); s.start();
+  }
   async function einmal(name, vol) {
     init(); const p = await sfxLaden(name); if (!p) return;
     const g = ctx.createGain(); g.gain.value = vol == null ? 0.8 : vol; g.connect(sfxBus);
@@ -2655,7 +2671,7 @@ window.LMS = (function () {
     laden, stimmeLaden, sfxLaden, musikLaden, stemEndung,
     stimme, stimmeStop, fortschritt, textFortschritt, pegel,
     musik, musikVol, musikAus,
-    atmo, atmoStop, ring, ringStop, einmal,
+    atmo, atmoStop, ring, ringStop, einmal, nebenton,
     fx,
     get ctx() { return ctx; }
   };
@@ -3493,7 +3509,42 @@ window.Feier = (function () {
     teams: { box: $('win-video'), idle: $('win-vid-idle'), talk: $('win-vid-talk'), standbild: $('win-vid-standbild'), warn: $('win-vid-warn') }
   };
   let VID = BUEHNEN.phone, vLauf = null;
-  C.anrufe.forEach(a => { if (a.video) a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; }); });
+  C.anrufe.forEach(a => {
+    if (!a.video) return;
+    a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; });
+    if (Array.isArray(a.video.idle)) a.video.idle.forEach(t => { if (t.ton) K.stemEndung[t.ton] = '.m4a'; });
+  });
+  // Idle aus Stücken (Seedance): jedes beginnt und endet in der Ausgangshaltung der Clips. Sie wechseln sich ab,
+  // und ein Clip beginnt nur dort, wo das Idle-Bild zur Ausgangshaltung passt (Stückgrenze oder nah-Fenster) –
+  // sonst springt das Bild. Ein String als idle bleibt eine einfache Schleife.
+  const IDLE = { teile: null, letzt: -1, warten: null };
+  function idleNaechstes() {
+    const t = IDLE.teile; if (!t) return;
+    const wahl = f => { const j = t.map((x, i) => f(x) ? i : -1).filter(i => i >= 0); return j[Math.floor(Math.random() * j.length)]; };
+    // Seltene Stücke (Hüsteln) nie zweimal hintereinander und nicht gleich zu Beginn
+    const selten = IDLE.letzt >= 0 && !t[IDLE.letzt].selten && t.some(x => x.selten) && Math.random() < 0.35;
+    const i = selten ? wahl(x => x.selten) : wahl(x => !x.selten);
+    IDLE.letzt = i;
+    VID.idle.src = t[i].src; VID.idle.play().catch(() => { });
+    if (t[i].ton) K.nebenton(t[i].ton, S.a.klang);
+  }
+  // Wartet auf eine Stelle in der Idle, an der ein Clip ohne Sprung beginnen kann (höchstens 6 s)
+  function idleGrenze() {
+    const v = VID.idle, t = IDLE.teile;
+    if (!t || v.paused || v.ended) return Promise.resolve();
+    const nah = () => v.currentTime < 0.15 || (t[IDLE.letzt].nah || []).some(([a, b]) => v.currentTime >= a && v.currentTime <= b);
+    if (nah()) return Promise.resolve();
+    return new Promise(ok => {
+      const los = () => { if (IDLE.warten !== los) return; IDLE.warten = null; clearInterval(iv); v.pause(); ok(); };
+      IDLE.warten = los;
+      const iv = setInterval(() => { if (nah()) los(); }, 40);
+      setTimeout(los, 6000);
+    });
+  }
+  Object.values(BUEHNEN).forEach(b => b.idle.addEventListener('ended', () => {
+    if (b !== VID || !IDLE.teile) return;
+    if (IDLE.warten) IDLE.warten(); else idleNaechstes();
+  }));
   function videoVorbereiten(a) {
     videoStop();
     Object.values(BUEHNEN).forEach(b => {
@@ -3508,7 +3559,9 @@ window.Feier = (function () {
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf
     geraet.style.setProperty('--poster', `url("${new URL(a.video.poster, location.href).href}")`);
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
-    VID.idle.src = a.video.idle; VID.idle.load();
+    IDLE.teile = Array.isArray(a.video.idle) ? a.video.idle : null; IDLE.letzt = 0; IDLE.warten = null;
+    VID.idle.loop = !IDLE.teile;
+    VID.idle.src = IDLE.teile ? IDLE.teile[0].src : a.video.idle; VID.idle.load();
     // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt
     videoVorbereiten.cache = a.video.clips.map(id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; });
   }
@@ -3525,12 +3578,28 @@ window.Feier = (function () {
     const start = p ? p.start : 0;
     let eingefroren = false;
     vt.src = 'assets/video/' + zeile.id + '.mp4';
-    try { vt.currentTime = start; await vt.play(); } catch (e) { }
+    // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
+    await Promise.all([bereit(vt, start), idleGrenze()]);
+    if (IDLE.teile) VID.idle.pause(); // hinter dem Clip steht sie still – kein Hüsteln mitten im Satz
+    try { await vt.play(); } catch (e) { }
     if (ep !== S.epoche) { vt.pause(); return; }
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
-      if (!zeile.glitch) { vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250); }
+      const ausblenden = () => {
+        // Die Idle beginnt wieder in der Ausgangshaltung – dort, wo der Clip (mit Übergang) aufhört
+        if (IDLE.teile && ep === S.epoche) { IDLE.letzt = -1; idleNaechstes(); }
+        vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250);
+      };
+      if (!zeile.glitch) {
+        // Clips mit Endbild (Grok) kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
+        // dann passt das letzte Bild zur Idle-Schleife
+        // (nur wenn das Bild mit dem Ton Schritt gehalten hat – sonst käme die Mundbewegung ohne Ton hinterher)
+        const synchron = Math.abs(vt.currentTime - (start + tok.dauer)) < 0.4;
+        const rest = S.a.video.auslauf && synchron && vt.duration ? vt.duration - vt.currentTime : 0;
+        if (rest > 0.1) setTimeout(() => { if (ep === S.epoche && vt.src.endsWith(zeile.id + '.mp4')) ausblenden(); }, rest * 1000);
+        else ausblenden();
+      }
       fertig();
     });
     if (ep !== S.epoche) return;
@@ -3543,12 +3612,24 @@ window.Feier = (function () {
       if (f != null && !eingefroren) {
         const soll = start + f * tok.dauer;
         if (vt.paused) vt.play().catch(() => { });
-        if (Math.abs(vt.currentTime - soll) > 0.12 && soll < (vt.duration || 99)) vt.currentTime = soll;
+        if (!vt.seeking && Math.abs(vt.currentTime - soll) > 0.12 && soll < (vt.duration || 99)) vt.currentTime = soll;
         // Kontrollfrage: Das Bild bleibt stehen, der Ton läuft noch kurz weiter – wie ein echter Abbruch
         if (zeile.glitch && f > 0.8) { eingefroren = true; vt.pause(); standbild(vt); VID.warn.textContent = C.telefon.instabil; VID.warn.hidden = false; }
       }
       vLauf.raf = requestAnimationFrame(schritt);
     })();
+  }
+  // Wartet, bis das Video an Stelle t ein Bild zeigen und weiterspielen kann (höchstens 4 s)
+  function bereit(v, t) {
+    return new Promise(ok => {
+      let fertig = false;
+      const los = () => { if (fertig) return; fertig = true; v.removeEventListener('canplay', pruef); v.removeEventListener('seeked', pruef); ok(); };
+      const pruef = () => { if (!v.seeking && v.readyState >= 3) los(); };
+      v.addEventListener('canplay', pruef); v.addEventListener('seeked', pruef);
+      setTimeout(los, 4000);
+      try { v.currentTime = t; } catch (e) { }
+      pruef();
+    });
   }
   function standbild(video) {
     const box = VID.box.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1), cv = VID.standbild;

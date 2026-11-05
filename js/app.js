@@ -713,7 +713,42 @@
     teams: { box: $('win-video'), idle: $('win-vid-idle'), talk: $('win-vid-talk'), standbild: $('win-vid-standbild'), warn: $('win-vid-warn') }
   };
   let VID = BUEHNEN.phone, vLauf = null;
-  C.anrufe.forEach(a => { if (a.video) a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; }); });
+  C.anrufe.forEach(a => {
+    if (!a.video) return;
+    a.video.clips.forEach(id => { K.stemEndung[id] = '.m4a'; });
+    if (Array.isArray(a.video.idle)) a.video.idle.forEach(t => { if (t.ton) K.stemEndung[t.ton] = '.m4a'; });
+  });
+  // Idle aus Stücken (Seedance): jedes beginnt und endet in der Ausgangshaltung der Clips. Sie wechseln sich ab,
+  // und ein Clip beginnt nur dort, wo das Idle-Bild zur Ausgangshaltung passt (Stückgrenze oder nah-Fenster) –
+  // sonst springt das Bild. Ein String als idle bleibt eine einfache Schleife.
+  const IDLE = { teile: null, letzt: -1, warten: null };
+  function idleNaechstes() {
+    const t = IDLE.teile; if (!t) return;
+    const wahl = f => { const j = t.map((x, i) => f(x) ? i : -1).filter(i => i >= 0); return j[Math.floor(Math.random() * j.length)]; };
+    // Seltene Stücke (Hüsteln) nie zweimal hintereinander und nicht gleich zu Beginn
+    const selten = IDLE.letzt >= 0 && !t[IDLE.letzt].selten && t.some(x => x.selten) && Math.random() < 0.35;
+    const i = selten ? wahl(x => x.selten) : wahl(x => !x.selten);
+    IDLE.letzt = i;
+    VID.idle.src = t[i].src; VID.idle.play().catch(() => { });
+    if (t[i].ton) K.nebenton(t[i].ton, S.a.klang);
+  }
+  // Wartet auf eine Stelle in der Idle, an der ein Clip ohne Sprung beginnen kann (höchstens 6 s)
+  function idleGrenze() {
+    const v = VID.idle, t = IDLE.teile;
+    if (!t || v.paused || v.ended) return Promise.resolve();
+    const nah = () => v.currentTime < 0.15 || (t[IDLE.letzt].nah || []).some(([a, b]) => v.currentTime >= a && v.currentTime <= b);
+    if (nah()) return Promise.resolve();
+    return new Promise(ok => {
+      const los = () => { if (IDLE.warten !== los) return; IDLE.warten = null; clearInterval(iv); v.pause(); ok(); };
+      IDLE.warten = los;
+      const iv = setInterval(() => { if (nah()) los(); }, 40);
+      setTimeout(los, 6000);
+    });
+  }
+  Object.values(BUEHNEN).forEach(b => b.idle.addEventListener('ended', () => {
+    if (b !== VID || !IDLE.teile) return;
+    if (IDLE.warten) IDLE.warten(); else idleNaechstes();
+  }));
   function videoVorbereiten(a) {
     videoStop();
     Object.values(BUEHNEN).forEach(b => {
@@ -728,7 +763,9 @@
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf
     geraet.style.setProperty('--poster', `url("${new URL(a.video.poster, location.href).href}")`);
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
-    VID.idle.src = a.video.idle; VID.idle.load();
+    IDLE.teile = Array.isArray(a.video.idle) ? a.video.idle : null; IDLE.letzt = 0; IDLE.warten = null;
+    VID.idle.loop = !IDLE.teile;
+    VID.idle.src = IDLE.teile ? IDLE.teile[0].src : a.video.idle; VID.idle.load();
     // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt
     videoVorbereiten.cache = a.video.clips.map(id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; });
   }
@@ -746,13 +783,18 @@
     let eingefroren = false;
     vt.src = 'assets/video/' + zeile.id + '.mp4';
     // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
-    await bereit(vt, start);
+    await Promise.all([bereit(vt, start), idleGrenze()]);
+    if (IDLE.teile) VID.idle.pause(); // hinter dem Clip steht sie still – kein Hüsteln mitten im Satz
     try { await vt.play(); } catch (e) { }
     if (ep !== S.epoche) { vt.pause(); return; }
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
-      const ausblenden = () => { vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250); };
+      const ausblenden = () => {
+        // Die Idle beginnt wieder in der Ausgangshaltung – dort, wo der Clip (mit Übergang) aufhört
+        if (IDLE.teile && ep === S.epoche) { IDLE.letzt = -1; idleNaechstes(); }
+        vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250);
+      };
       if (!zeile.glitch) {
         // Clips mit Endbild (Grok) kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
         // dann passt das letzte Bild zur Idle-Schleife

@@ -356,7 +356,16 @@ window.CONTENT = {
       kanal: 'teams',
       geraet: 'teams',
       extern: false,
-      video: { hoch: true, poster: 'assets/video/rivera-poster.jpg', idle: 'assets/video/c10_idle.mp4', clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b'] },
+      // Jeder Clip endet mit einem stillen Übergang (Seedance) zurück in die Ausgangshaltung; die Idle-Stücke beginnen
+      // und enden dort. nah = Stellen, an denen ein Clip ohne Sprung beginnen kann. B hüstelt (Ton als eigene Datei).
+      video: {
+        hoch: true, auslauf: true, poster: 'assets/video/rivera-poster.jpg',
+        idle: [
+          { src: 'assets/video/c10_idleA.mp4', nah: [[0, 1.3], [4.2, 5.1]] },
+          { src: 'assets/video/c10_idleB.mp4', nah: [[0, 0.6]], ton: 'c10_idleB', selten: true }
+        ],
+        clips: ['c10_0', 'c10_1a', 'c10_1b', 'c10_2a', 'c10_2b']
+      },
       klang: 'teams',
       atmo: 'wohnzimmer',
       klingel: 'teams',

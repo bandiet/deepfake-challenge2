@@ -252,6 +252,11 @@
     eins(); synthRing.timer = setInterval(eins, 1600);
   }
 
+  // Geräusch des Anrufers (z. B. Hüsteln in der Idle) durch dieselbe Leitung wie seine Stimme
+  async function nebenton(id, art) {
+    init(); const p = await stimmeLaden(id); if (!p) return;
+    const s = ctx.createBufferSource(); s.buffer = p.buf; s.connect(leitung(art, stimmBus)); s.start();
+  }
   async function einmal(name, vol) {
     init(); const p = await sfxLaden(name); if (!p) return;
     const g = ctx.createGain(); g.gain.value = vol == null ? 0.8 : vol; g.connect(sfxBus);
@@ -323,7 +328,7 @@
     laden, stimmeLaden, sfxLaden, musikLaden, stemEndung,
     stimme, stimmeStop, fortschritt, textFortschritt, pegel,
     musik, musikVol, musikAus,
-    atmo, atmoStop, ring, ringStop, einmal,
+    atmo, atmoStop, ring, ringStop, einmal, nebenton,
     fx,
     get ctx() { return ctx; }
   };

@@ -46,7 +46,9 @@ for sid in sorted(set(re.findall(r"id: '(c\d+_\w+)'", content))):   # nur verwen
     elif da(f'assets/stem/{sid}.mp3'):
         pfade.append(f'assets/stem/{sid}.mp3')
 # Idle-Schleifen und Standbilder der Videoanrufe
-pfade += [f for f in sorted(set(re.findall(r"(?:poster|idle): '(assets/[^']+)'", content))) if da(f)]
+pfade += [f for f in sorted(set(re.findall(r"(?:poster|idle|src): '(assets/[^']+)'", content))) if da(f)]
+# Geräusche in Idle-Stücken (z. B. Hüsteln)
+pfade += [f'assets/stem/{t}.m4a' for t in sorted(set(re.findall(r"ton: '(c\d+_\w+)'", content))) if da(f'assets/stem/{t}.m4a')]
 for ordner in ('sfx', 'musik'):
     for n in sorted(os.listdir(os.path.join(P, 'assets', ordner))):
         if n.endswith('.mp3'):
