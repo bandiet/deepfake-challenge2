@@ -750,7 +750,14 @@
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
-      if (!zeile.glitch) { vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250); }
+      const ausblenden = () => { vt.style.opacity = 0; setTimeout(() => { if (ep === S.epoche) vt.pause(); }, 250); };
+      if (!zeile.glitch) {
+        // Clips mit Endbild (Grok) kehren nach dem letzten Wort in die Ruhehaltung zurück: zu Ende laufen lassen,
+        // dann passt das letzte Bild zur Idle-Schleife
+        const rest = S.a.video.auslauf && vt.duration ? vt.duration - vt.currentTime : 0;
+        if (rest > 0.1) setTimeout(() => { if (ep === S.epoche && vt.src.endsWith(zeile.id + '.mp4')) ausblenden(); }, rest * 1000);
+        else ausblenden();
+      }
       fertig();
     });
     if (ep !== S.epoche) return;

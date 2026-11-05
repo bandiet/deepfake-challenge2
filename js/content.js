@@ -183,6 +183,47 @@ window.CONTENT = {
     },
 
     {
+      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips aus Grok mit
+      // dem Porträt als Start- und Endbild; die Idle ist vorläufig aus ihren Ruhephasen geschnitten (LEESMIJ).
+      id: 'c8',
+      echt: true,
+      kanal: 'teams',
+      geraet: 'teams',
+      extern: true,
+      video: { auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
+      klang: 'teams',
+      atmo: null,
+      klingel: 'teams',
+      zeit: 'Mittwoch, 10:00',
+      storyTitel: 'Neue Bankverbindung – ab Dezember?',
+      lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
+      anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
+      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
+      runden: [
+        [
+          { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
+            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
+          { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
+            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
+        ],
+        [
+          { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
+          { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
+        ]
+      ],
+      signale: [
+        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
+        { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
+      ],
+      kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
+      tipp: 'Neue Bankdaten trägst du erst ein, wenn du sie über einen bekannten Kontakt bestätigt hast – auch wenn alles echt wirkt.',
+      hacker: { echt: 'Gähn. Nur eine Ankündigung. Aber merk dir das gut … 😏', fehlalarm: 'Schon bei „neue Bank“ Alarm? Dann wird Level 2 lustig.' },
+      beute: 0
+    },
+
+    {
       // CEO-Fraud als Deepfake-Videoanruf (Alex Morgan, Hotel-Lounge, Hochformat). Bild und Ton aus
       // Alex_hotel_DF02_DE_v3: pro Zeile mehrere Clips mit Überblendung (tools siehe LEESMIJ). Das Bild bleibt makellos.
       id: 'c5',
@@ -453,48 +494,8 @@ window.CONTENT = {
       beute: 0
     },
 
-    /* ---- Die folgenden Anrufe warten noch auf ihre Videos (Texte aus „Deepfake Challenge – drei neue Videos“).
-       Sie stehen hinter c7 und sind damit nicht im Spiel; mit den Clips rücken sie an ihren Platz (siehe levels). ---- */
-    {
-      // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat)
-      id: 'c8',
-      echt: true,
-      kanal: 'teams',
-      geraet: 'teams',
-      extern: true,
-      video: { poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4', clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b'] },
-      klang: 'teams',
-      atmo: null,
-      klingel: 'teams',
-      zeit: 'Mittwoch, 10:00',
-      storyTitel: 'Neue Bankverbindung – ab Dezember?',
-      lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
-      anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
-      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
-      runden: [
-        [
-          { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
-            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
-          { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
-            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
-        ],
-        [
-          { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
-            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
-          { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
-            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
-        ]
-      ],
-      signale: [
-        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
-        { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
-      ],
-      kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
-      tipp: 'Neue Bankdaten trägst du erst ein, wenn du sie über einen bekannten Kontakt bestätigt hast – auch wenn alles echt wirkt.',
-      hacker: { echt: 'Gähn. Nur eine Ankündigung. Aber merk dir das gut … 😏', fehlalarm: 'Schon bei „neue Bank“ Alarm? Dann wird Level 2 lustig.' },
-      beute: 0
-    },
-
+    /* ---- Dieser Anruf wartet noch auf seine Videos (Text aus „Deepfake Challenge – drei neue Videos“).
+       Er steht hinter c7 und ist damit nicht im Spiel; mit den Clips rückt er an seinen Platz (siehe levels). ---- */
     {
       // Level 2 nach c3: die falsche Sofia nutzt die Ankündigung aus (WhatsApp-Video, Hochformat). Clips liefert Arne.
       id: 'c9',
@@ -543,9 +544,9 @@ window.CONTENT = {
      sonst wird das Level wiederholt (im LMS gilt die Challenge erst als abgeschlossen, wenn alle Levels bestanden sind).
      Nach Level 1 kommt der Sicherheitstipp, nach dem letzten Level „Zum Schluss“ (unten). */
   levels: [
-    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia echt (Level 1, vor c5)
-    // und Sofia fake (Level 2, nach c3) – die Texte stehen schon unten (c8, c9). c6 (Headset) ist nicht mehr im Spiel.
-    { anzahl: 3, mindestens: 2, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
+    // Ziel: 2 × 4 Anrufe, Audio und Video gemischt. Noch ohne Video: Sofia fake (Level 2, nach c3) –
+    // der Text steht schon unten (c9). c6 (Headset) ist nicht mehr im Spiel.
+    { anzahl: 4, mindestens: 3, kicker: 'Hör genau hin. Schau genau hin. Hak nach.' },
     { anzahl: 3, mindestens: 2, kicker: 'Anrufe im Job – wem kannst du trauen?' }
   ],
   levelIntro: {
