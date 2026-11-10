@@ -217,13 +217,75 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .beat[data-art="ring"] .beat-gross { font: 500 clamp(22px, 3vw, 34px)/1.3 var(--mono); font-style: normal; letter-spacing: .02em; color: var(--lilac); }
 .beat-gross.flackern { animation: flackern .09s steps(1) 10; }
 @keyframes flackern { 50% { font-family: var(--mono); font-style: normal; letter-spacing: -.06em; color: var(--pink); transform: translateX(4px) skewX(-6deg); } }
-.beat-klein { margin: 0; font: 500 clamp(14px, 1.5vw, 18px)/1.5 var(--mono); color: var(--lilac); min-height: 1.5em; }
-.beat-ergebnis { margin: 0; min-height: 1.4em; font: 600 14px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--pink); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+.beat-klein { margin: 0; font: 500 clamp(18px, 2vw, 24px)/1.45 var(--mono); color: var(--lilac); min-height: 1.45em; text-wrap: balance; }
+.beat-ergebnis { margin: 0; min-height: 1.4em; font: 600 16px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--pink); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
 .beat-ergebnis.an { opacity: 1; transform: none; }
-.beat-medium { display: none; width: 100%; justify-items: center; }
-.beat[data-art="audio"] .beat-medium { display: grid; }
+.beat-medium { display: none; width: 100%; justify-items: center; gap: 12px; }
+.beat[data-art="audio"] .beat-medium, .beat[data-art="gesicht"] .beat-medium { display: grid; }
 .rec { display: none; }
-.beat[data-art="audio"] .rec { display: grid; }
+.beat[data-art="audio"] .rec.an { display: grid; animation: beatein .45s var(--ease); }
+/* Szenen: erst läuft das Kit, dann kommen Überschrift, Untertitel und Ergebnis */
+.beat.vorher .beat-gross, .beat.vorher .beat-klein { opacity: 0; transform: translateY(8px); }
+.beat-gross, .beat-klein { transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.beat[data-art="audio"], .beat[data-art="gesicht"] { gap: 14px; }
+.beat[data-art="audio"] .beat-gross, .beat[data-art="gesicht"] .beat-gross { font-size: clamp(38px, 6vw, 84px); order: 1; }
+.beat[data-art="audio"] .beat-klein, .beat[data-art="gesicht"] .beat-klein { order: 2; }
+.beat[data-art="audio"] .beat-ergebnis, .beat[data-art="gesicht"] .beat-ergebnis { order: 3; }
+.beat-medium { order: 0; }
+.sz-schritt { margin: 0; min-height: 1.3em; font: 600 13px/1.3 var(--code); letter-spacing: .08em; color: var(--pink); }
+.szene { position: relative; display: grid; width: min(560px, 100%); }
+.szene > * { grid-area: 1 / 1; }
+.sz-scan { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent 0 46%, rgba(255, 45, 135, .0) 46%, rgba(255, 45, 135, .55) 50%, transparent 54%); background-size: 220% 100%; }
+/* die Scanlinie ist nur während des Scans zu sehen */
+@keyframes scan { from { background-position: 120% 0; opacity: 1; } to { background-position: -20% 0; opacity: 1; } }
+@keyframes scanY { from { transform: translateY(-100%); opacity: 1; } to { transform: translateY(100%); opacity: 1; } }
+/* Online-Video */
+.sz-player { border-radius: 14px; overflow: hidden; background: #111; border: 1px solid rgba(255, 255, 255, .12); text-align: left; box-shadow: 0 20px 60px -30px rgba(0,0,0,.9); }
+.sz-bild { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.sz-bild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sz-play { position: absolute; left: 14px; bottom: 12px; width: 0; height: 0; border-left: 12px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+.szene.laeuft .sz-play { width: 12px; height: 16px; border: 0; background: linear-gradient(90deg, #fff 0 4px, transparent 4px 8px, #fff 8px 12px); }
+.sz-dauer { position: absolute; right: 10px; bottom: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,.7); font: 600 11px/1.3 var(--code); color: #fff; }
+.sz-leiste { position: relative; height: 4px; background: rgba(255, 255, 255, .2); }
+.sz-fort { position: absolute; left: 0; top: 0; bottom: 0; width: 6%; background: #FF3B3B; transition: width 1.6s linear; }
+.szene.laeuft .sz-fort { width: 38%; }
+.sz-auswahl { position: absolute; left: 38%; width: 5%; top: -5px; bottom: -5px; border-radius: 3px; border: 2px solid var(--pink); background: rgba(255, 45, 135, .35); box-shadow: 0 0 14px var(--pink); opacity: 0; transform: scaleX(.2); transition: opacity .25s, transform .35s var(--ease); }
+.szene.markiert .sz-auswahl { opacity: 1; transform: none; }
+.szene.markiert .sz-bild .sz-scan { animation: scan 1.6s linear; }
+.sz-meta { display: flex; gap: 10px; align-items: center; padding: 10px 12px 12px; }
+.sz-meta b { display: block; font: 600 14px/1.3 var(--font); color: #fff; }
+.sz-meta small { display: block; font: 500 12px/1.4 var(--font); color: #A9A6BD; }
+.sz-avatar { flex: none; width: 34px; height: 34px; border-radius: 50%; overflow: hidden; }
+.sz-avatar img { width: 100%; height: 100%; object-fit: cover; }
+/* Social-Media-Profil */
+.sz-profil { border-radius: 14px; background: #fff; color: #111; padding: 16px; text-align: left; display: grid; gap: 14px; transition: opacity .45s var(--ease), transform .45s var(--ease); }
+.sp-kopf { display: flex; gap: 16px; align-items: center; }
+.sp-avatar { flex: none; width: 74px; height: 74px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #E1306C; }
+.sp-avatar img, .sp-post img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sp-info b { font: 700 16px/1.2 var(--font); }
+.sp-zahlen { display: flex; gap: 14px; margin: 6px 0 4px; font: 400 13px/1.2 var(--font); color: #444; }
+.sp-zahlen b { font-size: 14px; color: #111; }
+.sp-info p { margin: 0; font: 400 13px/1.3 var(--font); color: #555; }
+.sp-raster { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.sp-post { position: relative; aspect-ratio: 1; overflow: hidden; background: #ddd; }
+.sp-leer { background: linear-gradient(135deg, #8ec5fc, #e0c3fc); }
+.sp-ziel::after { content: ""; position: absolute; inset: 3px; border: 2px dashed var(--pink); opacity: 0; transition: opacity .25s; box-shadow: inset 0 0 0 999px rgba(255, 45, 135, .18); }
+.szene.markiert .sp-ziel::after { opacity: 1; animation: blink .5s steps(2) 3; }
+.szene.kopiert .sz-profil { opacity: 0; transform: scale(.92) translateX(-6%); }
+.sz-gesicht { position: relative; justify-self: center; width: min(320px, 70vw); aspect-ratio: 1; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 45, 135, .45);
+  box-shadow: 0 0 60px -18px rgba(255, 45, 135, .6); opacity: 0; transform: scale(.6) translate(-40%, 20%); transition: opacity .5s var(--ease), transform .6s var(--ease); }
+.sz-gesicht img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.szene.kopiert .sz-gesicht { opacity: 1; transform: none; }
+.sz-mesh { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sz-mesh line { stroke: rgba(23, 255, 192, .55); stroke-width: .25; opacity: 0; }
+.sz-mesh circle { fill: var(--mint); opacity: 0; }
+.szene.vermisst .sz-mesh circle { animation: punkt .3s var(--ease) both; animation-delay: calc(var(--i) * 45ms); }
+.szene.vermisst .sz-mesh line { animation: punkt .4s var(--ease) both; animation-delay: calc(400ms + var(--i) * 18ms); }
+@keyframes punkt { from { opacity: 0; } to { opacity: 1; } }
+.sz-gesicht .sz-scan { background: linear-gradient(180deg, transparent 44%, rgba(23, 255, 192, .45) 50%, transparent 56%); }
+.szene.vermisst .sz-gesicht .sz-scan { animation: scanY 1.4s linear 2; }
+@media (max-height: 700px) { .sz-gesicht { width: min(240px, 60vw); } .szene { width: min(460px, 100%); } }
 .rec { width: min(560px, 100%); gap: 10px; padding: 14px 18px; border-radius: 14px; background: rgba(20, 6, 22, .7); border: 1px solid rgba(255, 45, 135, .3); box-shadow: 0 0 60px -20px rgba(255, 45, 135, .5); }
 .rec-kopf { display: flex; align-items: center; gap: 10px; font: 600 12px/1 var(--mono); letter-spacing: .14em; color: var(--pink); }
 .rec-kopf b { margin-left: auto; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0; font-size: 14px; }
@@ -826,20 +888,16 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   padding: clamp(20px, 3vw, 30px); border-radius: 22px; background: var(--karte); box-shadow: inset 0 0 0 1px var(--kante), inset 0 3px 0 color-mix(in srgb, var(--farbe) 75%, transparent); }
 .nugget-karte.rein { animation: hochein .45s var(--ease); }
 .nk-bild img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 16px; box-shadow: 0 0 0 1px var(--kante), 0 24px 44px -22px rgba(0, 0, 0, .85); }
-.nk-einleitung { color: var(--text-2); line-height: 1.6; padding-bottom: 14px; margin-bottom: 4px; border-bottom: 1px solid var(--kante); }
-.nk-liste { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 8px; }
-.nk-liste li { display: grid; gap: 2px; padding: 9px 14px; border-radius: 12px; background: rgba(255, 255, 255, .04);
+/* das Muster: kompakt, zwei Spalten (schmal: eine) */
+.nk-liste { list-style: none; margin: 2px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; }
+.nk-liste li { display: grid; gap: 0; padding: 6px 11px; border-radius: 10px; background: rgba(255, 255, 255, .04);
   box-shadow: inset 3px 0 0 var(--farbe), inset 0 0 0 1px var(--kante); animation: hochein .4s var(--ease) backwards; animation-delay: calc(.15s + var(--i) * .08s); }
-.nk-liste b { font-weight: 750; }
-.nk-liste span { color: var(--lilac); font-size: .92rem; line-height: 1.45; }
+.nk-liste b { font-weight: 750; font-size: .95rem; }
+.nk-liste span { color: var(--lilac); font-size: .85rem; line-height: 1.35; }
 .nk-text { display: grid; gap: 8px; min-width: 0; }
 .nk-nr { font-size: .72rem; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; color: var(--farbe); }
 .nk-text h3 { font-size: clamp(1.35rem, 1.2vw + .8rem, 1.75rem); font-weight: 850; letter-spacing: -.015em; }
 .nk-inhalt { color: var(--text-2); line-height: 1.6; }
-.nk-beispiel { margin-top: 6px; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .04);
-  box-shadow: inset 0 0 0 1px var(--kante); color: var(--lilac); font-size: .92rem; line-height: 1.5; }
-.nk-beispiel .ico { color: var(--farbe); margin-top: 1px; }
-.nk-beispiel b { color: var(--text); font-weight: 700; }
 /* Die Knöpfe kleben unten wie in der Phishing Challenge; ist die Karte höher als der Bildschirm, liegt ein Verlauf darunter */
 .nugget-nav { position: sticky; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 14px; margin: -16px 0 -14px; padding: 18px 0 14px; }
 .screen-pause.ueberlauf .nugget-nav { background: linear-gradient(rgba(11, 6, 51, 0), rgba(11, 6, 51, .96) 45%); }
@@ -1157,6 +1215,8 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
       <div class="beat" id="beat">
         <h2 class="beat-gross" id="beat-gross"></h2>
         <div class="beat-medium" id="beat-medium">
+          <div class="szene" id="szene"></div>
+          <p class="sz-schritt" id="sz-schritt"></p>
           <div class="rec" id="rec">
             <div class="rec-kopf"><span class="rec-punkt"></span><span>REC</span><b id="rec-zeit">00:00.0</b></div>
             <canvas id="rec-welle" class="rec-welle" aria-hidden="true"></canvas>
@@ -1498,20 +1558,24 @@ window.CONTENT = {
     titel: 'Deepfake Challenge',
     akzent: 'Deepfake',            // dieses Wort bekommt den Verlauf
     knopf: 'Challenge starten',
-    kern: 'Geklonte Stimmen, gefälschte Gesichter, Angriffe in mehreren Schritten: Sprichst du mit einem echten Menschen – oder mit Betrügern, die dich mit KI hereinlegen wollen?',
-    fakten: ['Anrufe und Videoanrufe in 2 Levels', 'Mit Ton – am besten mit Kopfhörern', 'Jeder Fake, der dich täuscht, füllt die Kasse des Hackers']
+    kern: 'Geklonte Stimmen, gefälschte Gesichter: Sprichst du mit einem echten Menschen – oder mit Betrügern, die dich mit KI hereinlegen wollen?',
+    fakten: ['2 Levels', 'Mit Ton – am besten mit Kopfhörern', 'Fällst du rein, kassiert der Hacker']
   },
 
-  /* Intro ohne Stimme: eine Stimmklon-Werkbank bei der Arbeit, dann Stille, dann klingelt es. */
+  /* Intro ohne Stimme, direkt nach dem Start: das Deepfake-Kit holt eine Stimme aus einem Online-Video und ein
+     Gesicht aus einem Social-Media-Profil und scannt beides; danach kommt „Bereit für Level 1?“.
+     Bei audio/gesicht läuft erst die Szene, dann erscheinen gross, klein und ergebnis. */
   intro: {
     kopf: 'deepfake-kit · bereit',
     beats: [
-      { art: 'audio', gross: '3 Sekunden Audio.', klein: 'Mehr braucht es nicht.', ergebnis: 'Stimme geklont' },
-      { art: 'frage', gross: 'Echt oder Fake?', klein: 'Hören – und sehen – kannst du den Unterschied nicht mehr.' },
-      { art: 'du', gross: 'Du entscheidest.', klein: 'Hör genau hin. Schau genau hin. Hak nach.' },
-      { art: 'ring', gross: 'Gleich klingelt dein Telefon.' }
+      { art: 'audio', gross: '3 Sekunden Audio.', klein: 'Mehr braucht es nicht.', ergebnis: 'Stimme geklont',
+        quelle: { titel: 'Hafen-Vlog, Tag 3 – endlich Sonne! ☀️', kanal: 'Unterwegs mit Markus', aufrufe: '12.483 Aufrufe', schritte: ['Audio extrahieren …', 'Stimme analysieren …'] } },
+      { art: 'gesicht', gross: 'Ein Foto.', klein: 'Mehr braucht es nicht.', ergebnis: 'Gesicht geklont',
+        profil: { name: 'markus.unterwegs', zahlen: [['214', 'Beiträge'], ['1.208', 'Follower'], ['380', 'Gefolgt']], bio: 'Reisen · Kaffee · Hafenluft', schritte: ['Bild kopieren …', 'Gesicht vermessen …'] } },
+      { art: 'frage', gross: 'Echt oder Fake?', klein: 'Hören und sehen kannst du den Unterschied fast nicht mehr.' }
     ],
     foto: 'assets/intro-gesicht.jpg',
+    vlog: 'assets/intro-vlog.jpg',
     skip: 'Überspringen'
   },
 
@@ -1709,46 +1773,46 @@ window.CONTENT = {
     },
 
     {
-      // CEO-Fraud als Deepfake-Videoanruf (Alex Morgan, Hotel-Lounge, Hochformat). Bild und Ton aus
-      // Alex_hotel_DF02_DE_v3: pro Zeile mehrere Clips mit Überblendung (tools siehe LEESMIJ). Das Bild bleibt makellos.
+      // CEO-Fraud als Deepfake-Videoanruf (Katrin Albers, mit Grok erzeugt, wie in v1). Bild und Ton aus assets/video;
+      // c5_0 = Teil 1 und 1c hintereinander. c5_2b endet mit einem Verbindungsabbruch.
       id: 'c5',
       echt: false,
       kanal: 'whatsapp',
       geraet: 'phone',
-      video: { poster: 'assets/video/morgan-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
+      video: { poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
       klang: 'messenger',
       atmo: null,
       klingel: 'messenger',
-      zeit: 'Donnerstag, 16:40',
-      storyTitel: 'Die CEO persönlich – vom Privathandy?',
-      lage: 'Du vertrittst eine Kollegin in der Buchhaltung und darfst Zahlungen anlegen. Auf dem Diensthandy: ein Videoanruf von einer fremden Nummer – im Profilbild CEO Alex Morgan.',
-      anrufer: { name: '+44 7700 900418', videoName: '~Alex Morgan', zeile: 'WhatsApp-Video · ~Alex Morgan', initialen: 'AM', farbe: '#3C5A8A', foto: 'assets/morgan-profil.jpg' },
-      start: { id: 'c5_0', tts: 'Hallo, hier ist Alex Morgan. Gut, dass ich Sie erreiche – ich rufe vom Privathandy an, ich bin unterwegs. Wir stehen kurz vor einer Übernahme, das ist streng vertraulich. Heute muss noch eine Anzahlung von neunzigtausend Euro raus. Man hat mir gesagt, auf Sie ist Verlass. Kann ich auf Sie zählen?' },
+      zeit: 'Donnerstag, 16:52',
+      storyTitel: 'Die Chefin persönlich – am Handy?',
+      lage: 'Du vertrittst deine Teamleitung und darfst Zahlungen freigeben. Die Chefin, Dr. Katrin Albers, kennst du aus Townhall-Videos. Jetzt: ein WhatsApp-Videoanruf mit ihrem Foto – von einer fremden Nummer.',
+      anrufer: { name: '+49 157 3308 1146', videoName: '~Katrin Albers', zeile: 'WhatsApp-Video · ~Katrin Albers', initialen: 'KA', farbe: '#8A6A3C', foto: 'assets/albers-profil.jpg' },
+      start: { id: 'c5_0', tts: 'Hallo! Gut, dass ich Sie erreiche. Katrin Albers hier. Ich sitze gerade in Zürich zwischen zwei Terminen, deshalb rufe ich vom privaten Handy an. Es geht um etwas sehr Vertrauliches: Wir stehen kurz vor einer Übernahme. Das darf noch niemand wissen, wirklich niemand. Ich brauche heute noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro an die Kanzlei. Können Sie das für mich anstoßen? [pause]' },
       runden: [
         [
-          { text: 'Ja, natürlich. Was genau soll ich tun?', wert: 'riskant',
-            antwort: { id: 'c5_1a', tts: 'Danke, das wusste ich. Die Kontodaten schickt Ihnen gleich unser Anwalt, Doktor Brandt, per Mail – es ist ein Treuhandkonto im Ausland. Buchen Sie das bitte als Eilüberweisung. Und sprechen Sie mit niemandem darüber, auch nicht intern.' } },
-          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück, okay?', wert: 'gut',
-            antwort: { id: 'c5_1b', tts: 'Das geht gerade nicht, ich bin am Flughafen, gleich ist Boarding. Bitte keine Rückrufe und keine Mails ans Büro – je weniger Leute davon wissen, desto besser. Unser Anwalt schickt Ihnen die Kontodaten gleich direkt.' } }
+          { text: 'Natürlich. Wohin soll das Geld gehen?', wert: 'riskant',
+            antwort: { id: 'c5_1a', tts: 'Wunderbar, ich wusste, dass ich mich auf Sie verlassen kann. Die Kanzlei schickt Ihnen gleich die Kontodaten per Mail. Bitte als Eilüberweisung, heute noch – und nicht über die normale Freigabe, sonst ist es morgen im ganzen Haus rum. [pause]' } },
+          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück.', wert: 'gut',
+            antwort: { id: 'c5_1b', tts: '[impatient] Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte heute noch, und bitte diskret. [pause]' } }
         ],
         [
-          { text: 'Okay, ich überweise das heute noch.', wert: 'riskant',
-            antwort: { id: 'c5_2a', tts: 'Perfekt, danke. Schicken Sie mir die Bestätigung bitte hier auf diese Nummer. Das bleibt unter uns, bis die Übernahme offiziell ist. Ich werde nicht vergessen, dass Sie mir geholfen haben.' } },
-          { text: 'Ohne zweite Freigabe überweise ich nichts.', wert: 'gut',
-            antwort: { id: 'c5_2b', tts: 'Ich verstehe, dass das ungewöhnlich ist. Aber ich bin die CEO, und ich übernehme die Verantwortung. Wenn die Zahlung heute nicht rausgeht, platzt der Deal. Die zweite Freigabe ist in diesem Fall nur Formsache. Bitte machen Sie das jetzt.' } }
+          { text: 'In Ordnung, ich kümmere mich darum.', wert: 'riskant',
+            antwort: { id: 'c5_2a', tts: 'Danke. Ich verlasse mich auf Sie. Und denken Sie dran: Kein Wort zu niemandem. Bis dann. [pause]' } },
+          { text: 'Vorher kurz: Wie heißt das Projekt, das Sie mir letzte Woche übergeben haben?', wert: 'gut',
+            antwort: { id: 'c5_2b', tts: '[annoyed] Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas… Die Verbindung hier ist furchtbar, ich… [pause]', glitch: true } }
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Geheim, eilig, Auslandskonto', zitat: ['streng vertraulich', 'Treuhandkonto im Ausland'], text: 'Eine geheime Übernahme, Geld noch heute, ein Konto im Ausland über einen „Anwalt“ – und Schmeichelei obendrauf. Das ist das Muster des CEO-Betrugs.' },
-        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Bitte keine Rückrufe', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit „gleich ist Boarding“ abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
-        { art: 'rot', titel: 'Freigabe „nur Formsache“', zitat: 'nur Formsache', text: 'Das Vier-Augen-Prinzip ist nie Formsache – es ist genau für solche Anrufe da. Wer es mit Autorität wegdrückt, will, dass niemand gegenprüft.', wenn: 'c5_2b' },
-        { art: 'info', titel: 'Das Bild war makellos', geraet: 'anrufer', text: 'Kein Ruckeln, keine Ränder: Gesicht und Stimme dieser CEO sind komplett KI-erzeugt. Ein perfektes Videobild beweist nicht, wer am anderen Ende sitzt.' }
+        { art: 'rot', titel: 'Geheim, eilig, am Prozess vorbei', zitat: ['Das darf noch niemand wissen', 'nicht über die normale Freigabe', 'Eilüberweisung'], text: '„Das darf niemand wissen“, „heute noch“, „nicht über die normale Freigabe“ – die Chefin persönlich macht Druck, damit niemand gegenprüft.' },
+        { art: 'rot', titel: 'Kontrollfrage? Leitung tot.', zitat: 'Was soll das denn jetzt', text: 'Statt einer Antwort kam Ärger – und dann brach die Verbindung ab. Wer eine einfache Frage zum gemeinsamen Alltag nicht beantworten kann, ist nicht die, die sie vorgibt zu sein.', wenn: 'c5_2b' },
+        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Dafür ist jetzt wirklich keine Zeit', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit Zeitdruck abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
+        { art: 'info', titel: 'Gesicht und Stimme sind KI', geraet: 'anrufer', text: 'Diese Chefin gibt es nicht: Gesicht, Mimik und Stimme sind komplett KI-erzeugt. Ein Profilfoto kann jeder hochladen – und ein Videoanruf beweist nicht mehr, wer am anderen Ende sitzt.' }
       ],
-      kern: 'Geheim, eilig, Auslandskonto – und Rückruf und zweite Freigabe sollen wegfallen. Auch ein perfektes Gesicht im Video ersetzt keinen Rückruf.',
-      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Nichts überweisen, über die bekannte Nummer zurückrufen und den Vorfall melden.',
-      hacker: { reingelegt: '90.000 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
-      beute: 90000,
-      beuteText: '90.000 € Anzahlung'
+      kern: 'Geheim, eilig, am Prozess vorbei – und der Rückruf wird abgeblockt. Auch ein bekanntes Gesicht im Video beweist nichts.',
+      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Auflegen, über die bekannte Nummer zurückrufen, Vier-Augen-Prinzip einhalten.',
+      hacker: { reingelegt: '48.500 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
+      beute: 48500,
+      beuteText: '48.500 € Anzahlung'
     },
 
     {
@@ -2073,23 +2137,17 @@ window.CONTENT = {
 
   /* ---------------- Sicherheitstipp nach Level 1: Deepfake-Nugget ----------------
      Die Lehren aus den ersten Anrufen, eine Karte nach der anderen (Bild rechts, schmal oben).
-     einleitung steht nur auf der ersten Karte; liste = das Muster als Beispiele. */
+     liste = das Muster als kompakte Beispiele. */
   pause: {
     kicker: 'Sicherheitstipp · Deepfakes',
     titel: 'Deepfakes erkennen',
     karten: [
-      { bild: 'assets/nugget-stimme.webp', farbe: '#FF2D87', titel: 'Die Stimme ist kein Beweis',
-        einleitung: 'Deepfakes sind mit KI gefälschte Stimmen, Gesichter und Videos. Betrüger setzen sie am Telefon und im Videoanruf ein. Das sind die wichtigsten Lehren aus deinen ersten Anrufen.',
-        text: 'Die Stimme eines echten Menschen lässt sich leicht klonen: Ein kurzes Video aus den sozialen Netzwerken reicht, und eine KI spricht mit genau dieser Stimme – samt Tonfall, Lachen und Dialekt. Ob ein Anruf echt ist, kannst du deshalb nicht hören.',
-        beispiel: 'Jonas klang wie Jonas – seine Strandvideos auf Instagram reichten für den Klon.' },
-      { bild: 'assets/nugget-gesicht.png', farbe: '#9B7BFF', titel: 'Auch ein Gesicht ist kein Beweis',
-        text: 'Aus einem Foto und ein paar Sekunden Video macht KI ein sprechendes Gesicht – mit Mimik, Gesten und passender Stimme, sogar live im Videoanruf. Ruckler, verwaschene Ränder oder Lippen, die nicht ganz passen, können Hinweise sein. Gute Deepfakes zeigen keine davon.',
-        beispiel: 'Alex Morgan im Videoanruf: ein makelloses Bild – und komplett KI.' },
+      { bild: 'assets/nugget-stimme.webp', farbe: '#FF2D87', titel: 'Stimme und Gesicht sind kein Beweis',
+        text: 'Ein kurzes Video aus den sozialen Netzwerken reicht, und eine KI spricht mit genau dieser Stimme – samt Tonfall und Lachen. Aus einem Foto wird ein sprechendes Gesicht, sogar live im Videoanruf. Ruckler oder Lippen, die nicht ganz passen, können Hinweise sein – gute Deepfakes zeigen keine davon.' },
       { bild: 'assets/nugget-nummer.webp', farbe: '#2BB8E8', titel: 'Auch Nummern lassen sich fälschen',
-        text: 'Nummer und Name im Display können gefälscht sein (Call-ID-Spoofing) – auch die deiner Bank oder deiner Firma. Ein Profilfoto kann jeder hochladen. Und umgekehrt: Eine fremde Nummer allein macht noch keinen Fake.',
-        beispiel: 'Die Bank rief von einer fremden Nummer an – und war echt.' },
+        text: 'Nummer und Name im Display können gefälscht sein (Call-ID-Spoofing) – auch die deiner Bank oder deiner Firma. Ein Profilfoto kann jeder hochladen. Und umgekehrt: Eine fremde Nummer allein macht noch keinen Fake.' },
       { bild: 'assets/nugget-muster.webp', farbe: '#FFC24D', titel: 'Erkenne das Muster',
-        text: 'Oft ist der Anruf nur ein Schritt: Vorher sammeln Betrüger Daten aus sozialen Netzwerken oder Datenlecks – oder lösen selbst eine Spam-Flut aus, um dann als Retter anzurufen. Im Gespräch folgt fast immer dasselbe Muster:',
+        text: 'Im Gespräch folgt fast immer dasselbe Muster:',
         liste: [
           { titel: 'Zeitdruck', beispiel: '„Bitte, jetzt gleich!“' },
           { titel: 'Angst oder Autorität', beispiel: '„Die Polizei ist hier …“ – oder die CEO persönlich' },
@@ -2097,24 +2155,18 @@ window.CONTENT = {
           { titel: 'Eine ungewöhnliche Bitte', beispiel: 'Geld, PIN oder TAN, Passwörter – oder Fernzugriff auf deinen Rechner' }
         ] }
     ],
-    lehre: 'Lehre {n} von {gesamt}',
-    beispiel: 'Aus deinen Anrufen',
+    lehre: '{n} von {gesamt}',
     weiter: 'Weiter',
     zurueck: 'Zurück'
   },
 
-  /* ---------------- Zum Schluss nach Level 2: der letzte Tipp, dann die Frage ----------------
+  /* ---------------- Zum Schluss nach Level 2: gleich die Frage ----------------
      Danach die Rückruf-Regel und die Auswertung. */
   schluss: {
-    kicker: 'Zum Schluss',
+    kicker: 'Eine letzte Frage',
     titel: 'Der wichtigste Tipp',
-    karten: [
-      { bild: 'assets/nugget-rueckruf.webp', farbe: '#17FFC0', titel: 'Hak nach – und prüf den Weg',
-        text: 'Kontrollfrage, Ticketnummer, der normale Prozess: Echte Anrufer gehen darauf ein. Betrüger weichen aus, machen Druck – oder rufen von außen an, wo intern üblich wäre. Am sichersten: auflegen und selbst zurückrufen, über eine Nummer, die du kennst. Das hilft gegen jede Stimme und jedes Gesicht.',
-        beispiel: '„Extern“ im Teams-Anruf? Deine IT sitzt im eigenen Haus.' }
-    ],
     zurFrage: 'Und jetzt du',
-    frageTitel: 'Und wenn du dir nicht sicher bist?',
+    frageTitel: 'Zum Schluss: Und wenn du dir nicht sicher bist?',
     szene: 'Dein Telefon klingelt. Die Stimme klingt genau wie deine Chefin. Sie bittet dich um etwas Ungewöhnliches – und es eilt. Irgendetwas fühlt sich komisch an.',
     frage: 'Was tust du?',
     optionen: [
@@ -3069,11 +3121,11 @@ window.Feier = (function () {
       K.init(); K.fx.klick();
       vorladen(C.anrufe[0]);
       neuesSpiel();
-      levelIntro(0);
+      intro();
     });
   }
 
-  /* ================= Intro (nach „Bereit für Level 1?“, endet mit „Gleich klingelt dein Telefon.“) ================= */
+  /* ================= Intro (gleich nach dem Start, danach „Bereit für Level 1?“) ================= */
   let introAbbruch = false;
 
   async function intro() {
@@ -3081,7 +3133,7 @@ window.Feier = (function () {
     introAbbruch = false;
     const ep = ++S.epoche;
     const ok = () => !introAbbruch && ep === S.epoche;
-    K.musik('intro', 0.55, 1.2);
+    K.musik('kit', 0.55, 1.2);
     $('intro-skip').textContent = C.intro.skip;
     tippe($('kit-kopf').querySelector('span'), C.intro.kopf, 40);
     await warte(700);
@@ -3091,11 +3143,10 @@ window.Feier = (function () {
     }
     if (ok()) introFertig();
   }
-  // nach dem Intro klingelt sofort der erste Anruf – in Stille; beim Neustart kommt das Intro nicht noch einmal
+  // nach dem Intro kommt der Start von Level 1 (mit der Level-Musik); beim Neustart kommt das Intro nicht noch einmal
   function introFertig() {
     S.introGesehen = true;
-    hudAufbauen();
-    anrufStarten(lvStart(0), { still: true });
+    levelIntro(0);
   }
 
   async function beatZeigen(b, ok) {
@@ -3104,22 +3155,71 @@ window.Feier = (function () {
     await warte(180);
     beat.dataset.art = b.art;
     erg.textContent = ''; erg.classList.remove('an');
+    $('szene').innerHTML = ''; $('szene').className = 'szene'; $('sz-schritt').textContent = ''; $('rec').classList.remove('an');
     klein.textContent = b.klein || '';
     if (b.art === 'frage') gross.innerHTML = '<span class="mega-a">Echt</span> <span class="mega-oder">oder</span> <span class="mega-b">Fake?</span>';
     else gross.textContent = b.gross;
+    // Bei den Szenen kommt die Überschrift erst, wenn das Kit fertig ist
+    const szene = b.art === 'audio' || b.art === 'gesicht';
+    beat.classList.toggle('vorher', szene);
     beat.classList.remove('raus'); void beat.offsetWidth; beat.classList.add('rein');
 
-    if (b.art === 'ring') {
-      K.musikAus(2);   // danach ist es still, bis das Telefon klingelt
-      await warte(2000);
-      beat.classList.remove('rein'); beat.classList.add('raus');
-      await warte(700);
-      return;
+    if (b.art === 'audio') {
+      await szeneVideo(b.quelle, ok); if (!ok()) return;
+      $('sz-schritt').textContent = b.quelle.schritte[1]; $('rec').classList.add('an');
+      await aufnahme(2800, ok);
+    } else if (b.art === 'gesicht') {
+      await szeneProfil(b.profil, ok);
     }
-    K.fx.schlag();
-    if (b.art === 'audio') { await aufnahme(2800, ok); await ergebnis(b, ok); await warte(650); }
-    else if (b.art === 'frage') { gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(1500); }
-    else await warte(2300);
+    if (!ok()) return;
+    if (szene) {
+      $('sz-schritt').textContent = '';
+      beat.classList.remove('vorher'); K.fx.schlag();
+      await warte(450); await ergebnis(b, ok); await warte(2200);
+    } else {
+      K.fx.schlag();
+      gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(2800);
+    }
+  }
+  // Szene 1: ein Online-Video läuft, das Kit markiert drei Sekunden und zieht die Stimme heraus
+  async function szeneVideo(q, ok) {
+    const sz = $('szene');
+    sz.innerHTML = `<div class="sz-player">
+        <div class="sz-bild"><img src="${C.intro.vlog}" alt=""><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
+        <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i></div>
+        <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
+      </div>`;
+    await warte(60); sz.classList.add('laeuft');
+    await warte(1500); if (!ok()) return;
+    sz.classList.add('markiert'); $('sz-schritt').textContent = q.schritte[0]; K.fx.rec();
+    await warte(1700);
+  }
+  // Szene 2: ein Social-Media-Profil, das Kit kopiert das Foto und vermisst das Gesicht
+  async function szeneProfil(pr, ok) {
+    const sz = $('szene');
+    // Messpunkte in Prozent des Porträts (Augen, Brauen, Nase, Mund, Gesichtsrand)
+    const pkt = [];
+    for (let k = 0; k < 18; k++) { const w = Math.PI * (0.05 + k / 17 * 0.9); pkt.push([50 - Math.cos(w) * 19, 47 + Math.sin(w) * 22]); }
+    [[42, 39], [38.5, 39.5], [45.5, 39.5], [58, 39], [54.5, 39.5], [61.5, 39.5], [37, 35.5], [41.5, 34], [46, 35], [54, 35], [58.5, 34], [63, 35.5],
+      [50, 40], [50, 46], [50, 51.5], [46.5, 52.5], [53.5, 52.5], [43, 57.5], [46.5, 56.5], [50, 57], [53.5, 56.5], [57, 57.5], [50, 60]].forEach(q => pkt.push(q));
+    const linien = [];
+    pkt.forEach((a, i) => pkt.map((b, j) => [j, Math.hypot(a[0] - b[0], a[1] - b[1])]).filter(([j]) => j > i).sort((x, y) => x[1] - y[1]).slice(0, 2)
+      .forEach(([j]) => linien.push([a, pkt[j]])));
+    sz.innerHTML = `<div class="sz-profil">
+        <div class="sp-kopf"><span class="sp-avatar"><img src="${C.intro.foto}" alt=""></span>
+          <div class="sp-info"><b>${esc(pr.name)}</b><div class="sp-zahlen">${pr.zahlen.map(([n, t]) => `<span><b>${esc(n)}</b> ${esc(t)}</span>`).join('')}</div><p>${esc(pr.bio)}</p></div></div>
+        <div class="sp-raster"><span class="sp-post sp-ziel"><img src="${C.intro.foto}" alt=""></span><span class="sp-post"><img src="${C.intro.vlog}" alt=""></span><span class="sp-post sp-leer"></span></div>
+      </div>
+      <div class="sz-gesicht"><img src="${C.intro.foto}" alt="">
+        <svg class="sz-mesh" viewBox="0 0 100 100" preserveAspectRatio="none">${linien.map(([a, b], i) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" style="--i:${i}"/>`).join('')}${pkt.map((q, i) => `<circle cx="${q[0]}" cy="${q[1]}" r=".7" style="--i:${i}"/>`).join('')}</svg>
+        <i class="sz-scan"></i></div>`;
+    await warte(1300); if (!ok()) return;
+    sz.classList.add('markiert'); $('sz-schritt').textContent = pr.schritte[0]; K.fx.rec();
+    await warte(1300); if (!ok()) return;
+    sz.classList.add('kopiert'); K.fx.pop(1);
+    await warte(700); if (!ok()) return;
+    sz.classList.add('vermisst'); $('sz-schritt').textContent = pr.schritte[1];
+    for (let k = 0; k < 3 && ok(); k++) { K.fx.rec(); await warte(900); }
   }
   async function ergebnis(b, ok) {
     if (!ok()) return;
@@ -3160,7 +3260,7 @@ window.Feier = (function () {
 
   $('intro-skip').addEventListener('click', () => {
     if (app.dataset.screen !== 's-intro') return;
-    introAbbruch = true; K.fx.klick(); K.musikAus(0.8);
+    introAbbruch = true; K.fx.klick();
     introFertig();
   });
 
@@ -3233,6 +3333,7 @@ window.Feier = (function () {
   function setZustand(z) { geraet.dataset.zustand = z; app.dataset.anruf = z; }
 
   function vorladen(a) {
+    videoVorrat(a, false);
     const ids = [a.start.id]; a.runden.forEach(r => r.forEach(o => ids.push(o.antwort.id)));
     ids.forEach(id => K.stimmeLaden(id));
     K.sfxLaden('ring-' + a.klingel); if (a.atmo) K.sfxLaden('atmo-' + a.atmo);
@@ -3282,7 +3383,7 @@ window.Feier = (function () {
     vorladen(a);
     const naechster = C.anrufe[i + 1]; if (naechster) setTimeout(() => vorladen(naechster), 3000);
 
-    // Ton: nach dem Intro komplett still (nur kurz – das Intro hat eben „Gleich klingelt dein Telefon“ gesagt); sonst kurz leise Musik, die vor dem Klingeln abbricht
+    // Ton: kurz leise Musik, die vor dem Klingeln abbricht
     const verzoegerung = opt.still ? 1200 : 4200;
     if (!opt.still) {
       K.musik('intro', 0.2, 1.5);
@@ -3544,7 +3645,7 @@ window.Feier = (function () {
     return new Promise(ok => {
       const t0 = performance.now();
       const iv = setInterval(() => {
-        if (!idleNah() && performance.now() - t0 < 8000) return;
+        if (!idleNah() && performance.now() - t0 < 2500) return;   // länger wartet niemand – dann lieber kurz überblenden
         clearInterval(iv); v.pause(); ok();
       }, 30);
     });
@@ -3580,14 +3681,30 @@ window.Feier = (function () {
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
     IDLE.nah = a.video.nah || null; IDLE.toene = a.video.toene || []; IDLE.zuletzt = 0; auslauf = null;
     VID.idle.loop = true; VID.talk.playbackRate = 1;
-    VID.idle.src = a.video.idle; VID.idle.load();
-    // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt – den ersten sofort, die übrigen
-    // etwas später, damit er nicht mit ihnen um die Leitung konkurriert
-    const laden = id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; };
-    videoVorbereiten.cache = [laden(a.video.clips[0])];
-    setTimeout(() => { if (S.a === a) videoVorbereiten.cache.push(...a.video.clips.slice(1).map(laden)); }, 4000);
+    videoVorrat(a, true);
+    IDLE.bereit = quelle(a.video.idle).then(u => { if (S.a === a) { VID.idle.src = u; VID.idle.load(); } });
   }
-  function videoStart() { VID.idle.play().catch(() => { }); }
+  function videoStart() { IDLE.bereit.then(() => VID.idle.play().catch(() => { })); }
+  // Die Videos eines Anrufs kommen vorab ganz in den Speicher (Blob-URLs): Cloudflare liefert keine Byte-Ranges,
+  // sonst wartet ein Clip auf die volle Datei – Ton ohne Bild. Idle und erster Clip sofort, der Rest der Reihe nach,
+  // dahinter der nächste Videoanruf. Behalten werden nur der laufende und der nächste Anruf.
+  const VORRAT = { urls: new Map(), kette: Promise.resolve() };
+  function videoVorrat(a, jetzt) {
+    if (!a.video) return;
+    const behalten = new Set([a.id, S.a && S.a.id]);
+    VORRAT.urls.forEach((m, id) => { if (!behalten.has(id)) { Object.values(m).forEach(p => p.then(u => u && URL.revokeObjectURL(u))); VORRAT.urls.delete(id); } });
+    if (!VORRAT.urls.has(a.id)) VORRAT.urls.set(a.id, {});
+    const m = VORRAT.urls.get(a.id);
+    const hol = pfad => m[pfad] || (m[pfad] = fetch(pfad).then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
+    const clips = a.video.clips.map(id => 'assets/video/' + id + '.mp4');
+    if (jetzt) { hol(a.video.idle); hol(clips[0]); }
+    VORRAT.kette = VORRAT.kette.then(async () => { for (const pf of [a.video.idle, ...clips]) await hol(pf); });
+  }
+  // Blob-URL, sobald geladen – sonst (Fehler) die normale Adresse
+  const quelle = pfad => {
+    const m = S.a && VORRAT.urls.get(S.a.id);
+    return (m && m[pfad] ? m[pfad] : Promise.resolve(null)).then(u => u || pfad);
+  };
   function videoStop() {
     if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
     try { VID.talk.pause(); VID.idle.pause(); } catch (e) { }
@@ -3602,7 +3719,8 @@ window.Feier = (function () {
     const p = await K.stimmeLaden(zeile.id);
     const start = p ? p.start : 0;
     let eingefroren = false;
-    vt.src = 'assets/video/' + zeile.id + '.mp4';
+    vt.src = await quelle('assets/video/' + zeile.id + '.mp4');
+    if (ep !== S.epoche) return;
     // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
     await Promise.all([bereit(vt, start), idleGrenze()]); // idleGrenze hält die Idle an: kein Hüsteln mitten im Satz
     try { await vt.play(); } catch (e) { }
@@ -3954,7 +4072,6 @@ window.Feier = (function () {
   $('lv-los').addEventListener('click', () => {
     if (app.dataset.screen !== 's-level') return;
     K.fx.klick();
-    if (S.level === 0 && !S.introGesehen) { intro(); return; }
     hudAufbauen();
     anrufStarten(lvStart(S.level));
   });
@@ -4016,13 +4133,14 @@ window.Feier = (function () {
   function nuggetZeigen(teil) {
     ++S.epoche;
     zeige('s-pause');
-    K.musik('intro', 0.3, 2);
+    K.musik(teil === 'pause' ? 'kit' : 'intro', 0.3, 2);
     const T = C[teil];
     S.nugget = teil;
     $('pause-kicker').textContent = T.kicker; $('pause-titel').textContent = T.titel;
     $('nugget-zurueck').textContent = C.pause.zurueck;
     $('nugget').hidden = false; $('pause-quiz').hidden = true;
     S.pause = null; S.karteMax = 0;
+    if (!(T.karten || []).length) { frageZeigen(); return; }
     $('nugget-punkte').innerHTML = T.karten.length < 2 ? '' : T.karten.map((k, i) => `<button type="button" data-i="${i}" aria-label="${esc(f(C.pause.lehre, { n: i + 1, gesamt: T.karten.length }))}"></button>`).join('');
     $('nugget-punkte').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { K.fx.klick(); karteZeigen(+b.dataset.i); }));
     karteZeigen(0);
@@ -4032,11 +4150,9 @@ window.Feier = (function () {
     S.karte = i; S.karteMax = Math.max(S.karteMax, i);
     el.style.setProperty('--farbe', k.farbe);
     el.innerHTML = `<div class="nk-text">
-        ${k.einleitung ? `<p class="nk-einleitung">${esc(k.einleitung)}</p>` : ''}
         ${n > 1 ? `<p class="nk-nr">${esc(f(P.lehre, { n: i + 1, gesamt: n }))}</p>` : ''}
         <h3>${esc(k.titel)}</h3><p class="nk-inhalt">${esc(k.text)}</p>
         ${k.liste ? `<ul class="nk-liste">${k.liste.map((x, j) => `<li style="--i:${j}"><b>${esc(x.titel)}</b><span>${esc(x.beispiel)}</span></li>`).join('')}</ul>` : ''}
-        ${k.beispiel ? `<p class="nk-beispiel">${chipHoerer}<span><b>${esc(P.beispiel)}:</b> ${esc(k.beispiel)}</span></p>` : ''}
       </div>
       <div class="nk-bild"><img src="${k.bild}" alt=""></div>`;
     el.classList.remove('rein'); void el.offsetWidth; el.classList.add('rein');

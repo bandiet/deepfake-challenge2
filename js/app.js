@@ -262,11 +262,11 @@
       K.init(); K.fx.klick();
       vorladen(C.anrufe[0]);
       neuesSpiel();
-      levelIntro(0);
+      intro();
     });
   }
 
-  /* ================= Intro (nach „Bereit für Level 1?“, endet mit „Gleich klingelt dein Telefon.“) ================= */
+  /* ================= Intro (gleich nach dem Start, danach „Bereit für Level 1?“) ================= */
   let introAbbruch = false;
 
   async function intro() {
@@ -274,7 +274,7 @@
     introAbbruch = false;
     const ep = ++S.epoche;
     const ok = () => !introAbbruch && ep === S.epoche;
-    K.musik('intro', 0.55, 1.2);
+    K.musik('kit', 0.55, 1.2);
     $('intro-skip').textContent = C.intro.skip;
     tippe($('kit-kopf').querySelector('span'), C.intro.kopf, 40);
     await warte(700);
@@ -284,11 +284,10 @@
     }
     if (ok()) introFertig();
   }
-  // nach dem Intro klingelt sofort der erste Anruf – in Stille; beim Neustart kommt das Intro nicht noch einmal
+  // nach dem Intro kommt der Start von Level 1 (mit der Level-Musik); beim Neustart kommt das Intro nicht noch einmal
   function introFertig() {
     S.introGesehen = true;
-    hudAufbauen();
-    anrufStarten(lvStart(0), { still: true });
+    levelIntro(0);
   }
 
   async function beatZeigen(b, ok) {
@@ -297,22 +296,71 @@
     await warte(180);
     beat.dataset.art = b.art;
     erg.textContent = ''; erg.classList.remove('an');
+    $('szene').innerHTML = ''; $('szene').className = 'szene'; $('sz-schritt').textContent = ''; $('rec').classList.remove('an');
     klein.textContent = b.klein || '';
     if (b.art === 'frage') gross.innerHTML = '<span class="mega-a">Echt</span> <span class="mega-oder">oder</span> <span class="mega-b">Fake?</span>';
     else gross.textContent = b.gross;
+    // Bei den Szenen kommt die Überschrift erst, wenn das Kit fertig ist
+    const szene = b.art === 'audio' || b.art === 'gesicht';
+    beat.classList.toggle('vorher', szene);
     beat.classList.remove('raus'); void beat.offsetWidth; beat.classList.add('rein');
 
-    if (b.art === 'ring') {
-      K.musikAus(2);   // danach ist es still, bis das Telefon klingelt
-      await warte(2000);
-      beat.classList.remove('rein'); beat.classList.add('raus');
-      await warte(700);
-      return;
+    if (b.art === 'audio') {
+      await szeneVideo(b.quelle, ok); if (!ok()) return;
+      $('sz-schritt').textContent = b.quelle.schritte[1]; $('rec').classList.add('an');
+      await aufnahme(2800, ok);
+    } else if (b.art === 'gesicht') {
+      await szeneProfil(b.profil, ok);
     }
-    K.fx.schlag();
-    if (b.art === 'audio') { await aufnahme(2800, ok); await ergebnis(b, ok); await warte(650); }
-    else if (b.art === 'frage') { gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(1500); }
-    else await warte(2300);
+    if (!ok()) return;
+    if (szene) {
+      $('sz-schritt').textContent = '';
+      beat.classList.remove('vorher'); K.fx.schlag();
+      await warte(450); await ergebnis(b, ok); await warte(2200);
+    } else {
+      K.fx.schlag();
+      gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(2800);
+    }
+  }
+  // Szene 1: ein Online-Video läuft, das Kit markiert drei Sekunden und zieht die Stimme heraus
+  async function szeneVideo(q, ok) {
+    const sz = $('szene');
+    sz.innerHTML = `<div class="sz-player">
+        <div class="sz-bild"><img src="${C.intro.vlog}" alt=""><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
+        <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i></div>
+        <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
+      </div>`;
+    await warte(60); sz.classList.add('laeuft');
+    await warte(1500); if (!ok()) return;
+    sz.classList.add('markiert'); $('sz-schritt').textContent = q.schritte[0]; K.fx.rec();
+    await warte(1700);
+  }
+  // Szene 2: ein Social-Media-Profil, das Kit kopiert das Foto und vermisst das Gesicht
+  async function szeneProfil(pr, ok) {
+    const sz = $('szene');
+    // Messpunkte in Prozent des Porträts (Augen, Brauen, Nase, Mund, Gesichtsrand)
+    const pkt = [];
+    for (let k = 0; k < 18; k++) { const w = Math.PI * (0.05 + k / 17 * 0.9); pkt.push([50 - Math.cos(w) * 19, 47 + Math.sin(w) * 22]); }
+    [[42, 39], [38.5, 39.5], [45.5, 39.5], [58, 39], [54.5, 39.5], [61.5, 39.5], [37, 35.5], [41.5, 34], [46, 35], [54, 35], [58.5, 34], [63, 35.5],
+      [50, 40], [50, 46], [50, 51.5], [46.5, 52.5], [53.5, 52.5], [43, 57.5], [46.5, 56.5], [50, 57], [53.5, 56.5], [57, 57.5], [50, 60]].forEach(q => pkt.push(q));
+    const linien = [];
+    pkt.forEach((a, i) => pkt.map((b, j) => [j, Math.hypot(a[0] - b[0], a[1] - b[1])]).filter(([j]) => j > i).sort((x, y) => x[1] - y[1]).slice(0, 2)
+      .forEach(([j]) => linien.push([a, pkt[j]])));
+    sz.innerHTML = `<div class="sz-profil">
+        <div class="sp-kopf"><span class="sp-avatar"><img src="${C.intro.foto}" alt=""></span>
+          <div class="sp-info"><b>${esc(pr.name)}</b><div class="sp-zahlen">${pr.zahlen.map(([n, t]) => `<span><b>${esc(n)}</b> ${esc(t)}</span>`).join('')}</div><p>${esc(pr.bio)}</p></div></div>
+        <div class="sp-raster"><span class="sp-post sp-ziel"><img src="${C.intro.foto}" alt=""></span><span class="sp-post"><img src="${C.intro.vlog}" alt=""></span><span class="sp-post sp-leer"></span></div>
+      </div>
+      <div class="sz-gesicht"><img src="${C.intro.foto}" alt="">
+        <svg class="sz-mesh" viewBox="0 0 100 100" preserveAspectRatio="none">${linien.map(([a, b], i) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" style="--i:${i}"/>`).join('')}${pkt.map((q, i) => `<circle cx="${q[0]}" cy="${q[1]}" r=".7" style="--i:${i}"/>`).join('')}</svg>
+        <i class="sz-scan"></i></div>`;
+    await warte(1300); if (!ok()) return;
+    sz.classList.add('markiert'); $('sz-schritt').textContent = pr.schritte[0]; K.fx.rec();
+    await warte(1300); if (!ok()) return;
+    sz.classList.add('kopiert'); K.fx.pop(1);
+    await warte(700); if (!ok()) return;
+    sz.classList.add('vermisst'); $('sz-schritt').textContent = pr.schritte[1];
+    for (let k = 0; k < 3 && ok(); k++) { K.fx.rec(); await warte(900); }
   }
   async function ergebnis(b, ok) {
     if (!ok()) return;
@@ -353,7 +401,7 @@
 
   $('intro-skip').addEventListener('click', () => {
     if (app.dataset.screen !== 's-intro') return;
-    introAbbruch = true; K.fx.klick(); K.musikAus(0.8);
+    introAbbruch = true; K.fx.klick();
     introFertig();
   });
 
@@ -426,6 +474,7 @@
   function setZustand(z) { geraet.dataset.zustand = z; app.dataset.anruf = z; }
 
   function vorladen(a) {
+    videoVorrat(a, false);
     const ids = [a.start.id]; a.runden.forEach(r => r.forEach(o => ids.push(o.antwort.id)));
     ids.forEach(id => K.stimmeLaden(id));
     K.sfxLaden('ring-' + a.klingel); if (a.atmo) K.sfxLaden('atmo-' + a.atmo);
@@ -475,7 +524,7 @@
     vorladen(a);
     const naechster = C.anrufe[i + 1]; if (naechster) setTimeout(() => vorladen(naechster), 3000);
 
-    // Ton: nach dem Intro komplett still (nur kurz – das Intro hat eben „Gleich klingelt dein Telefon“ gesagt); sonst kurz leise Musik, die vor dem Klingeln abbricht
+    // Ton: kurz leise Musik, die vor dem Klingeln abbricht
     const verzoegerung = opt.still ? 1200 : 4200;
     if (!opt.still) {
       K.musik('intro', 0.2, 1.5);
@@ -737,7 +786,7 @@
     return new Promise(ok => {
       const t0 = performance.now();
       const iv = setInterval(() => {
-        if (!idleNah() && performance.now() - t0 < 8000) return;
+        if (!idleNah() && performance.now() - t0 < 2500) return;   // länger wartet niemand – dann lieber kurz überblenden
         clearInterval(iv); v.pause(); ok();
       }, 30);
     });
@@ -773,14 +822,30 @@
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
     IDLE.nah = a.video.nah || null; IDLE.toene = a.video.toene || []; IDLE.zuletzt = 0; auslauf = null;
     VID.idle.loop = true; VID.talk.playbackRate = 1;
-    VID.idle.src = a.video.idle; VID.idle.load();
-    // Clips vorab laden, damit der Wechsel von der Idle-Schleife ohne Lücke klappt – den ersten sofort, die übrigen
-    // etwas später, damit er nicht mit ihnen um die Leitung konkurriert
-    const laden = id => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = 'assets/video/' + id + '.mp4'; return v; };
-    videoVorbereiten.cache = [laden(a.video.clips[0])];
-    setTimeout(() => { if (S.a === a) videoVorbereiten.cache.push(...a.video.clips.slice(1).map(laden)); }, 4000);
+    videoVorrat(a, true);
+    IDLE.bereit = quelle(a.video.idle).then(u => { if (S.a === a) { VID.idle.src = u; VID.idle.load(); } });
   }
-  function videoStart() { VID.idle.play().catch(() => { }); }
+  function videoStart() { IDLE.bereit.then(() => VID.idle.play().catch(() => { })); }
+  // Die Videos eines Anrufs kommen vorab ganz in den Speicher (Blob-URLs): Cloudflare liefert keine Byte-Ranges,
+  // sonst wartet ein Clip auf die volle Datei – Ton ohne Bild. Idle und erster Clip sofort, der Rest der Reihe nach,
+  // dahinter der nächste Videoanruf. Behalten werden nur der laufende und der nächste Anruf.
+  const VORRAT = { urls: new Map(), kette: Promise.resolve() };
+  function videoVorrat(a, jetzt) {
+    if (!a.video) return;
+    const behalten = new Set([a.id, S.a && S.a.id]);
+    VORRAT.urls.forEach((m, id) => { if (!behalten.has(id)) { Object.values(m).forEach(p => p.then(u => u && URL.revokeObjectURL(u))); VORRAT.urls.delete(id); } });
+    if (!VORRAT.urls.has(a.id)) VORRAT.urls.set(a.id, {});
+    const m = VORRAT.urls.get(a.id);
+    const hol = pfad => m[pfad] || (m[pfad] = fetch(pfad).then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
+    const clips = a.video.clips.map(id => 'assets/video/' + id + '.mp4');
+    if (jetzt) { hol(a.video.idle); hol(clips[0]); }
+    VORRAT.kette = VORRAT.kette.then(async () => { for (const pf of [a.video.idle, ...clips]) await hol(pf); });
+  }
+  // Blob-URL, sobald geladen – sonst (Fehler) die normale Adresse
+  const quelle = pfad => {
+    const m = S.a && VORRAT.urls.get(S.a.id);
+    return (m && m[pfad] ? m[pfad] : Promise.resolve(null)).then(u => u || pfad);
+  };
   function videoStop() {
     if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
     try { VID.talk.pause(); VID.idle.pause(); } catch (e) { }
@@ -795,7 +860,8 @@
     const p = await K.stimmeLaden(zeile.id);
     const start = p ? p.start : 0;
     let eingefroren = false;
-    vt.src = 'assets/video/' + zeile.id + '.mp4';
+    vt.src = await quelle('assets/video/' + zeile.id + '.mp4');
+    if (ep !== S.epoche) return;
     // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
     await Promise.all([bereit(vt, start), idleGrenze()]); // idleGrenze hält die Idle an: kein Hüsteln mitten im Satz
     try { await vt.play(); } catch (e) { }
@@ -1147,7 +1213,6 @@
   $('lv-los').addEventListener('click', () => {
     if (app.dataset.screen !== 's-level') return;
     K.fx.klick();
-    if (S.level === 0 && !S.introGesehen) { intro(); return; }
     hudAufbauen();
     anrufStarten(lvStart(S.level));
   });
@@ -1209,13 +1274,14 @@
   function nuggetZeigen(teil) {
     ++S.epoche;
     zeige('s-pause');
-    K.musik('intro', 0.3, 2);
+    K.musik(teil === 'pause' ? 'kit' : 'intro', 0.3, 2);
     const T = C[teil];
     S.nugget = teil;
     $('pause-kicker').textContent = T.kicker; $('pause-titel').textContent = T.titel;
     $('nugget-zurueck').textContent = C.pause.zurueck;
     $('nugget').hidden = false; $('pause-quiz').hidden = true;
     S.pause = null; S.karteMax = 0;
+    if (!(T.karten || []).length) { frageZeigen(); return; }
     $('nugget-punkte').innerHTML = T.karten.length < 2 ? '' : T.karten.map((k, i) => `<button type="button" data-i="${i}" aria-label="${esc(f(C.pause.lehre, { n: i + 1, gesamt: T.karten.length }))}"></button>`).join('');
     $('nugget-punkte').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { K.fx.klick(); karteZeigen(+b.dataset.i); }));
     karteZeigen(0);
@@ -1225,11 +1291,9 @@
     S.karte = i; S.karteMax = Math.max(S.karteMax, i);
     el.style.setProperty('--farbe', k.farbe);
     el.innerHTML = `<div class="nk-text">
-        ${k.einleitung ? `<p class="nk-einleitung">${esc(k.einleitung)}</p>` : ''}
         ${n > 1 ? `<p class="nk-nr">${esc(f(P.lehre, { n: i + 1, gesamt: n }))}</p>` : ''}
         <h3>${esc(k.titel)}</h3><p class="nk-inhalt">${esc(k.text)}</p>
         ${k.liste ? `<ul class="nk-liste">${k.liste.map((x, j) => `<li style="--i:${j}"><b>${esc(x.titel)}</b><span>${esc(x.beispiel)}</span></li>`).join('')}</ul>` : ''}
-        ${k.beispiel ? `<p class="nk-beispiel">${chipHoerer}<span><b>${esc(P.beispiel)}:</b> ${esc(k.beispiel)}</span></p>` : ''}
       </div>
       <div class="nk-bild"><img src="${k.bild}" alt=""></div>`;
     el.classList.remove('rein'); void el.offsetWidth; el.classList.add('rein');

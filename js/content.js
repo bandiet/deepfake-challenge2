@@ -17,20 +17,24 @@ window.CONTENT = {
     titel: 'Deepfake Challenge',
     akzent: 'Deepfake',            // dieses Wort bekommt den Verlauf
     knopf: 'Challenge starten',
-    kern: 'Geklonte Stimmen, gefälschte Gesichter, Angriffe in mehreren Schritten: Sprichst du mit einem echten Menschen – oder mit Betrügern, die dich mit KI hereinlegen wollen?',
-    fakten: ['Anrufe und Videoanrufe in 2 Levels', 'Mit Ton – am besten mit Kopfhörern', 'Jeder Fake, der dich täuscht, füllt die Kasse des Hackers']
+    kern: 'Geklonte Stimmen, gefälschte Gesichter: Sprichst du mit einem echten Menschen – oder mit Betrügern, die dich mit KI hereinlegen wollen?',
+    fakten: ['2 Levels', 'Mit Ton – am besten mit Kopfhörern', 'Fällst du rein, kassiert der Hacker']
   },
 
-  /* Intro ohne Stimme: eine Stimmklon-Werkbank bei der Arbeit, dann Stille, dann klingelt es. */
+  /* Intro ohne Stimme, direkt nach dem Start: das Deepfake-Kit holt eine Stimme aus einem Online-Video und ein
+     Gesicht aus einem Social-Media-Profil und scannt beides; danach kommt „Bereit für Level 1?“.
+     Bei audio/gesicht läuft erst die Szene, dann erscheinen gross, klein und ergebnis. */
   intro: {
     kopf: 'deepfake-kit · bereit',
     beats: [
-      { art: 'audio', gross: '3 Sekunden Audio.', klein: 'Mehr braucht es nicht.', ergebnis: 'Stimme geklont' },
-      { art: 'frage', gross: 'Echt oder Fake?', klein: 'Hören – und sehen – kannst du den Unterschied nicht mehr.' },
-      { art: 'du', gross: 'Du entscheidest.', klein: 'Hör genau hin. Schau genau hin. Hak nach.' },
-      { art: 'ring', gross: 'Gleich klingelt dein Telefon.' }
+      { art: 'audio', gross: '3 Sekunden Audio.', klein: 'Mehr braucht es nicht.', ergebnis: 'Stimme geklont',
+        quelle: { titel: 'Hafen-Vlog, Tag 3 – endlich Sonne! ☀️', kanal: 'Unterwegs mit Markus', aufrufe: '12.483 Aufrufe', schritte: ['Audio extrahieren …', 'Stimme analysieren …'] } },
+      { art: 'gesicht', gross: 'Ein Foto.', klein: 'Mehr braucht es nicht.', ergebnis: 'Gesicht geklont',
+        profil: { name: 'markus.unterwegs', zahlen: [['214', 'Beiträge'], ['1.208', 'Follower'], ['380', 'Gefolgt']], bio: 'Reisen · Kaffee · Hafenluft', schritte: ['Bild kopieren …', 'Gesicht vermessen …'] } },
+      { art: 'frage', gross: 'Echt oder Fake?', klein: 'Hören und sehen kannst du den Unterschied fast nicht mehr.' }
     ],
     foto: 'assets/intro-gesicht.jpg',
+    vlog: 'assets/intro-vlog.jpg',
     skip: 'Überspringen'
   },
 
@@ -228,46 +232,46 @@ window.CONTENT = {
     },
 
     {
-      // CEO-Fraud als Deepfake-Videoanruf (Alex Morgan, Hotel-Lounge, Hochformat). Bild und Ton aus
-      // Alex_hotel_DF02_DE_v3: pro Zeile mehrere Clips mit Überblendung (tools siehe LEESMIJ). Das Bild bleibt makellos.
+      // CEO-Fraud als Deepfake-Videoanruf (Katrin Albers, mit Grok erzeugt, wie in v1). Bild und Ton aus assets/video;
+      // c5_0 = Teil 1 und 1c hintereinander. c5_2b endet mit einem Verbindungsabbruch.
       id: 'c5',
       echt: false,
       kanal: 'whatsapp',
       geraet: 'phone',
-      video: { poster: 'assets/video/morgan-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
+      video: { poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
       klang: 'messenger',
       atmo: null,
       klingel: 'messenger',
-      zeit: 'Donnerstag, 16:40',
-      storyTitel: 'Die CEO persönlich – vom Privathandy?',
-      lage: 'Du vertrittst eine Kollegin in der Buchhaltung und darfst Zahlungen anlegen. Auf dem Diensthandy: ein Videoanruf von einer fremden Nummer – im Profilbild CEO Alex Morgan.',
-      anrufer: { name: '+44 7700 900418', videoName: '~Alex Morgan', zeile: 'WhatsApp-Video · ~Alex Morgan', initialen: 'AM', farbe: '#3C5A8A', foto: 'assets/morgan-profil.jpg' },
-      start: { id: 'c5_0', tts: 'Hallo, hier ist Alex Morgan. Gut, dass ich Sie erreiche – ich rufe vom Privathandy an, ich bin unterwegs. Wir stehen kurz vor einer Übernahme, das ist streng vertraulich. Heute muss noch eine Anzahlung von neunzigtausend Euro raus. Man hat mir gesagt, auf Sie ist Verlass. Kann ich auf Sie zählen?' },
+      zeit: 'Donnerstag, 16:52',
+      storyTitel: 'Die Chefin persönlich – am Handy?',
+      lage: 'Du vertrittst deine Teamleitung und darfst Zahlungen freigeben. Die Chefin, Dr. Katrin Albers, kennst du aus Townhall-Videos. Jetzt: ein WhatsApp-Videoanruf mit ihrem Foto – von einer fremden Nummer.',
+      anrufer: { name: '+49 157 3308 1146', videoName: '~Katrin Albers', zeile: 'WhatsApp-Video · ~Katrin Albers', initialen: 'KA', farbe: '#8A6A3C', foto: 'assets/albers-profil.jpg' },
+      start: { id: 'c5_0', tts: 'Hallo! Gut, dass ich Sie erreiche. Katrin Albers hier. Ich sitze gerade in Zürich zwischen zwei Terminen, deshalb rufe ich vom privaten Handy an. Es geht um etwas sehr Vertrauliches: Wir stehen kurz vor einer Übernahme. Das darf noch niemand wissen, wirklich niemand. Ich brauche heute noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro an die Kanzlei. Können Sie das für mich anstoßen? [pause]' },
       runden: [
         [
-          { text: 'Ja, natürlich. Was genau soll ich tun?', wert: 'riskant',
-            antwort: { id: 'c5_1a', tts: 'Danke, das wusste ich. Die Kontodaten schickt Ihnen gleich unser Anwalt, Doktor Brandt, per Mail – es ist ein Treuhandkonto im Ausland. Buchen Sie das bitte als Eilüberweisung. Und sprechen Sie mit niemandem darüber, auch nicht intern.' } },
-          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück, okay?', wert: 'gut',
-            antwort: { id: 'c5_1b', tts: 'Das geht gerade nicht, ich bin am Flughafen, gleich ist Boarding. Bitte keine Rückrufe und keine Mails ans Büro – je weniger Leute davon wissen, desto besser. Unser Anwalt schickt Ihnen die Kontodaten gleich direkt.' } }
+          { text: 'Natürlich. Wohin soll das Geld gehen?', wert: 'riskant',
+            antwort: { id: 'c5_1a', tts: 'Wunderbar, ich wusste, dass ich mich auf Sie verlassen kann. Die Kanzlei schickt Ihnen gleich die Kontodaten per Mail. Bitte als Eilüberweisung, heute noch – und nicht über die normale Freigabe, sonst ist es morgen im ganzen Haus rum. [pause]' } },
+          { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück.', wert: 'gut',
+            antwort: { id: 'c5_1b', tts: '[impatient] Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte heute noch, und bitte diskret. [pause]' } }
         ],
         [
-          { text: 'Okay, ich überweise das heute noch.', wert: 'riskant',
-            antwort: { id: 'c5_2a', tts: 'Perfekt, danke. Schicken Sie mir die Bestätigung bitte hier auf diese Nummer. Das bleibt unter uns, bis die Übernahme offiziell ist. Ich werde nicht vergessen, dass Sie mir geholfen haben.' } },
-          { text: 'Ohne zweite Freigabe überweise ich nichts.', wert: 'gut',
-            antwort: { id: 'c5_2b', tts: 'Ich verstehe, dass das ungewöhnlich ist. Aber ich bin die CEO, und ich übernehme die Verantwortung. Wenn die Zahlung heute nicht rausgeht, platzt der Deal. Die zweite Freigabe ist in diesem Fall nur Formsache. Bitte machen Sie das jetzt.' } }
+          { text: 'In Ordnung, ich kümmere mich darum.', wert: 'riskant',
+            antwort: { id: 'c5_2a', tts: 'Danke. Ich verlasse mich auf Sie. Und denken Sie dran: Kein Wort zu niemandem. Bis dann. [pause]' } },
+          { text: 'Vorher kurz: Wie heißt das Projekt, das Sie mir letzte Woche übergeben haben?', wert: 'gut',
+            antwort: { id: 'c5_2b', tts: '[annoyed] Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas… Die Verbindung hier ist furchtbar, ich… [pause]', glitch: true } }
         ]
       ],
       signale: [
-        { art: 'rot', titel: 'Geheim, eilig, Auslandskonto', zitat: ['streng vertraulich', 'Treuhandkonto im Ausland'], text: 'Eine geheime Übernahme, Geld noch heute, ein Konto im Ausland über einen „Anwalt“ – und Schmeichelei obendrauf. Das ist das Muster des CEO-Betrugs.' },
-        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Bitte keine Rückrufe', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit „gleich ist Boarding“ abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
-        { art: 'rot', titel: 'Freigabe „nur Formsache“', zitat: 'nur Formsache', text: 'Das Vier-Augen-Prinzip ist nie Formsache – es ist genau für solche Anrufe da. Wer es mit Autorität wegdrückt, will, dass niemand gegenprüft.', wenn: 'c5_2b' },
-        { art: 'info', titel: 'Das Bild war makellos', geraet: 'anrufer', text: 'Kein Ruckeln, keine Ränder: Gesicht und Stimme dieser CEO sind komplett KI-erzeugt. Ein perfektes Videobild beweist nicht, wer am anderen Ende sitzt.' }
+        { art: 'rot', titel: 'Geheim, eilig, am Prozess vorbei', zitat: ['Das darf noch niemand wissen', 'nicht über die normale Freigabe', 'Eilüberweisung'], text: '„Das darf niemand wissen“, „heute noch“, „nicht über die normale Freigabe“ – die Chefin persönlich macht Druck, damit niemand gegenprüft.' },
+        { art: 'rot', titel: 'Kontrollfrage? Leitung tot.', zitat: 'Was soll das denn jetzt', text: 'Statt einer Antwort kam Ärger – und dann brach die Verbindung ab. Wer eine einfache Frage zum gemeinsamen Alltag nicht beantworten kann, ist nicht die, die sie vorgibt zu sein.', wenn: 'c5_2b' },
+        { art: 'rot', titel: 'Rückruf abgeblockt', zitat: 'Dafür ist jetzt wirklich keine Zeit', text: 'Ein Rückruf über die Büronummer dauert eine Minute. Wer ihn mit Zeitdruck abblockt, will genau diese Prüfung verhindern.', wenn: 'c5_1b' },
+        { art: 'info', titel: 'Gesicht und Stimme sind KI', geraet: 'anrufer', text: 'Diese Chefin gibt es nicht: Gesicht, Mimik und Stimme sind komplett KI-erzeugt. Ein Profilfoto kann jeder hochladen – und ein Videoanruf beweist nicht mehr, wer am anderen Ende sitzt.' }
       ],
-      kern: 'Geheim, eilig, Auslandskonto – und Rückruf und zweite Freigabe sollen wegfallen. Auch ein perfektes Gesicht im Video ersetzt keinen Rückruf.',
-      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Nichts überweisen, über die bekannte Nummer zurückrufen und den Vorfall melden.',
-      hacker: { reingelegt: '90.000 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
-      beute: 90000,
-      beuteText: '90.000 € Anzahlung'
+      kern: 'Geheim, eilig, am Prozess vorbei – und der Rückruf wird abgeblockt. Auch ein bekanntes Gesicht im Video beweist nichts.',
+      tipp: 'Zahlungen laufen nie am Prozess vorbei – egal, wer anruft. Auflegen, über die bekannte Nummer zurückrufen, Vier-Augen-Prinzip einhalten.',
+      hacker: { reingelegt: '48.500 €. Und ich hab nicht mal ein echtes Gesicht gebraucht.', erwischt: 'Perfektes Gesicht, perfekte Geschichte – und trotzdem durchschaut. Respekt.' },
+      beute: 48500,
+      beuteText: '48.500 € Anzahlung'
     },
 
     {
@@ -592,23 +596,17 @@ window.CONTENT = {
 
   /* ---------------- Sicherheitstipp nach Level 1: Deepfake-Nugget ----------------
      Die Lehren aus den ersten Anrufen, eine Karte nach der anderen (Bild rechts, schmal oben).
-     einleitung steht nur auf der ersten Karte; liste = das Muster als Beispiele. */
+     liste = das Muster als kompakte Beispiele. */
   pause: {
     kicker: 'Sicherheitstipp · Deepfakes',
     titel: 'Deepfakes erkennen',
     karten: [
-      { bild: 'assets/nugget-stimme.webp', farbe: '#FF2D87', titel: 'Die Stimme ist kein Beweis',
-        einleitung: 'Deepfakes sind mit KI gefälschte Stimmen, Gesichter und Videos. Betrüger setzen sie am Telefon und im Videoanruf ein. Das sind die wichtigsten Lehren aus deinen ersten Anrufen.',
-        text: 'Die Stimme eines echten Menschen lässt sich leicht klonen: Ein kurzes Video aus den sozialen Netzwerken reicht, und eine KI spricht mit genau dieser Stimme – samt Tonfall, Lachen und Dialekt. Ob ein Anruf echt ist, kannst du deshalb nicht hören.',
-        beispiel: 'Jonas klang wie Jonas – seine Strandvideos auf Instagram reichten für den Klon.' },
-      { bild: 'assets/nugget-gesicht.png', farbe: '#9B7BFF', titel: 'Auch ein Gesicht ist kein Beweis',
-        text: 'Aus einem Foto und ein paar Sekunden Video macht KI ein sprechendes Gesicht – mit Mimik, Gesten und passender Stimme, sogar live im Videoanruf. Ruckler, verwaschene Ränder oder Lippen, die nicht ganz passen, können Hinweise sein. Gute Deepfakes zeigen keine davon.',
-        beispiel: 'Alex Morgan im Videoanruf: ein makelloses Bild – und komplett KI.' },
+      { bild: 'assets/nugget-stimme.webp', farbe: '#FF2D87', titel: 'Stimme und Gesicht sind kein Beweis',
+        text: 'Ein kurzes Video aus den sozialen Netzwerken reicht, und eine KI spricht mit genau dieser Stimme – samt Tonfall und Lachen. Aus einem Foto wird ein sprechendes Gesicht, sogar live im Videoanruf. Ruckler oder Lippen, die nicht ganz passen, können Hinweise sein – gute Deepfakes zeigen keine davon.' },
       { bild: 'assets/nugget-nummer.webp', farbe: '#2BB8E8', titel: 'Auch Nummern lassen sich fälschen',
-        text: 'Nummer und Name im Display können gefälscht sein (Call-ID-Spoofing) – auch die deiner Bank oder deiner Firma. Ein Profilfoto kann jeder hochladen. Und umgekehrt: Eine fremde Nummer allein macht noch keinen Fake.',
-        beispiel: 'Die Bank rief von einer fremden Nummer an – und war echt.' },
+        text: 'Nummer und Name im Display können gefälscht sein (Call-ID-Spoofing) – auch die deiner Bank oder deiner Firma. Ein Profilfoto kann jeder hochladen. Und umgekehrt: Eine fremde Nummer allein macht noch keinen Fake.' },
       { bild: 'assets/nugget-muster.webp', farbe: '#FFC24D', titel: 'Erkenne das Muster',
-        text: 'Oft ist der Anruf nur ein Schritt: Vorher sammeln Betrüger Daten aus sozialen Netzwerken oder Datenlecks – oder lösen selbst eine Spam-Flut aus, um dann als Retter anzurufen. Im Gespräch folgt fast immer dasselbe Muster:',
+        text: 'Im Gespräch folgt fast immer dasselbe Muster:',
         liste: [
           { titel: 'Zeitdruck', beispiel: '„Bitte, jetzt gleich!“' },
           { titel: 'Angst oder Autorität', beispiel: '„Die Polizei ist hier …“ – oder die CEO persönlich' },
@@ -616,24 +614,18 @@ window.CONTENT = {
           { titel: 'Eine ungewöhnliche Bitte', beispiel: 'Geld, PIN oder TAN, Passwörter – oder Fernzugriff auf deinen Rechner' }
         ] }
     ],
-    lehre: 'Lehre {n} von {gesamt}',
-    beispiel: 'Aus deinen Anrufen',
+    lehre: '{n} von {gesamt}',
     weiter: 'Weiter',
     zurueck: 'Zurück'
   },
 
-  /* ---------------- Zum Schluss nach Level 2: der letzte Tipp, dann die Frage ----------------
+  /* ---------------- Zum Schluss nach Level 2: gleich die Frage ----------------
      Danach die Rückruf-Regel und die Auswertung. */
   schluss: {
-    kicker: 'Zum Schluss',
+    kicker: 'Eine letzte Frage',
     titel: 'Der wichtigste Tipp',
-    karten: [
-      { bild: 'assets/nugget-rueckruf.webp', farbe: '#17FFC0', titel: 'Hak nach – und prüf den Weg',
-        text: 'Kontrollfrage, Ticketnummer, der normale Prozess: Echte Anrufer gehen darauf ein. Betrüger weichen aus, machen Druck – oder rufen von außen an, wo intern üblich wäre. Am sichersten: auflegen und selbst zurückrufen, über eine Nummer, die du kennst. Das hilft gegen jede Stimme und jedes Gesicht.',
-        beispiel: '„Extern“ im Teams-Anruf? Deine IT sitzt im eigenen Haus.' }
-    ],
     zurFrage: 'Und jetzt du',
-    frageTitel: 'Und wenn du dir nicht sicher bist?',
+    frageTitel: 'Zum Schluss: Und wenn du dir nicht sicher bist?',
     szene: 'Dein Telefon klingelt. Die Stimme klingt genau wie deine Chefin. Sie bittet dich um etwas Ungewöhnliches – und es eilt. Irgendetwas fühlt sich komisch an.',
     frage: 'Was tust du?',
     optionen: [
