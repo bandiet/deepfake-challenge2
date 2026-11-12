@@ -527,19 +527,19 @@ window.CONTENT = {
       storyTitel: 'Die Umstellung wurde vorgezogen?',
       lage: 'Zwei Tage nach eurem Abstimmungstermin ruft Sofia Laurent an – diesmal nicht über Teams, sondern von einer Handynummer, die du nicht kennst.',
       anrufer: { name: '+49 151 2290 4471', zeile: 'WhatsApp-Video', initialen: '?', farbe: '#5B6B8C' },
-      start: { id: 'c9_0', tts: 'Hallo, Sofia Laurent hier. Unsere Bankumstellung wurde vorgezogen. Die September-Rechnung bitte schon aufs neue Konto. Geht das?' },
+      start: { id: 'c9_0', tts: 'Hallo, gut, dass ich Sie erreiche! Ich bin gerade unterwegs und hab eben erfahren: Wir wechseln schon nächste Woche die Bank. Können Sie die Septemberrechnung bitte schon aufs neue Konto überweisen? Die Daten schick ich Ihnen gleich.' },
       runden: [
         [
           { text: 'Ah, Sie hatten es ja angekündigt. Schicken Sie mir die Daten.', wert: 'riskant',
-            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt. Nehmen Sie nur diese Daten, die im Portal sind veraltet.' } },
+            antwort: { id: 'c9_1a', tts: 'Genau, danke! Die Mail kommt von meiner privaten Adresse, unser Postfach spinnt gerade. Nehmen Sie bitte nur diese Daten – die im Portal sind veraltet.' } },
           { text: 'Ich warte lieber auf Ihr offizielles Schreiben.', wert: 'gut',
-            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Machen wir das lieber jetzt.' } }
+            antwort: { id: 'c9_1b', tts: 'Das Schreiben dauert noch zwei Wochen. Bis dahin ist das alte Konto zu, und Ihre Zahlung kommt zurück. Machen wir das lieber jetzt, ja?' } }
         ],
         [
           { text: 'Okay, ich trage die neuen Daten heute noch ein.', wert: 'riskant',
-            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir ein Foto der Buchung aufs Handy.' } },
+            antwort: { id: 'c9_2a', tts: 'Super, Sie retten mir den Tag! Schicken Sie mir dann kurz ein Foto der Buchung, hier über WhatsApp?' } },
           { text: 'Ich rufe kurz Herrn Vogt an und lasse es mir bestätigen.', wert: 'gut',
-            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub. Das läuft nur über mich. Sie kennen mich doch.' } }
+            antwort: { id: 'c9_2b', tts: 'Herr Vogt ist im Urlaub, und die Zentrale weiß noch nichts davon. Das läuft nur über mich – Sie kennen mich doch.' } }
         ]
       ],
       signale: [
