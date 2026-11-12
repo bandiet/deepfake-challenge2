@@ -8,11 +8,12 @@
 (function () {
   const PFAD = {
     musik: n => 'assets/musik/' + n + '.mp3',
-    sfx: n => 'assets/sfx/' + n + '.mp3',
+    sfx: n => 'assets/sfx/' + n + (sfxEndung[n] || '.mp3'),
     // Zeilen aus einem Videoanruf: der Ton steckt als .m4a neben dem Clip (siehe stemEndung)
     stem: n => 'assets/stem/' + n + (stemEndung[n] || '.mp3')
   };
   const stemEndung = {};
+  const sfxEndung = { 'atmo-auto': '.m4a' };   // Straßengeräusch aus den Grok-Idle-Clips (c9)
 
   // Färbung der Leitung: Hochpass / Tiefpass / leichte Sättigung
   const LEITUNG = {
@@ -23,7 +24,7 @@
   };
 
   // buero und wohnzimmer sind als Datei sehr leise (um −67 dB) – daher über 1: leichtes Rauschen, das in den Pausen durchläuft
-  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13, buero: 1.6, wohnzimmer: 2.0 };
+  const ATMO_VOL = { callcenter: 0.16, helpdesk: 0.09, homeoffice: 0.13, buero: 1.6, wohnzimmer: 2.0, auto: 0.5 };
 
   let ctx = null, master = null, musikBus = null, stimmBus = null, analyser = null, sfxBus = null;
   let an = true;
