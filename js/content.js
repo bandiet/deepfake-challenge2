@@ -35,6 +35,7 @@ window.CONTENT = {
     ],
     foto: 'assets/intro-gesicht.jpg',
     vlog: 'assets/intro-vlog.jpg',
+    vlogVideo: 'assets/video/intro-vlog.mp4',   // läuft stumm im Player (Grok, Start- und Endbild = intro-vlog.jpg)
     skip: 'Überspringen'
   },
 
@@ -188,7 +189,8 @@ window.CONTENT = {
 
     {
       // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips und die beiden
-      // Idle-Stücke aus Grok, alle mit dem Porträt als Start- und Endbild; nah gemessen mit tools/werk/idlefilm.swift.
+      // Idle-Stücke aus Grok (v4: Umgangssprache, erst sprechen, dann warten; werk/grok-sofia-echt, tools/werk/c8_bau.swift),
+      // alle mit dem Porträt als Start- und Endbild; nah gemessen mit tools/werk/idlefilm.swift.
       id: 'c8',
       echt: true,
       kanal: 'teams',
@@ -196,7 +198,7 @@ window.CONTENT = {
       extern: true,
       video: {
         auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4',
-        nah: [[0, 4.2], [7.7, 12.3], [18.6, 20.1]],
+        nah: [[0, 2.9], [4.3, 12.1], [17.0, 20.1]],
         clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b']
       },
       klang: 'teams',
@@ -206,23 +208,23 @@ window.CONTENT = {
       storyTitel: 'Neue Bankverbindung – ab Dezember?',
       lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
       anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
-      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
+      start: { id: 'c8_0', tts: 'Hallo! Schön, dass unsere Monatsabstimmung klappt. Ich fang gleich mit dem Wichtigsten an: Wir wechseln ab Dezember die Bank. Das offizielle Schreiben kommt diese Woche.' },
       runden: [
         [
           { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
-            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
+            antwort: { id: 'c8_1a', tts: 'Lieber nicht per Mail – die neuen Daten stehen im offiziellen Schreiben. Bis Ende November gilt ja noch das alte Konto.' } },
           { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
-            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
+            antwort: { id: 'c8_1b', tts: 'Sehr gut, so machen wir das auch. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
         ],
         [
           { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
-            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur noch die Rechnung vom September. Die bitte ganz normal aufs alte Konto.' } },
           { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
-            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt – über die Nummern, die Sie schon haben. Ich wollte es nur rechtzeitig ankündigen.' } }
         ]
       ],
       signale: [
-        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
+        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielle Schreiben', 'gilt ja noch das alte Konto'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
         { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
       ],
       kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',

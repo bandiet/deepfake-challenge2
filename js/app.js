@@ -38,6 +38,8 @@
   const lvStart = l => LV.slice(0, l).reduce((n, x) => n + x.anzahl, 0);
   const levelVon = i => { let n = 0; for (let l = 0; l < LV.length; l++) { n += LV[l].anzahl; if (i < n) return l; } return LV.length - 1; };
   const istRichtig = e => !!(e && e.richtig && !e.zuSpaet);
+  // nur die Anrufe, die in einem Level stehen (dahinter geparkte wie das Headset-Ticket zählen nirgends)
+  const IM_SPIEL = C.anrufe.slice(0, lvStart(LV.length));
   // so viele Anrufe eines Levels müssen richtig sein, sonst wird es wiederholt
   const mindestens = l => Math.min(LV[l].anzahl, LV[l].mindestens || LV[l].anzahl);
   const richtigIm = l => C.anrufe.slice(lvStart(l), lvStart(l) + LV[l].anzahl).filter((a, k) => istRichtig(S.ergebnisse[lvStart(l) + k])).length;
@@ -326,7 +328,7 @@
   async function szeneVideo(q, ok) {
     const sz = $('szene');
     sz.innerHTML = `<div class="sz-player">
-        <div class="sz-bild"><img src="${C.intro.vlog}" alt=""><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
+        <div class="sz-bild"><video src="${C.intro.vlogVideo}" poster="${C.intro.vlog}" muted playsinline loop autoplay preload="auto"></video><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
         <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i></div>
         <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
       </div>`;
@@ -409,8 +411,8 @@
   function neuesSpiel() {
     S.i = 0; S.level = 0; S.ergebnisse = []; S.beute = 0; S.pause = null; S.pauseFertig = false;
     // Der Hacker kommt nicht zu jedem Feedback: beim ersten Anruf immer, danach zufällig, insgesamt bei etwa zwei Dritteln
-    const rest = C.anrufe.map((a, i) => i).slice(1).sort(() => Math.random() - .5);
-    S.hackerBei = new Set([0, ...rest.slice(0, Math.round(C.anrufe.length * 2 / 3) - 1)]);
+    const rest = IM_SPIEL.map((a, i) => i).slice(1).sort(() => Math.random() - .5);
+    S.hackerBei = new Set([0, ...rest.slice(0, Math.round(IM_SPIEL.length * 2 / 3) - 1)]);
     $('hud-beute-wert').textContent = euro(0);
   }
 
@@ -494,7 +496,7 @@
     transkriptLinks(false);
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
     $('cc-log').innerHTML = '<p class="cc-leer">Noch kein Gespräch.</p>';
-    $('ablehnen-tipp').hidden = true; $('geraet-ende').hidden = true;
+    $('ablehnen-tipp').hidden = true; $('geraet-ende').hidden = true; geraet.classList.remove('getrennt');
 
     // Lage
     const [tag, uhr] = a.zeit.split(', ');
@@ -982,9 +984,12 @@
     cancelAnimationFrame(ringId); clearInterval(timerId); clearInterval(posteingang.id);
     geraet.classList.remove('spricht');
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
-    if (grund !== 'verbindung') K.fx.auflegen();
+    // Nur wenn die andere Seite das Gespräch beendet, steht es da (und das Videobild verschwindet). Endet das Gespräch
+    // einfach, weil die Antworten durch sind, bleibt alles stehen – sonst klingt es, als hätte der Anrufer aufgelegt.
+    if (grund === 'aufgelegt') K.fx.auflegen();
     const ende = $('geraet-ende');
-    ende.textContent = grund === 'verbindung' ? C.telefon.verbindungWeg : C.telefon.beendet; ende.hidden = false;
+    ende.textContent = C.telefon.verbindungWeg; ende.hidden = grund !== 'verbindung';
+    geraet.classList.toggle('getrennt', grund === 'verbindung');
     setZustand('ende');
     await warte(900);
     if (ep === S.epoche) urteilZeigen();
@@ -1363,14 +1368,14 @@
   /* ================= Auswertung (wie das Ergebnis der Serie) ================= */
   function ende() {
     ++S.epoche;
-    const A = C.auswertung, N = C.anrufe.length;
+    const A = C.auswertung, N = IM_SPIEL.length;
     const erg = S.ergebnisse;
-    const richtig = C.anrufe.filter((a, i) => istRichtig(erg[i])).length;
+    const richtig = IM_SPIEL.filter((a, i) => istRichtig(erg[i])).length;
     const gut = erg.filter(Boolean).reduce((x, e) => x + (e.gut || 0), 0);
     const rang = A.raenge.find(r => N - richtig <= r.fehler);
     const hackerText = richtig >= N - 1 && !S.beute ? A.hackerGut : (richtig >= N - 2 ? A.hackerMittel : A.hackerSchlecht);
     const mitte = `<span class="m-prozent">0 %</span><span class="m-richtig">${richtig}/${N} ${esc(A.richtig)}</span>`;
-    const akte = C.anrufe.map((a, i) => {
+    const akte = IM_SPIEL.map((a, i) => {
       const e = erg[i] || {};
       const st = !a.echt ? (e.zuSpaet ? 'zuSpaet' : e.richtig ? 'entlarvt' : 'getaeuscht') : (e.richtig ? 'echtErkannt' : 'fehlalarm');
       return `<li class="akte-${st}" style="--i:${i}"><span class="akte-nr">${i + 1}</span><div><b>${esc(a.storyTitel)}</b><span>${C.hud.level} ${levelVon(i) + 1} · ${esc(a.echt ? C.levelEnde.warEcht : C.levelEnde.warFake)} · ${esc(a.anrufer.name)}</span></div><em>${C.feedback[st].stempel}</em></li>`;
@@ -1404,7 +1409,7 @@
     messerStarten($('finale'));
     zaehle($('ende-beute'), S.beute, euro, 1600);
     setTimeout(() => tippe($('ende-hacker-text'), hackerText, 26, true), reduziert ? 0 : 900);
-    if (!reduziert) C.anrufe.forEach((a, i) => setTimeout(() => K.fx.pop(i), 700 + i * 160));
+    if (!reduziert) IM_SPIEL.forEach((a, i) => setTimeout(() => K.fx.pop(i), 700 + i * 160));
     setTimeout(() => (richtig >= N - 2 ? K.fx.richtig : K.fx.stempel)(), reduziert ? 0 : 500);
     if (!S.beute) setTimeout(() => konfetti(140, 'bunt'), reduziert ? 0 : 1300);
     $('ende-nochmal').addEventListener('click', () => { K.fx.klick(); neuesSpiel(); levelIntro(0); });
@@ -1421,8 +1426,8 @@
     LMS.speichern({ v: 1, l, p: S.pauseFertig ? 1 : 0, b: S.beute, e }, 'level' + Math.min(l + 1, LV.length));
     // Alle Levels bestanden: abgeschlossen und bestanden, Punkte = Anteil der richtig erkannten Anrufe (letzter Versuch je Level)
     if (l === LV.length && !S.lmsGemeldet) {
-      const richtig = C.anrufe.filter((a, i) => istRichtig(S.ergebnisse[i])).length;
-      S.lmsGemeldet = LMS.abschliessen(100 * richtig / C.anrufe.length, true);
+      const richtig = IM_SPIEL.filter((a, i) => istRichtig(S.ergebnisse[i])).length;
+      S.lmsGemeldet = LMS.abschliessen(100 * richtig / IM_SPIEL.length, true);
     }
   }
   function standLaden(d) {
@@ -1485,11 +1490,30 @@
     }, { capture: true, once: true });
   }
 
+  // Debugmodus (?debug): Pfeile unten links springen zum vorigen / nächsten Anruf – für die Endfassung nicht verlinken
+  if (/[?&]debug\b/.test(location.search)) {
+    testModus = true;
+    const leiste = document.createElement('div');
+    leiste.className = 'debug-leiste';
+    leiste.innerHTML = '<button type="button" data-d="-1" title="Vorheriger Anruf">◀</button><span></span><button type="button" data-d="1" title="Nächster Anruf">▶</button>';
+    document.body.appendChild(leiste);
+    const anzeigen = () => { leiste.querySelector('span').textContent = app.dataset.screen === 's-spiel' ? `Anruf ${S.i + 1}/${IM_SPIEL.length} · ${C.anrufe[S.i].id}` : 'Debug'; };
+    setInterval(anzeigen, 500);
+    leiste.addEventListener('click', ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      K.init(); K.stimmeStop(); K.ringStop(); K.atmoStop(); K.nebentonStop(); videoStop();
+      const i = app.dataset.screen === 's-spiel' || app.dataset.screen === 's-levelende' ? S.i + +b.dataset.d : (+b.dataset.d > 0 ? 0 : IM_SPIEL.length - 1);
+      const n = (i + IM_SPIEL.length) % IM_SPIEL.length;
+      if (!['s-spiel', 's-levelende', 's-pause', 's-level'].includes(app.dataset.screen)) neuesSpiel();
+      S.pauseFertig = levelVon(n) > 0; S.introGesehen = true;
+      hudAufbauen(); anrufStarten(n);
+    });
+  }
   // Testsprünge: #intro, #l1, #l2, #anruf1 … #anruf6, #e1, #e2, #pause, #schluss, #frage, #ende (fremde Hashes, z. B. vom LMS, zählen nicht)
   const sprung = location.hash.slice(1);
   if (/^(intro|l\d|anruf\d|e\d|pause|schluss|frage|ende)$/.test(sprung)) {
     testModus = true;
-    const testErgebnisse = () => C.anrufe.forEach((a, i) => {
+    const testErgebnisse = () => IM_SPIEL.forEach((a, i) => {
       const richtig = i !== 1;
       S.ergebnisse[i] = { richtig, zuSpaet: false, gut: i % 2 ? 1 : 2, beute: !a.echt && !richtig ? a.beute : 0, zuege: [], pfad: [] };
     });

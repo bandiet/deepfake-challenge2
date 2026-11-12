@@ -243,7 +243,7 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 /* Online-Video */
 .sz-player { border-radius: 14px; overflow: hidden; background: #111; border: 1px solid rgba(255, 255, 255, .12); text-align: left; box-shadow: 0 20px 60px -30px rgba(0,0,0,.9); }
 .sz-bild { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
-.sz-bild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sz-bild img, .sz-bild video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .sz-play { position: absolute; left: 14px; bottom: 12px; width: 0; height: 0; border-left: 12px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
 .szene.laeuft .sz-play { width: 12px; height: 16px; border: 0; background: linear-gradient(90deg, #fff 0 4px, transparent 4px 8px, #fff 8px 12px); }
 .sz-dauer { position: absolute; right: 10px; bottom: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,.7); font: 600 11px/1.3 var(--code); color: #fff; }
@@ -1158,6 +1158,16 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* Die andere Seite hat aufgelegt bzw. die Verbindung ist weg: kein Videobild mehr, nur noch der Hinweis */
+.geraet.mit-video.getrennt[data-zustand="ende"] .phone-video, .geraet.mit-video.getrennt[data-zustand="ende"] .win-video { display: none; }
+.geraet.mit-video.getrennt[data-zustand="ende"] .phone-anruf { visibility: visible; }
+
+/* Debugmodus (?debug): zum vorigen / nächsten Anruf springen */
+.debug-leiste { position: fixed; left: 12px; bottom: 12px; z-index: 999; display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 12px;
+  background: rgba(255, 196, 0, .92); color: #1a1200; font: 700 12px/1 var(--code); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.debug-leiste button { width: 34px; height: 30px; border-radius: 8px; background: #1a1200; color: #ffd24d; font-size: 14px; }
+.debug-leiste span { padding: 0 6px; white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -1576,6 +1586,7 @@ window.CONTENT = {
     ],
     foto: 'assets/intro-gesicht.jpg',
     vlog: 'assets/intro-vlog.jpg',
+    vlogVideo: 'assets/video/intro-vlog.mp4',   // läuft stumm im Player (Grok, Start- und Endbild = intro-vlog.jpg)
     skip: 'Überspringen'
   },
 
@@ -1729,7 +1740,8 @@ window.CONTENT = {
 
     {
       // Level 1 vor c5: die echte Sofia kündigt die Bankänderung an (Teams-Video, Querformat). Clips und die beiden
-      // Idle-Stücke aus Grok, alle mit dem Porträt als Start- und Endbild; nah gemessen mit tools/werk/idlefilm.swift.
+      // Idle-Stücke aus Grok (v4: Umgangssprache, erst sprechen, dann warten; werk/grok-sofia-echt, tools/werk/c8_bau.swift),
+      // alle mit dem Porträt als Start- und Endbild; nah gemessen mit tools/werk/idlefilm.swift.
       id: 'c8',
       echt: true,
       kanal: 'teams',
@@ -1737,7 +1749,7 @@ window.CONTENT = {
       extern: true,
       video: {
         auslauf: true, poster: 'assets/video/laurent-poster.jpg', idle: 'assets/video/c8_idle.mp4',
-        nah: [[0, 4.2], [7.7, 12.3], [18.6, 20.1]],
+        nah: [[0, 2.9], [4.3, 12.1], [17.0, 20.1]],
         clips: ['c8_0', 'c8_1a', 'c8_1b', 'c8_2a', 'c8_2b']
       },
       klang: 'teams',
@@ -1747,23 +1759,23 @@ window.CONTENT = {
       storyTitel: 'Neue Bankverbindung – ab Dezember?',
       lage: 'Du betreust die Rechnungen eines langjährigen Lieferanten. Euer monatlicher Abstimmungstermin mit Sofia Laurent steht im Kalender.',
       anrufer: { name: 'Sofia Laurent', zeile: 'Lieferant · Monatliche Abstimmung', initialen: 'SL', farbe: '#8A3C5A', badge: 'Extern' },
-      start: { id: 'c8_0', tts: 'Guten Morgen! Wir wechseln zum ersten Dezember die Bank. Diese Woche kommt ein offizielles Schreiben. Bis dahin bleibt alles wie gehabt.' },
+      start: { id: 'c8_0', tts: 'Hallo! Schön, dass unsere Monatsabstimmung klappt. Ich fang gleich mit dem Wichtigsten an: Wir wechseln ab Dezember die Bank. Das offizielle Schreiben kommt diese Woche.' },
       runden: [
         [
           { text: 'Schicken Sie mir die neuen Daten doch gleich, dann trage ich sie ein.', wert: 'riskant',
-            antwort: { id: 'c8_1a', tts: 'Das Schreiben kommt sowieso. Das alte Konto gilt noch bis Ende November. Keine Eile.' } },
+            antwort: { id: 'c8_1a', tts: 'Lieber nicht per Mail – die neuen Daten stehen im offiziellen Schreiben. Bis Ende November gilt ja noch das alte Konto.' } },
           { text: 'Danke für den Hinweis. Bankdaten prüfen wir immer per Rückruf.', wert: 'gut',
-            antwort: { id: 'c8_1b', tts: 'Klar, kenne ich ja von Ihnen. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
+            antwort: { id: 'c8_1b', tts: 'Sehr gut, so machen wir das auch. Rufen Sie einfach unsere Zentrale an oder Herrn Vogt.' } }
         ],
         [
           { text: 'Gut, dann gehen wir jetzt die offenen Posten durch.', wert: 'neutral',
-            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur die Rechnung vom September. Die bitte normal aufs alte Konto.' } },
+            antwort: { id: 'c8_2a', tts: 'Gern. Offen ist nur noch die Rechnung vom September. Die bitte ganz normal aufs alte Konto.' } },
           { text: 'Wen kann ich anrufen, falls am Schreiben etwas unklar ist?', wert: 'gut',
-            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt, über die Nummern in Ihrem System. Ich wollte es nur ankündigen.' } }
+            antwort: { id: 'c8_2b', tts: 'Mich oder Herrn Vogt – über die Nummern, die Sie schon haben. Ich wollte es nur rechtzeitig ankündigen.' } }
         ]
       ],
       signale: [
-        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielles Schreiben', 'bleibt alles wie gehabt'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
+        { art: 'gruen', titel: 'Alles läuft über den normalen Weg', zitat: ['offizielle Schreiben', 'gilt ja noch das alte Konto'], text: 'Geplanter Termin, offizielles Schreiben, das alte Konto gilt weiter – und ein Rückruf über bekannte Nummern ist ausdrücklich erwünscht.' },
         { art: 'info', titel: '„Extern“ ist hier normal', geraet: 'extern', text: 'Ein Lieferant sitzt nun mal nicht im eigenen Haus. „Extern“ ist ein Grund, genau hinzusehen – kein Beweis für einen Fake.' }
       ],
       kern: 'Eine Bankänderung ist nicht automatisch Betrug. Hier lief alles über den normalen Weg – und das alte Konto gilt weiter. Merk dir Sofia: Du hörst wieder von ihr.',
@@ -2901,6 +2913,8 @@ window.Feier = (function () {
   const lvStart = l => LV.slice(0, l).reduce((n, x) => n + x.anzahl, 0);
   const levelVon = i => { let n = 0; for (let l = 0; l < LV.length; l++) { n += LV[l].anzahl; if (i < n) return l; } return LV.length - 1; };
   const istRichtig = e => !!(e && e.richtig && !e.zuSpaet);
+  // nur die Anrufe, die in einem Level stehen (dahinter geparkte wie das Headset-Ticket zählen nirgends)
+  const IM_SPIEL = C.anrufe.slice(0, lvStart(LV.length));
   // so viele Anrufe eines Levels müssen richtig sein, sonst wird es wiederholt
   const mindestens = l => Math.min(LV[l].anzahl, LV[l].mindestens || LV[l].anzahl);
   const richtigIm = l => C.anrufe.slice(lvStart(l), lvStart(l) + LV[l].anzahl).filter((a, k) => istRichtig(S.ergebnisse[lvStart(l) + k])).length;
@@ -3189,7 +3203,7 @@ window.Feier = (function () {
   async function szeneVideo(q, ok) {
     const sz = $('szene');
     sz.innerHTML = `<div class="sz-player">
-        <div class="sz-bild"><img src="${C.intro.vlog}" alt=""><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
+        <div class="sz-bild"><video src="${C.intro.vlogVideo}" poster="${C.intro.vlog}" muted playsinline loop autoplay preload="auto"></video><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
         <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i></div>
         <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
       </div>`;
@@ -3272,8 +3286,8 @@ window.Feier = (function () {
   function neuesSpiel() {
     S.i = 0; S.level = 0; S.ergebnisse = []; S.beute = 0; S.pause = null; S.pauseFertig = false;
     // Der Hacker kommt nicht zu jedem Feedback: beim ersten Anruf immer, danach zufällig, insgesamt bei etwa zwei Dritteln
-    const rest = C.anrufe.map((a, i) => i).slice(1).sort(() => Math.random() - .5);
-    S.hackerBei = new Set([0, ...rest.slice(0, Math.round(C.anrufe.length * 2 / 3) - 1)]);
+    const rest = IM_SPIEL.map((a, i) => i).slice(1).sort(() => Math.random() - .5);
+    S.hackerBei = new Set([0, ...rest.slice(0, Math.round(IM_SPIEL.length * 2 / 3) - 1)]);
     $('hud-beute-wert').textContent = euro(0);
   }
 
@@ -3357,7 +3371,7 @@ window.Feier = (function () {
     transkriptLinks(false);
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
     $('cc-log').innerHTML = '<p class="cc-leer">Noch kein Gespräch.</p>';
-    $('ablehnen-tipp').hidden = true; $('geraet-ende').hidden = true;
+    $('ablehnen-tipp').hidden = true; $('geraet-ende').hidden = true; geraet.classList.remove('getrennt');
 
     // Lage
     const [tag, uhr] = a.zeit.split(', ');
@@ -3845,9 +3859,12 @@ window.Feier = (function () {
     cancelAnimationFrame(ringId); clearInterval(timerId); clearInterval(posteingang.id);
     geraet.classList.remove('spricht');
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
-    if (grund !== 'verbindung') K.fx.auflegen();
+    // Nur wenn die andere Seite das Gespräch beendet, steht es da (und das Videobild verschwindet). Endet das Gespräch
+    // einfach, weil die Antworten durch sind, bleibt alles stehen – sonst klingt es, als hätte der Anrufer aufgelegt.
+    if (grund === 'aufgelegt') K.fx.auflegen();
     const ende = $('geraet-ende');
-    ende.textContent = grund === 'verbindung' ? C.telefon.verbindungWeg : C.telefon.beendet; ende.hidden = false;
+    ende.textContent = C.telefon.verbindungWeg; ende.hidden = grund !== 'verbindung';
+    geraet.classList.toggle('getrennt', grund === 'verbindung');
     setZustand('ende');
     await warte(900);
     if (ep === S.epoche) urteilZeigen();
@@ -4226,14 +4243,14 @@ window.Feier = (function () {
   /* ================= Auswertung (wie das Ergebnis der Serie) ================= */
   function ende() {
     ++S.epoche;
-    const A = C.auswertung, N = C.anrufe.length;
+    const A = C.auswertung, N = IM_SPIEL.length;
     const erg = S.ergebnisse;
-    const richtig = C.anrufe.filter((a, i) => istRichtig(erg[i])).length;
+    const richtig = IM_SPIEL.filter((a, i) => istRichtig(erg[i])).length;
     const gut = erg.filter(Boolean).reduce((x, e) => x + (e.gut || 0), 0);
     const rang = A.raenge.find(r => N - richtig <= r.fehler);
     const hackerText = richtig >= N - 1 && !S.beute ? A.hackerGut : (richtig >= N - 2 ? A.hackerMittel : A.hackerSchlecht);
     const mitte = `<span class="m-prozent">0 %</span><span class="m-richtig">${richtig}/${N} ${esc(A.richtig)}</span>`;
-    const akte = C.anrufe.map((a, i) => {
+    const akte = IM_SPIEL.map((a, i) => {
       const e = erg[i] || {};
       const st = !a.echt ? (e.zuSpaet ? 'zuSpaet' : e.richtig ? 'entlarvt' : 'getaeuscht') : (e.richtig ? 'echtErkannt' : 'fehlalarm');
       return `<li class="akte-${st}" style="--i:${i}"><span class="akte-nr">${i + 1}</span><div><b>${esc(a.storyTitel)}</b><span>${C.hud.level} ${levelVon(i) + 1} · ${esc(a.echt ? C.levelEnde.warEcht : C.levelEnde.warFake)} · ${esc(a.anrufer.name)}</span></div><em>${C.feedback[st].stempel}</em></li>`;
@@ -4267,7 +4284,7 @@ window.Feier = (function () {
     messerStarten($('finale'));
     zaehle($('ende-beute'), S.beute, euro, 1600);
     setTimeout(() => tippe($('ende-hacker-text'), hackerText, 26, true), reduziert ? 0 : 900);
-    if (!reduziert) C.anrufe.forEach((a, i) => setTimeout(() => K.fx.pop(i), 700 + i * 160));
+    if (!reduziert) IM_SPIEL.forEach((a, i) => setTimeout(() => K.fx.pop(i), 700 + i * 160));
     setTimeout(() => (richtig >= N - 2 ? K.fx.richtig : K.fx.stempel)(), reduziert ? 0 : 500);
     if (!S.beute) setTimeout(() => konfetti(140, 'bunt'), reduziert ? 0 : 1300);
     $('ende-nochmal').addEventListener('click', () => { K.fx.klick(); neuesSpiel(); levelIntro(0); });
@@ -4284,8 +4301,8 @@ window.Feier = (function () {
     LMS.speichern({ v: 1, l, p: S.pauseFertig ? 1 : 0, b: S.beute, e }, 'level' + Math.min(l + 1, LV.length));
     // Alle Levels bestanden: abgeschlossen und bestanden, Punkte = Anteil der richtig erkannten Anrufe (letzter Versuch je Level)
     if (l === LV.length && !S.lmsGemeldet) {
-      const richtig = C.anrufe.filter((a, i) => istRichtig(S.ergebnisse[i])).length;
-      S.lmsGemeldet = LMS.abschliessen(100 * richtig / C.anrufe.length, true);
+      const richtig = IM_SPIEL.filter((a, i) => istRichtig(S.ergebnisse[i])).length;
+      S.lmsGemeldet = LMS.abschliessen(100 * richtig / IM_SPIEL.length, true);
     }
   }
   function standLaden(d) {
@@ -4348,11 +4365,30 @@ window.Feier = (function () {
     }, { capture: true, once: true });
   }
 
+  // Debugmodus (?debug): Pfeile unten links springen zum vorigen / nächsten Anruf – für die Endfassung nicht verlinken
+  if (/[?&]debug\b/.test(location.search)) {
+    testModus = true;
+    const leiste = document.createElement('div');
+    leiste.className = 'debug-leiste';
+    leiste.innerHTML = '<button type="button" data-d="-1" title="Vorheriger Anruf">◀</button><span></span><button type="button" data-d="1" title="Nächster Anruf">▶</button>';
+    document.body.appendChild(leiste);
+    const anzeigen = () => { leiste.querySelector('span').textContent = app.dataset.screen === 's-spiel' ? `Anruf ${S.i + 1}/${IM_SPIEL.length} · ${C.anrufe[S.i].id}` : 'Debug'; };
+    setInterval(anzeigen, 500);
+    leiste.addEventListener('click', ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      K.init(); K.stimmeStop(); K.ringStop(); K.atmoStop(); K.nebentonStop(); videoStop();
+      const i = app.dataset.screen === 's-spiel' || app.dataset.screen === 's-levelende' ? S.i + +b.dataset.d : (+b.dataset.d > 0 ? 0 : IM_SPIEL.length - 1);
+      const n = (i + IM_SPIEL.length) % IM_SPIEL.length;
+      if (!['s-spiel', 's-levelende', 's-pause', 's-level'].includes(app.dataset.screen)) neuesSpiel();
+      S.pauseFertig = levelVon(n) > 0; S.introGesehen = true;
+      hudAufbauen(); anrufStarten(n);
+    });
+  }
   // Testsprünge: #intro, #l1, #l2, #anruf1 … #anruf6, #e1, #e2, #pause, #schluss, #frage, #ende (fremde Hashes, z. B. vom LMS, zählen nicht)
   const sprung = location.hash.slice(1);
   if (/^(intro|l\d|anruf\d|e\d|pause|schluss|frage|ende)$/.test(sprung)) {
     testModus = true;
-    const testErgebnisse = () => C.anrufe.forEach((a, i) => {
+    const testErgebnisse = () => IM_SPIEL.forEach((a, i) => {
       const richtig = i !== 1;
       S.ergebnisse[i] = { richtig, zuSpaet: false, gut: i % 2 ? 1 : 2, beute: !a.echt && !richtig ? a.beute : 0, zuege: [], pfad: [] };
     });
