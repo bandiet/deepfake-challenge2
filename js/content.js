@@ -22,20 +22,26 @@ window.CONTENT = {
   },
 
   /* Intro ohne Stimme, direkt nach dem Start: das Deepfake-Kit holt eine Stimme aus einem Online-Video und ein
-     Gesicht aus einem Social-Media-Profil und scannt beides; danach kommt „Bereit für Level 1?“.
-     Bei audio/gesicht läuft erst die Szene, dann erscheinen gross, klein und ergebnis. */
+     Gesicht aus einem Social-Media-Profil und scannt beides; dann steuert ein Angreifer an seiner Webcam das geklonte
+     Gesicht live (steuern). Danach kommt „Bereit für Level 1?“.
+     Bei audio/gesicht/steuern läuft erst die Szene, dann erscheinen gross, klein und ergebnis. */
   intro: {
     kopf: 'deepfake-kit · bereit',
     beats: [
       { art: 'audio', gross: '3 Sekunden Audio.', klein: 'Mehr braucht es nicht.', ergebnis: 'Stimme geklont',
-        quelle: { titel: 'Hafen-Vlog, Tag 3 – endlich Sonne! ☀️', kanal: 'Unterwegs mit Markus', aufrufe: '12.483 Aufrufe', schritte: ['Audio extrahieren …', 'Stimme analysieren …'] } },
+        quelle: { titel: 'Hafen-Vlog, Tag 3 – endlich Sonne! ☀️', kanal: 'Unterwegs mit Markus', aufrufe: '12.483 Aufrufe', abgriff: 'Tonspur → Kit', schritte: ['Tonspur abgreifen …', 'Stimme analysieren …'] } },
       { art: 'gesicht', gross: 'Ein Foto.', klein: 'Mehr braucht es nicht.', ergebnis: 'Gesicht geklont',
         profil: { name: 'markus.unterwegs', zahlen: [['214', 'Beiträge'], ['1.208', 'Follower'], ['380', 'Gefolgt']], bio: 'Reisen · Kaffee · Hafenluft', schritte: ['Bild kopieren …', 'Gesicht vermessen …'] } },
+      { art: 'steuern', gross: 'Live gesteuert.', klein: 'Ein Fremder spricht – mit seinem Gesicht und seiner Stimme.', ergebnis: 'Markus ist jetzt live',
+        live: { links: 'Webcam · Angreifer', rechts: 'Ausgabe · Markus', live: 'Live', verbinden: 'Gesicht wird verbunden …', erkannt: 'Gesicht erkannt',
+          untertitel: '„Hi, ich bin’s, Markus! Kannst du mir kurz helfen?“', schritte: ['Gesicht aufsetzen …', 'Live-Steuerung aktiv'] } },
       { art: 'frage', gross: 'Echt oder Fake?', klein: 'Hören und sehen kannst du den Unterschied fast nicht mehr.' }
     ],
     foto: 'assets/intro-gesicht.jpg',
     vlog: 'assets/intro-vlog.jpg',
     vlogVideo: 'assets/video/intro-vlog.mp4',   // läuft stumm im Player (Grok, Start- und Endbild = intro-vlog.jpg)
+    liveVideo: 'assets/video/intro-live.mp4',   // links der Angreifer an der Webcam, rechts Markus' Gesicht, das mitmacht (Grok, eine Aufnahme)
+    live: 'assets/intro-live.jpg',
     skip: 'Überspringen'
   },
 

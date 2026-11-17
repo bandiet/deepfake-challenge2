@@ -277,6 +277,7 @@
     const ep = ++S.epoche;
     const ok = () => !introAbbruch && ep === S.epoche;
     K.musik('kit', 0.55, 1.2);
+    fetch(C.intro.liveVideo).catch(() => { });   // die Live-Szene kommt später – schon jetzt in den Cache holen
     $('intro-skip').textContent = C.intro.skip;
     tippe($('kit-kopf').querySelector('span'), C.intro.kopf, 40);
     await warte(700);
@@ -298,21 +299,22 @@
     await warte(180);
     beat.dataset.art = b.art;
     erg.textContent = ''; erg.classList.remove('an');
-    $('szene').innerHTML = ''; $('szene').className = 'szene'; $('sz-schritt').textContent = ''; $('rec').classList.remove('an');
+    if (szeneLauf) { cancelAnimationFrame(szeneLauf); szeneLauf = 0; }
+    $('szene').innerHTML = ''; $('szene').className = 'szene'; $('sz-schritt').textContent = ''; $('rec').classList.remove('an'); $('beat-medium').classList.remove('zapft');
     klein.textContent = b.klein || '';
     if (b.art === 'frage') gross.innerHTML = '<span class="mega-a">Echt</span> <span class="mega-oder">oder</span> <span class="mega-b">Fake?</span>';
     else gross.textContent = b.gross;
     // Bei den Szenen kommt die Überschrift erst, wenn das Kit fertig ist
-    const szene = b.art === 'audio' || b.art === 'gesicht';
+    const szene = b.art === 'audio' || b.art === 'gesicht' || b.art === 'steuern';
     beat.classList.toggle('vorher', szene);
     beat.classList.remove('raus'); void beat.offsetWidth; beat.classList.add('rein');
 
     if (b.art === 'audio') {
-      await szeneVideo(b.quelle, ok); if (!ok()) return;
-      $('sz-schritt').textContent = b.quelle.schritte[1]; $('rec').classList.add('an');
-      await aufnahme(2800, ok);
+      await szeneVideo(b.quelle, ok);
     } else if (b.art === 'gesicht') {
       await szeneProfil(b.profil, ok);
+    } else if (b.art === 'steuern') {
+      await szeneSteuern(b.live, ok);
     }
     if (!ok()) return;
     if (szene) {
@@ -324,18 +326,38 @@
       gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(2800);
     }
   }
-  // Szene 1: ein Online-Video läuft, das Kit markiert drei Sekunden und zieht die Stimme heraus
+  // Szene 1: ein Online-Video läuft weiter, während das Kit drei Sekunden markiert und die Tonspur abzapft
+  let szeneLauf = 0;
   async function szeneVideo(q, ok) {
     const sz = $('szene');
     sz.innerHTML = `<div class="sz-player">
-        <div class="sz-bild"><video src="${C.intro.vlogVideo}" poster="${C.intro.vlog}" muted playsinline loop autoplay preload="auto"></video><i class="sz-scan"></i><span class="sz-play"></span><span class="sz-dauer">08:12</span></div>
-        <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i></div>
+        <div class="sz-bild"><video src="${C.intro.vlogVideo}" poster="${C.intro.vlog}" muted playsinline loop autoplay preload="auto"></video><i class="sz-scan"></i>
+          <span class="sz-play"></span><span class="sz-ton"><i></i><i></i><i></i><i></i><i></i></span><span class="sz-dauer"><b class="sz-zeit">00:14</b> / 00:48</span>
+          <span class="sz-abgriff">${esc(q.abgriff)}</span></div>
+        <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i><i class="sz-kopf"></i></div>
         <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
       </div>`;
+    // Die Wiedergabe läuft die ganze Szene über weiter: Fortschritt und Zeit kommen aus der Uhr, nicht aus CSS
+    const fort = sz.querySelector('.sz-fort'), kopf = sz.querySelector('.sz-kopf'), auswahl = sz.querySelector('.sz-auswahl'), zeit = sz.querySelector('.sz-zeit');
+    const GESAMT = 48, START = 14, t0 = performance.now(); let markAb = null;
+    const mmss = x => String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(Math.floor(x % 60)).padStart(2, '0');
+    const pos = t => START + (t - t0) / 1000;
+    (function schritt(t) {
+      const p = pos(t), pz = p / GESAMT * 100;
+      fort.style.width = pz + '%'; kopf.style.left = pz + '%'; zeit.textContent = mmss(p);
+      if (markAb != null) { const a = markAb / GESAMT * 100; auswahl.style.left = a + '%'; auswahl.style.width = Math.min(pz - a, 3 / GESAMT * 100) + '%'; }
+      szeneLauf = requestAnimationFrame(schritt);
+    })(t0);
     await warte(60); sz.classList.add('laeuft');
-    await warte(1500); if (!ok()) return;
-    sz.classList.add('markiert'); $('sz-schritt').textContent = q.schritte[0]; K.fx.rec();
-    await warte(1700);
+    await warte(1600); if (!ok()) return;
+    // drei Sekunden markieren: die Auswahl wächst mit dem Abspielkopf, die Tonspur fließt ins Kit
+    markAb = pos(performance.now());
+    sz.classList.add('markiert'); $('beat-medium').classList.add('zapft');
+    $('sz-schritt').textContent = q.schritte[0]; $('rec').classList.add('an');
+    await aufnahme(3000, ok); if (!ok()) return;
+    sz.classList.add('fertig'); $('beat-medium').classList.remove('zapft');
+    $('sz-schritt').textContent = q.schritte[1]; K.fx.rec();
+    await warte(1200);
   }
   // Szene 2: ein Social-Media-Profil, das Kit kopiert das Foto und vermisst das Gesicht
   async function szeneProfil(pr, ok) {
@@ -364,6 +386,32 @@
     sz.classList.add('vermisst'); $('sz-schritt').textContent = pr.schritte[1];
     for (let k = 0; k < 3 && ok(); k++) { K.fx.rec(); await warte(900); }
   }
+  // Szene 3: der Angreifer vor seiner Webcam steuert das geklonte Gesicht live (eine Aufnahme, links und rechts)
+  async function szeneSteuern(lv, ok) {
+    const sz = $('szene');
+    sz.innerHTML = `<div class="sz-live">
+        <div class="sl-bild"><video src="${C.intro.liveVideo}" poster="${C.intro.live}" muted playsinline loop preload="auto"></video>
+          <div class="sl-halb sl-links"><span class="sl-tag"><i class="sl-cam"></i>${esc(lv.links)}</span><i class="sl-track"><b>${esc(lv.erkannt)}</b></i></div>
+          <div class="sl-halb sl-rechts"><span class="sl-tag">${esc(lv.rechts)}</span><span class="sl-live">${esc(lv.live)}</span>
+            <div class="sl-decke"><img src="${C.intro.foto}" alt=""><i class="sz-scan"></i><span>${esc(lv.verbinden)}</span></div>
+            <p class="sl-cc">${esc(lv.untertitel)}</p></div>
+          <i class="sl-pfeil"></i>
+        </div>
+      </div>`;
+    const v = sz.querySelector('video');
+    await warte(60); sz.classList.add('laeuft');
+    // erst das Standbild: rechts wird das Gesicht aufgesetzt; dann läuft die Webcam los und Markus macht sofort mit
+    try { v.currentTime = 0; } catch (e) { }
+    $('sz-schritt').textContent = lv.schritte[0]; K.fx.rec();
+    await warte(1000); if (!ok()) return;
+    sz.classList.add('erkannt'); K.fx.pop(1);
+    v.play().catch(() => { });
+    await warte(600); if (!ok()) return;
+    sz.classList.add('verbunden'); $('sz-schritt').textContent = lv.schritte[1]; K.fx.fertig();
+    await warte(1400); if (!ok()) return;
+    sz.classList.add('spricht');
+    await warte(2600);
+  }
   async function ergebnis(b, ok) {
     if (!ok()) return;
     const erg = $('beat-ergebnis');
@@ -379,15 +427,18 @@
     cv.width = r.width * d; cv.height = r.height * d; g.setTransform(d, 0, 0, d, 0, 0);
     const W = r.width, H = r.height, balken = [];
     let pegel = 0, letzterPiep = 0;
-    const t0 = performance.now();
+    const t0 = performance.now(); let takt = t0;
     return new Promise(fertig => {
       (function schritt(t) {
         const f = Math.min(1, (t - t0) / dauer);
         zeit.textContent = '00:0' + (f * 3).toFixed(1);
         // sprachartige Hüllkurve: Silben mit kleinen Pausen
-        const silbe = Math.sin(t / 95) * 0.5 + 0.5, pause = Math.sin(t / 610) > -0.55 ? 1 : 0.12;
-        pegel += ((0.25 + Math.random() * 0.75) * silbe * pause - pegel) * 0.35;
-        balken.push(pegel);
+        // ein Balken je 16 ms, auch wenn der Rechner nur wenige Bilder schafft
+        while (takt <= t) {
+          const silbe = Math.sin(takt / 95) * 0.5 + 0.5, pause = Math.sin(takt / 610) > -0.55 ? 1 : 0.12;
+          pegel += ((0.25 + Math.random() * 0.75) * silbe * pause - pegel) * 0.35;
+          balken.push(pegel); takt += 16;
+        }
         const n = Math.floor(W / 5); while (balken.length > n) balken.shift();
         g.clearRect(0, 0, W, H);
         balken.forEach((v, i) => {
