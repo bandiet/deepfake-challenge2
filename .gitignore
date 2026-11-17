@@ -7,3 +7,6 @@ dist/*.zip
 
 # Entwurfsvergleich (lokal, wird nicht veröffentlicht)
 entwurf/
+
+# Reste von abgebrochenen Schreibvorgängen der Sandbox
+*.sb-*

@@ -67,10 +67,15 @@
       .then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r.arrayBuffer(); })
       .then(ab => new Promise((ok, nein) => { init(); ctx.decodeAudioData(ab, ok, nein); }))
       .then(buf => {
-        const d = buf.getChannelData(0), sr = buf.sampleRate, schwelle = 0.02;
-        let a = 0; while (a < d.length && Math.abs(d[a]) < schwelle) a++;
-        let e = d.length - 1; while (e > a && Math.abs(d[e]) < schwelle) e--;
-        const start = Math.max(0, a / sr - 0.06), ende = Math.min(buf.duration, e / sr + 0.28);
+        // Anfang und Ende der Sprache über den Pegel je 20 ms, relativ zum lautesten Fenster: so zählt das
+        // Hintergrundrauschen der Grok-Clips (Straße, Büro) nicht als Sprache und die Antworten kommen gleich nach dem letzten Wort
+        const d = buf.getChannelData(0), sr = buf.sampleRate, w = Math.floor(sr * 0.02), n = Math.floor(d.length / w);
+        const rms = new Float32Array(n); let max = 0;
+        for (let i = 0; i < n; i++) { let q = 0; for (let j = i * w; j < (i + 1) * w; j++) q += d[j] * d[j]; rms[i] = Math.sqrt(q / w); if (rms[i] > max) max = rms[i]; }
+        const schwelle = Math.max(0.006, max * 0.12);
+        let a = 0; while (a < n && rms[a] < schwelle) a++;
+        let e = n - 1; while (e > a && rms[e] < schwelle) e--;
+        const start = Math.max(0, a * 0.02 - 0.06), ende = Math.min(buf.duration, (e + 1) * 0.02 + 0.28);
         return { buf, start, ende, huelle: sprechHuelle(d, sr, start, ende) };
       })
       .catch(err => { console.warn('Audio fehlt:', err.message); delete puffer[url]; return null; });

@@ -497,6 +497,8 @@
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;
     $('cc-log').innerHTML = '<p class="cc-leer">Noch kein Gespräch.</p>';
     $('ablehnen-tipp').hidden = true; $('geraet-ende').hidden = true; geraet.classList.remove('getrennt');
+    // Gesprächsdauer erst ab dem Abheben (auch nach einem Sprung mitten aus einem anderen Anruf)
+    clearInterval(timerId); $('ph-timer').textContent = ''; $('vid-timer').textContent = ''; $('win-timer').textContent = '00:00';
 
     // Lage
     const [tag, uhr] = a.zeit.split(', ');
@@ -981,6 +983,8 @@
     L.beendet = true;
     L.aufgelegt = grund === 'aufgelegt';
     K.stimmeStop(); K.ringStop(); K.atmoStop(); K.nebentonStop(); ccFertig(); videoStop();
+    // Videoanruf vorbei: es bleibt das Ausgangsbild stehen (Augen offen), nicht ein zufälliges Bild mitten im Blinzeln
+    if (S.a.video && grund !== 'verbindung') { VID.talk.style.opacity = 0; try { VID.idle.currentTime = 0; } catch (e) { } }
     cancelAnimationFrame(ringId); clearInterval(timerId); clearInterval(posteingang.id);
     geraet.classList.remove('spricht');
     $('wahl').hidden = true; $('cc-nochmal').hidden = true;

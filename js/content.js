@@ -234,13 +234,14 @@ window.CONTENT = {
     },
 
     {
-      // CEO-Fraud als Deepfake-Videoanruf (Katrin Albers, mit Grok erzeugt, wie in v1). Bild und Ton aus assets/video;
-      // c5_0 = Teil 1 und 1c hintereinander. c5_2b endet mit einem Verbindungsabbruch.
+      // CEO-Fraud als Deepfake-Videoanruf (Katrin Albers, mit Grok im Schleifen-Modus erzeugt: jeder Clip beginnt und
+      // endet im Ausgangsbild werk/grok-albers/albers-weit.jpg). Bild aus assets/video, Ton aus assets/stem.
+      // c5_2b endet mit einem Verbindungsabbruch.
       id: 'c5',
       echt: false,
       kanal: 'whatsapp',
       geraet: 'phone',
-      video: { poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
+      video: { auslauf: true, poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', nah: [[0, 2.9], [8.1, 15.9], [16.9, 20.1]], clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
       klang: 'messenger',
       atmo: null,
       klingel: 'messenger',
@@ -248,19 +249,19 @@ window.CONTENT = {
       storyTitel: 'Die Chefin persönlich – am Handy?',
       lage: 'Du vertrittst deine Teamleitung und darfst Zahlungen freigeben. Die Chefin, Dr. Katrin Albers, kennst du aus Townhall-Videos. Jetzt: ein WhatsApp-Videoanruf mit ihrem Foto – von einer fremden Nummer.',
       anrufer: { name: '+49 157 3308 1146', videoName: '~Katrin Albers', zeile: 'WhatsApp-Video · ~Katrin Albers', initialen: 'KA', farbe: '#8A6A3C', foto: 'assets/albers-profil.jpg' },
-      start: { id: 'c5_0', tts: 'Hallo! Gut, dass ich Sie erreiche. Katrin Albers hier. Ich sitze gerade in Zürich zwischen zwei Terminen, deshalb rufe ich vom privaten Handy an. Es geht um etwas sehr Vertrauliches: Wir stehen kurz vor einer Übernahme. Das darf noch niemand wissen, wirklich niemand. Ich brauche heute noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro an die Kanzlei. Können Sie das für mich anstoßen? [pause]' },
+      start: { id: 'c5_0', tts: 'Hallo, Katrin Albers hier – vom privaten Handy, ich bin in Zürich. Wir stehen kurz vor einer Übernahme, das darf noch niemand wissen. Heute muss noch eine Anzahlung von achtundvierzigtausendfünfhundert Euro raus. Können Sie das anstoßen?' },
       runden: [
         [
           { text: 'Natürlich. Wohin soll das Geld gehen?', wert: 'riskant',
-            antwort: { id: 'c5_1a', tts: 'Wunderbar, ich wusste, dass ich mich auf Sie verlassen kann. Die Kanzlei schickt Ihnen gleich die Kontodaten per Mail. Bitte als Eilüberweisung, heute noch – und nicht über die normale Freigabe, sonst ist es morgen im ganzen Haus rum. [pause]' } },
+            antwort: { id: 'c5_1a', tts: 'Wunderbar, danke. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte als Eilüberweisung – und nicht über die normale Freigabe, sonst weiß es morgen das ganze Haus.' } },
           { text: 'Ich rufe Sie kurz auf Ihrer Büronummer zurück.', wert: 'gut',
-            antwort: { id: 'c5_1b', tts: '[impatient] Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Die Kanzlei schickt Ihnen gleich die Kontodaten. Bitte heute noch, und bitte diskret. [pause]' } }
+            antwort: { id: 'c5_1b', tts: 'Dafür ist jetzt wirklich keine Zeit, ich gehe gleich in den nächsten Termin. Die Kanzlei schickt Ihnen die Kontodaten. Bitte heute noch – und bitte diskret.' } }
         ],
         [
           { text: 'In Ordnung, ich kümmere mich darum.', wert: 'riskant',
-            antwort: { id: 'c5_2a', tts: 'Danke. Ich verlasse mich auf Sie. Und denken Sie dran: Kein Wort zu niemandem. Bis dann. [pause]' } },
+            antwort: { id: 'c5_2a', tts: 'Danke. Ich verlasse mich auf Sie. Und denken Sie dran: kein Wort zu niemandem. Bis dann.' } },
           { text: 'Vorher kurz: Wie heißt das Projekt, das Sie mir letzte Woche übergeben haben?', wert: 'gut',
-            antwort: { id: 'c5_2b', tts: '[annoyed] Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas… Die Verbindung hier ist furchtbar, ich… [pause]', glitch: true } }
+            antwort: { id: 'c5_2b', tts: 'Wie bitte? Was soll das denn jetzt? Ich habe wirklich keine Zeit für so etwas … die Verbindung hier ist furchtbar, ich …', glitch: true } }
         ]
       ],
       signale: [
@@ -337,7 +338,7 @@ window.CONTENT = {
       storyTitel: 'Die Umstellung wurde vorgezogen?',
       lage: 'Zwei Tage nach eurem Abstimmungstermin ruft Sofia Laurent an – diesmal nicht über Teams, sondern von einer Handynummer, die du nicht kennst.',
       anrufer: { name: '+49 151 2290 4471', zeile: 'WhatsApp-Video', initialen: '?', farbe: '#5B6B8C' },
-      start: { id: 'c9_0', tts: 'Hallo, gut, dass ich Sie erreiche! Ich bin gerade unterwegs und hab eben erfahren: Wir wechseln schon nächste Woche die Bank. Können Sie die Septemberrechnung bitte schon aufs neue Konto überweisen? Die Daten schick ich Ihnen gleich.' },
+      start: { id: 'c9_0', tts: 'Hallo, gut, dass ich Sie erreiche! Ich bin unterwegs und hab eben erfahren: Wir wechseln schon nächste Woche die Bank – können Sie die Septemberrechnung bitte schon aufs neue Konto überweisen?' },
       runden: [
         [
           { text: 'Ah, Sie hatten es ja angekündigt. Schicken Sie mir die Daten.', wert: 'riskant',
