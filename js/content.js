@@ -40,7 +40,7 @@ window.CONTENT = {
     foto: 'assets/intro-gesicht.jpg',
     vlog: 'assets/intro-vlog.jpg',
     vlogVideo: 'assets/video/intro-vlog.mp4',   // läuft stumm im Player (Grok, Start- und Endbild = intro-vlog.jpg)
-    liveVideo: 'assets/video/intro-live.mp4',   // links der Angreifer an der Webcam, rechts Markus' Gesicht, das mitmacht (Grok, eine Aufnahme)
+    liveVideo: 'assets/video/intro-live.mp4',   // links der Hacker im Dunkeln an der Webcam, rechts Markus' Gesicht, das mitmacht (Grok, eine Aufnahme)
     live: 'assets/intro-live.jpg',
     skip: 'Überspringen'
   },

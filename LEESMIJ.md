@@ -83,3 +83,5 @@ Testen zonder LMS: `http://localhost:8814/test/lms.html` (LMS-simulator met SCOR
 - c7 (echte IT, Tobias Brandt): stem "Michael" (`d9Ln92LAVKPJLW7vlW1m`), take 1 van elke regel.
 - c5 (Chefin): de bestaande opnames uit de vroegere videocase; bij de kontrollvraag (`c5_2b`) valt de verbinding weg (`glitch: true`).
 - Wie een `tts`-tekst in `content.js` wijzigt, moet die regel opnieuw genereren (zelfde bestandsnaam in `assets/stem/`).
+
+**Grok workflow (2026-11-18):** how the video calls are made in Grok (settings, prompt structure, idle loops, profile photos, lessons learned, pipeline into the app, localisation) is in `docs/grok-video-workflow.md`.
