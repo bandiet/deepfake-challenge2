@@ -247,7 +247,7 @@ window.CONTENT = {
       echt: false,
       kanal: 'whatsapp',
       geraet: 'phone',
-      video: { auslauf: true, poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', nah: [[0, 2.9], [8.1, 15.9], [16.9, 20.1]], clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
+      video: { auslauf: true, poster: 'assets/video/albers-poster.jpg', idle: 'assets/video/c5_idle.mp4', nah: [[0, 3.0], [4.2, 18.1]], clips: ['c5_0', 'c5_1a', 'c5_1b', 'c5_2a', 'c5_2b'] },
       klang: 'messenger',
       atmo: null,
       klingel: 'messenger',

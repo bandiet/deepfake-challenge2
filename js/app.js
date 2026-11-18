@@ -326,7 +326,7 @@
       gross.classList.add('flackern'); await warte(900); gross.classList.remove('flackern'); await warte(2800);
     }
   }
-  // Szene 1: ein Online-Video läuft weiter, während das Kit drei Sekunden markiert und die Tonspur abzapft
+  // Szene 1: ein Online-Video läuft weiter, während das Kit drei Sekunden der Tonspur abzapft
   let szeneLauf = 0;
   async function szeneVideo(q, ok) {
     const sz = $('szene');
@@ -334,24 +334,22 @@
         <div class="sz-bild"><video src="${C.intro.vlogVideo}" poster="${C.intro.vlog}" muted playsinline loop autoplay preload="auto"></video><i class="sz-scan"></i>
           <span class="sz-play"></span><span class="sz-ton"><i></i><i></i><i></i><i></i><i></i></span><span class="sz-dauer"><b class="sz-zeit">00:14</b> / 00:48</span>
           <span class="sz-abgriff">${esc(q.abgriff)}</span></div>
-        <div class="sz-leiste"><i class="sz-fort"></i><i class="sz-auswahl"></i><i class="sz-kopf"></i></div>
+        <div class="sz-leiste"><i class="sz-fort"></i></div>
         <div class="sz-meta"><span class="sz-avatar"><img src="${C.intro.foto}" alt=""></span><span><b>${esc(q.titel)}</b><small>${esc(q.kanal)} · ${esc(q.aufrufe)}</small></span></div>
       </div>`;
     // Die Wiedergabe läuft die ganze Szene über weiter: Fortschritt und Zeit kommen aus der Uhr, nicht aus CSS
-    const fort = sz.querySelector('.sz-fort'), kopf = sz.querySelector('.sz-kopf'), auswahl = sz.querySelector('.sz-auswahl'), zeit = sz.querySelector('.sz-zeit');
-    const GESAMT = 48, START = 14, t0 = performance.now(); let markAb = null;
+    const fort = sz.querySelector('.sz-fort'), zeit = sz.querySelector('.sz-zeit');
+    const GESAMT = 48, START = 14, t0 = performance.now();
     const mmss = x => String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(Math.floor(x % 60)).padStart(2, '0');
     const pos = t => START + (t - t0) / 1000;
     (function schritt(t) {
       const p = pos(t), pz = p / GESAMT * 100;
-      fort.style.width = pz + '%'; kopf.style.left = pz + '%'; zeit.textContent = mmss(p);
-      if (markAb != null) { const a = markAb / GESAMT * 100; auswahl.style.left = a + '%'; auswahl.style.width = Math.min(pz - a, 3 / GESAMT * 100) + '%'; }
+      fort.style.width = pz + '%'; zeit.textContent = mmss(p);
       szeneLauf = requestAnimationFrame(schritt);
     })(t0);
     await warte(60); sz.classList.add('laeuft');
     await warte(1600); if (!ok()) return;
-    // drei Sekunden markieren: die Auswahl wächst mit dem Abspielkopf, die Tonspur fließt ins Kit
-    markAb = pos(performance.now());
+    // drei Sekunden lang fließt die Tonspur ins Kit, das Video läuft weiter
     sz.classList.add('markiert'); $('beat-medium').classList.add('zapft');
     $('sz-schritt').textContent = q.schritte[0]; $('rec').classList.add('an');
     await aufnahme(3000, ok); if (!ok()) return;
@@ -386,21 +384,128 @@
     sz.classList.add('vermisst'); $('sz-schritt').textContent = pr.schritte[1];
     for (let k = 0; k < 3 && ok(); k++) { K.fx.rec(); await warte(900); }
   }
-  // Szene 3: der Angreifer vor seiner Webcam steuert das geklonte Gesicht live (eine Aufnahme, links und rechts)
+  // Szene 3: der Angreifer (der Hacker der Serie) steuert das geklonte Gesicht live. Rechts läuft Markus als Video,
+  // links bewegt sich der Hacker genau so: seine Bewegung kommt Bild für Bild aus der Gesichtsspur desselben Videos
+  // (js/intro-spur.js), das Messnetz liegt auf seiner Maske.
+  // Messpunkte auf der Maske, relativ zur Gesichtsmitte (140, 225) des Serien-Hackers (index.html, .hacker-svg)
+  const HACKER_NETZ = (() => {
+    const P = [
+      ['rand', 58, 172], ['rand', 66, 215], ['rand', 80, 255], ['rand', 105, 292], ['rand', 140, 320], ['rand', 175, 292], ['rand', 200, 255], ['rand', 214, 215], ['rand', 222, 172], ['rand', 190, 150], ['rand', 140, 140], ['rand', 90, 150],
+      ['braueL', 94, 175], ['braueL', 109, 170], ['braueL', 124, 176], ['braueR', 186, 175], ['braueR', 171, 170], ['braueR', 156, 176],
+      ['augeL', 101, 198], ['augeL', 113, 198], ['augeL', 107, 187], ['augeL', 107, 209], ['augeR', 167, 198], ['augeR', 179, 198], ['augeR', 173, 187], ['augeR', 173, 209],
+      ['zug', 140, 200], ['zug', 140, 222], ['zug', 107, 237], ['zug', 124, 243], ['zug', 140, 240], ['zug', 156, 243], ['zug', 173, 237],
+      ['mundO', 140, 249], ['mundU', 140, 252], ['kinn', 140, 258], ['kinn', 140, 273]
+    ].map(([g, x, y]) => [g, x - 140, y - 225]);
+    const L = [];
+    P.forEach((a, i) => P.map((b, j) => [j, Math.hypot(a[1] - b[1], a[2] - b[2])]).filter(([j]) => j > i).sort((x, y) => x[1] - y[1]).slice(0, 3)
+      .forEach(([j]) => L.push([i, j])));
+    return { P, L };
+  })();
+  // Der Hacker der Serie vor seiner Webcam (Formen aus .hacker-svg, eigene Klassen hl-*, damit dessen Animationen nicht greifen)
+  function hackerSvg() {
+    const N = HACKER_NETZ;
+    return `<svg class="sl-hacker" viewBox="0 0 480 540" fill="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="hl-raum" cx="50%" cy="100%" r="90%"><stop offset="0" stop-color="#2a3a86"/><stop offset=".5" stop-color="#120c36"/><stop offset="1" stop-color="#05040f"/></radialGradient>
+        <linearGradient id="hl-kapuze" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#381c5a"/><stop offset=".35" stop-color="#251343"/><stop offset="1" stop-color="#120824"/></linearGradient>
+        <linearGradient id="hl-rumpf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#28174a"/><stop offset="1" stop-color="#150b28"/></linearGradient>
+        <linearGradient id="hl-s1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8d115e"/><stop offset=".5" stop-color="#b51a77"/><stop offset="1" stop-color="#8d115e"/></linearGradient>
+        <linearGradient id="hl-s2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff0066"/><stop offset=".5" stop-color="#ff0d75"/><stop offset="1" stop-color="#ff0066"/></linearGradient>
+        <radialGradient id="hl-licht" cx="50%" cy="100%" r="80%"><stop offset="0" stop-color="#7f9cff" stop-opacity=".22"/><stop offset="1" stop-color="#7f9cff" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="480" height="540" fill="url(#hl-raum)"/>
+      <g class="hl-rumpf">
+        <path d="M24,540 C34,468 118,428 240,425 C362,428 446,468 456,540 Z" fill="url(#hl-kapuze)"/>
+        <path d="M150,462 L240,500 L330,462 L330,480 L240,518 L150,480 Z" fill="url(#hl-s1)"/>
+        <path d="M168,492 L240,524 L312,492 L312,504 L240,536 L168,504 Z" fill="url(#hl-s2)"/></g>
+      <g class="hl-kopf"><g transform="scale(1.12)">
+        <g transform="translate(-140 -225)">
+          <path d="M140 10C95 38 12 135 12 215s66 135 128 135 128-55 128-135S185 38 140 10Z" fill="url(#hl-kapuze)"/>
+          <path d="M140 55C90 85 26 160 26 225s54 115 114 115 114-50 114-115S190 85 140 55Z" fill="#0d061c"/>
+        </g>
+        <g class="hl-maske"><g transform="translate(-140 -225)">
+          <path d="M40 160c-10 25-6 55 6 60-2-15 0-35 6-50Z" fill="#4f2d18"/><path d="M240 160c10 25 6 55-6 60 2-15 0-35-6-50Z" fill="#4f2d18"/>
+          <path d="M48 165c-22 0-24 37-2 37Z" fill="#a88267"/><path d="M44 172c-12 0-13 23-1 23Z" fill="#865f47"/>
+          <path d="M232 165c22 0 24 37 2 37Z" fill="#a88267"/><path d="M236 172c12 0 13 23 1 23Z" fill="#865f47"/>
+          <path d="M58 172c-4 46 12 106 82 148 70-42 86-102 82-148 0 0-47-32-82-32s-82 32-82 32Z" fill="#fff"/>
+          <path d="M58 172c47-32 117-32 164 0 2-10-37-34-82-34s-84 24-82 34Z" fill="#cbd2db"/>
+          <path d="M58 172c-4 46 12 106 82 148 70-42 86-102 82-148 0 0-47-32-82-32s-82 32-82 32Z" fill="url(#hl-licht)"/>
+        </g></g>
+        <g class="hl-zuege"><g transform="translate(-140 -225)">
+          <path class="hl-braueL" d="M94 175c11-6 26-3 30 1" stroke="#232d3a" stroke-width="5" stroke-linecap="round"/>
+          <path class="hl-braueR" d="M186 175c-11-6-26-3-30 1" stroke="#232d3a" stroke-width="5" stroke-linecap="round"/>
+          <ellipse class="hl-augeL" cx="107" cy="198" rx="5.5" ry="11" fill="#232d3a"/>
+          <ellipse class="hl-augeR" cx="173" cy="198" rx="5.5" ry="11" fill="#232d3a"/>
+          <ellipse class="hl-mund" cx="140" cy="250" rx="9" ry="1" fill="#4a1630"/>
+          <path d="M140 240c-12-6-26-7-33-3 7 9 21 12 33 12s26-3 33-12c-7-4-21-3-33 3Z" fill="#232d3a"/>
+          <rect class="hl-bart" x="137" y="254" width="6.5" height="19" rx="3.25" fill="#232d3a"/>
+        </g></g>
+        <g class="hl-netz">${N.L.map(() => '<line/>').join('')}${N.P.map(() => '<circle r="1.6"/>').join('')}</g>
+      </g></g>
+    </svg>`;
+  }
+  // Stellt den Hacker auf ein Bild der Spur (b = [dx, dy, gr, roll, dreh, nick, mund, augeL, augeR, braue, breite])
+  function hackerStellen(svg, b, nul) {
+    const [dx, dy, gr, roll, dreh, nick, mund, aL, aR, braue, breite] = b;
+    const q = s => svg.querySelector(s);
+    const cx = 240 + dx * 240, cy = 272 + dy * 240, sk = gr;
+    q('.hl-kopf').setAttribute('transform', `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${(-roll * 180 / Math.PI).toFixed(2)}) scale(${sk.toFixed(3)})`);
+    q('.hl-rumpf').setAttribute('transform', `translate(${(dx * 70).toFixed(1)} 0)`);
+    const fx = dreh * 520, fy = nick * 50, quetsch = 1 - Math.min(0.12, Math.abs(dreh) * 2.6);
+    q('.hl-maske').setAttribute('transform', `translate(${(fx * 0.35).toFixed(1)} ${(fy * 0.35).toFixed(1)}) scale(${quetsch.toFixed(3)} 1)`);
+    q('.hl-zuege').setAttribute('transform', `translate(${fx.toFixed(1)} ${fy.toFixed(1)})`);
+    const hoch = Math.max(-4, Math.min(11, braue * 140));
+    q('.hl-braueL').setAttribute('transform', `translate(0 ${(-hoch).toFixed(1)})`);
+    q('.hl-braueR').setAttribute('transform', `translate(0 ${(-hoch).toFixed(1)})`);
+    // Vision: „linkes Auge" = links im Bild, wie beim Hacker
+    const offenL = Math.max(0.08, Math.min(1.35, aL / nul.augeL)), offenR = Math.max(0.08, Math.min(1.35, aR / nul.augeR));
+    q('.hl-augeL').setAttribute('ry', (11 * offenL).toFixed(1)); q('.hl-augeR').setAttribute('ry', (11 * offenR).toFixed(1));
+    const auf = Math.max(0, Math.min(16, (mund - nul.mund) * 220)), weit = 9 + Math.max(-3, Math.min(8, breite * 55));
+    const m = q('.hl-mund'); m.setAttribute('ry', Math.max(1, auf).toFixed(1)); m.setAttribute('rx', weit.toFixed(1)); m.setAttribute('cy', (251 + auf * 0.6).toFixed(1));
+    q('.hl-bart').setAttribute('transform', `translate(0 ${(auf * 1.1).toFixed(1)})`);
+    // Messnetz: gleiche Verschiebung wie die Gesichtszüge, Rand wie die Maske
+    const N = HACKER_NETZ, pkt = N.P.map(([g, x, y]) => {
+      if (g === 'rand') return [x * quetsch + fx * 0.35, y + fy * 0.35];
+      if (g === 'braueL' || g === 'braueR') y -= hoch;
+      if (g === 'augeL') y = -27 + (y + 27) * offenL;
+      if (g === 'augeR') y = -27 + (y + 27) * offenR;
+      if (g === 'mundO') y = 24 - auf * 0.3;
+      if (g === 'mundU') y = 27 + auf * 1.3;
+      if (g === 'kinn') y += auf * 1.1;
+      return [x + fx, y + fy];
+    });
+    const netz = q('.hl-netz'), lin = netz.querySelectorAll('line'), krs = netz.querySelectorAll('circle');
+    N.L.forEach(([i, j], k) => { const l = lin[k]; l.setAttribute('x1', pkt[i][0].toFixed(1)); l.setAttribute('y1', pkt[i][1].toFixed(1)); l.setAttribute('x2', pkt[j][0].toFixed(1)); l.setAttribute('y2', pkt[j][1].toFixed(1)); });
+    pkt.forEach((p, k) => { krs[k].setAttribute('cx', p[0].toFixed(1)); krs[k].setAttribute('cy', p[1].toFixed(1)); });
+    return { cx, cy, gr: sk * 1.12 };
+  }
   async function szeneSteuern(lv, ok) {
-    const sz = $('szene');
+    const sz = $('szene'), spur = window.INTRO_SPUR;
     sz.innerHTML = `<div class="sz-live">
-        <div class="sl-bild"><video src="${C.intro.liveVideo}" poster="${C.intro.live}" muted playsinline loop preload="auto"></video>
-          <div class="sl-halb sl-links"><span class="sl-tag"><i class="sl-cam"></i>${esc(lv.links)}</span><i class="sl-track"><b>${esc(lv.erkannt)}</b></i></div>
-          <div class="sl-halb sl-rechts"><span class="sl-tag">${esc(lv.rechts)}</span><span class="sl-live">${esc(lv.live)}</span>
+        <div class="sl-bild">
+          <div class="sl-halb sl-links">${hackerSvg()}<span class="sl-tag"><i class="sl-cam"></i>${esc(lv.links)}</span><i class="sl-track"><b>${esc(lv.erkannt)}</b></i></div>
+          <div class="sl-halb sl-rechts"><video src="${C.intro.liveVideo}" poster="${C.intro.live}" muted playsinline loop preload="auto"></video>
+            <span class="sl-tag">${esc(lv.rechts)}</span><span class="sl-live">${esc(lv.live)}</span>
             <div class="sl-decke"><img src="${C.intro.foto}" alt=""><i class="sz-scan"></i><span>${esc(lv.verbinden)}</span></div>
             <p class="sl-cc">${esc(lv.untertitel)}</p></div>
           <i class="sl-pfeil"></i>
         </div>
       </div>`;
-    const v = sz.querySelector('video');
+    const v = sz.querySelector('video'), svg = sz.querySelector('.sl-hacker'), track = sz.querySelector('.sl-track');
+    // der Hacker folgt der Zeit des Videos (zwischen zwei Bildern der Spur weich überblendet)
+    (function schritt() {
+      if (spur && spur.bilder.length) {
+        const f = Math.max(0, v.currentTime * spur.fps), i = Math.min(spur.bilder.length - 1, Math.floor(f)), j = Math.min(spur.bilder.length - 1, i + 1), t = f - i;
+        const b = spur.bilder[i].map((x, k) => x + (spur.bilder[j][k] - x) * t);
+        const k = hackerStellen(svg, b, spur.null);
+        const w = 190 * k.gr, h = 200 * k.gr;
+        track.style.left = ((k.cx - w / 2) / 4.8) + '%'; track.style.top = ((k.cy - h * 0.48) / 5.4) + '%';
+        track.style.width = (w / 4.8) + '%'; track.style.height = (h / 5.4) + '%';
+      }
+      szeneLauf = requestAnimationFrame(schritt);
+    })();
     await warte(60); sz.classList.add('laeuft');
-    // erst das Standbild: rechts wird das Gesicht aufgesetzt; dann läuft die Webcam los und Markus macht sofort mit
+    // erst das Standbild: rechts wird das Gesicht aufgesetzt; dann bewegt sich der Hacker und Markus macht sofort mit
     try { v.currentTime = 0; } catch (e) { }
     $('sz-schritt').textContent = lv.schritte[0]; K.fx.rec();
     await warte(1000); if (!ok()) return;
@@ -840,9 +945,11 @@
     if (!IDLE.nah || v.paused) return Promise.resolve();
     return new Promise(ok => {
       const t0 = performance.now();
+      // bis zur nächsten passenden Stelle läuft die Idle etwas schneller (ohne Geräusche in der Idle, sonst passt der Ton nicht)
+      const eilen = !IDLE.toene.length;
       const iv = setInterval(() => {
-        if (!idleNah() && performance.now() - t0 < 2500) return;   // länger wartet niemand – dann lieber kurz überblenden
-        clearInterval(iv); v.pause(); ok();
+        if (!idleNah() && performance.now() - t0 < 3000) { if (eilen) v.playbackRate = 1.8; return; }   // länger wartet niemand
+        clearInterval(iv); v.playbackRate = 1; v.pause(); ok();
       }, 30);
     });
   }
@@ -874,6 +981,9 @@
     if (!a.video) { geraet.style.removeProperty('--poster'); return; }
     // absolut, sonst löst das Stylesheet den Pfad relativ zu css/ auf
     geraet.style.setProperty('--poster', `url("${new URL(a.video.poster, location.href).href}")`);
+    // Beim Klingeln liegt das Profilfoto unscharf im Hintergrund – unbekannte Nummern (ohne Foto) klingeln ohne Bild
+    if (a.anrufer.foto) geraet.style.setProperty('--klingelbild', `url("${new URL(a.anrufer.foto, location.href).href}")`);
+    else geraet.style.removeProperty('--klingelbild');
     $('vid-name').textContent = a.anrufer.videoName || a.anrufer.name; $('vid-timer').textContent = '';
     IDLE.nah = a.video.nah || null; IDLE.toene = a.video.toene || []; IDLE.zuletzt = 0; auslauf = null;
     VID.idle.loop = true; VID.talk.playbackRate = 1;
@@ -917,10 +1027,14 @@
     let eingefroren = false;
     vt.src = await quelle('assets/video/' + zeile.id + '.mp4');
     if (ep !== S.epoche) return;
+    // Clips, die in der Ausgangshaltung beginnen (auslauf), laufen ab dem ersten Bild: der Moment vor dem ersten Wort
+    // ist der Übergang aus der Ruhehaltung – wer ihn überspringt, sieht einen Sprung. Der Ton setzt dann beim ersten Wort ein.
+    const vorlauf = S.a.video.auslauf ? start : 0;
     // Erst sprechen, wenn das Bild an der Startstelle spielbereit ist – sonst läuft der Ton vor und das Bild hinterher
-    await Promise.all([bereit(vt, start), idleGrenze()]); // idleGrenze hält die Idle an: kein Hüsteln mitten im Satz
+    await Promise.all([bereit(vt, start - vorlauf), idleGrenze()]); // idleGrenze hält die Idle an: kein Hüsteln mitten im Satz
     try { await vt.play(); } catch (e) { }
     if (ep !== S.epoche) { vt.pause(); return; }
+    if (vorlauf > 0.02) { vt.style.opacity = 1; await warte(vorlauf * 1000); if (ep !== S.epoche) { vt.pause(); return; } }
     const tok = await K.stimme(zeile.id, S.a.klang, () => {
       if (vLauf) { cancelAnimationFrame(vLauf.raf); vLauf = null; }
       // Bricht die Verbindung ab, bleibt das letzte Bild stehen
